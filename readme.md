@@ -7,12 +7,12 @@ var validate = require('validate');
 
 var schema = {
     name    : { type: 'string', required: true }
-  , email   : { type: 'email', required: true }
+  , email   : { type: 'email', required: true, message: "Invalid email" }
   , number  : { type: 'number', min: 1, max: 99 }
   , address : {
       street    : { type: 'string' }
     , city      : { type: 'string', required: true }
-    , zip       : { type: 'string', length: 8 }
+    , zip       : { type: 'string', length: 8, message: "Invalid zip" }
   }
   , array   : { type: 'number' }
 };

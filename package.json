@@ -1,0 +1,14 @@
+{
+  "name": "validate",
+  "description": "Validate object properties in javascript.",
+  "version": "0.1.0",
+  "author": "Eivind Fjeldstad",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eivindfjeldstad/validate.git"
+  },
+  "keywords": ["validation","validate","valid","object"],
+  "scirpts": {
+    "test": "node test"
+  }
+}

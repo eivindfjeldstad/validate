@@ -69,8 +69,8 @@ Validator.prototype.url = function (bool, value) {
     .test(value);
 };
 
-Validator.prototype.number = function (bool, value) {
-  return /^[0-9]+$/.test(value);
+Validator.prototype.type = function (type, value) {
+  return typeof value === type;
 };
 
 Validator.prototype.required = function (bool, value) {

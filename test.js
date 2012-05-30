@@ -3,9 +3,9 @@ var validate = require('./')
   , assert = require('assert');
 
 var tests = module.exports = {
-  'test number': function () {
-    assert(Validator.prototype.number.call(null, true, 2));
-    assert(!Validator.prototype.number.call(null, true, 'a'));
+  'test type': function () {
+    assert(Validator.prototype.type.call(null, 'string', '2'));
+    assert(!Validator.prototype.type.call(null, 'string', 2));
   },
   
   'test max': function () {
@@ -53,7 +53,7 @@ var tests = module.exports = {
   },
   
   'test array': function () {
-    var schema = { test: { number: true } };
+    var schema = { test: { type: 'number' } };
     
     assert(!validate(schema, { test: [3, 2, 1] }));
     assert.equal(validate(schema, { test: [3, 'b', 'a'] }).length, 2);

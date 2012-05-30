@@ -3,11 +3,6 @@ var validate = require('./')
   , assert = require('assert');
 
 var tests = module.exports = {
-  'test type': function () {
-    assert(Validator.prototype.type.call(null, 'string', '2'));
-    assert(!Validator.prototype.type.call(null, 'string', 2));
-  },
-  
   'test max': function () {
     assert(Validator.prototype.max.call(null, 2, 1));
     assert(!Validator.prototype.max.call(null, 2, 3));
@@ -18,14 +13,19 @@ var tests = module.exports = {
     assert(!Validator.prototype.min.call(null, 2, 1));
   },
   
-  'test email': function () {
-    assert(Validator.prototype.email.call(null, true, 'test@test.com'));
-    assert(!Validator.prototype.email.call(null, true, 'testtest.com'));
+  'test type': function () {
+    assert(Validator.prototype.type.call(null, 'string', '2'));
+    assert(!Validator.prototype.type.call(null, 'string', 2));
+  },
+  
+  'test type email': function () {
+    assert(Validator.prototype.type.call(null, 'email', 'test@test.com'));
+    assert(!Validator.prototype.type.call(null, 'email', 'testtest.com'));
   },
   
   'test url': function () {
-    assert(Validator.prototype.url.call(null, true, 'http://www.test.com'));
-    assert(!Validator.prototype.url.call(null, true, 'test'));
+    assert(Validator.prototype.type.call(null, 'url', 'http://www.test.com'));
+    assert(!Validator.prototype.type.call(null, 'url', 'test'));
   },
   
   'test required': function () {

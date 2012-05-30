@@ -60,17 +60,16 @@ Validator.prototype.match = function (re, value) {
   return re.test(value);
 };
 
-Validator.prototype.email = function (bool, value) {
-  return /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(value);
-};
-
-Validator.prototype.url = function (bool, value) {
-  return /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
-    .test(value);
-};
-
 Validator.prototype.type = function (type, value) {
-  return typeof value === type;
+  switch (type) {
+    case 'email':
+      return /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(value);
+    case 'url':
+      return /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+        .test(value);
+    default:
+      return typeof value === type;
+  }
 };
 
 Validator.prototype.required = function (bool, value) {

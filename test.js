@@ -13,6 +13,21 @@ var tests = module.exports = {
     assert(!Validator.prototype.min.call(null, 2, 1));
   },
   
+  'test len': function () {
+    assert(Validator.prototype.len.call(null, 2, 'ab'));
+    assert(!Validator.prototype.len.call(null, 2, 'a'));
+  },
+  
+  'test minLen': function () {
+    assert(Validator.prototype.minLen.call(null, 2, 'abc'));
+    assert(!Validator.prototype.minLen.call(null, 2, 'a'));
+  },
+  
+  'test maxLen': function () {
+    assert(Validator.prototype.maxLen.call(null, 3, 'ab'));
+    assert(!Validator.prototype.maxLen.call(null, 3, 'abcd'));
+  },
+  
   'test type': function () {
     assert(Validator.prototype.type.call(null, 'string', '2'));
     assert(!Validator.prototype.type.call(null, 'string', 2));
@@ -23,9 +38,14 @@ var tests = module.exports = {
     assert(!Validator.prototype.type.call(null, 'email', 'testtest.com'));
   },
   
-  'test url': function () {
+  'test type url': function () {
     assert(Validator.prototype.type.call(null, 'url', 'http://www.test.com'));
     assert(!Validator.prototype.type.call(null, 'url', 'test'));
+  },
+  
+  'test type hex': function () {
+    assert(Validator.prototype.type.call(null, 'hex', '#fefefe'));
+    assert(!Validator.prototype.type.call(null, 'hex', '#fzfefe'));
   },
   
   'test required': function () {

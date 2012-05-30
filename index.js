@@ -1,8 +1,12 @@
-module.exports = validate;
-
 function validate (schema, values) {
   var validator = new Validator(schema, values).run();
   return validator.errors.length ? validator.errors : null;
+};
+
+validate.re = {
+    email : /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
+  , url   : /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+  , hex   : /^#?([a-f0-9]{6}|[a-f0-9]{3})$/
 };
 
 validate.Validator = Validator;
@@ -56,6 +60,18 @@ Validator.prototype.min = function (num, value) {
   return value >= num;
 };
 
+Validator.prototype.len = function (num, value) {
+  return value.length === num;
+};
+
+Validator.prototype.minLen = function (num, value) {
+  return value.length >= num;
+};
+
+Validator.prototype.maxLen = function (num, value) {
+  return value.length <= num;
+};
+
 Validator.prototype.match = function (re, value) {
   return re.test(value);
 };
@@ -63,10 +79,13 @@ Validator.prototype.match = function (re, value) {
 Validator.prototype.type = function (type, value) {
   switch (type) {
     case 'email':
-      return /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(value);
+      return validate.re.email.test(value);
     case 'url':
-      return /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
-        .test(value);
+      return validate.re.url.test(value);
+    case 'hex':
+      return validate.re.hex.test(value);
+    case 'date':
+      return value instanceof Date;
     default:
       return typeof value === type;
   }
@@ -75,3 +94,5 @@ Validator.prototype.type = function (type, value) {
 Validator.prototype.required = function (bool, value) {
   return !!value;
 };
+
+module.exports = validate;

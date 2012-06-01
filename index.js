@@ -1,6 +1,6 @@
 function validate (schema, values) {
   var validator = new Validator(schema, values).run();
-  return validator.errors.length ? validator.errors : null;
+  return validator.errors.length ? validator.errors : validator.accepted;
 };
 
 validate.re = {
@@ -13,28 +13,45 @@ validate.Validator = Validator;
 
 function Validator (schema, values) {
   this.values = values;
+  this.accepted = {};
   this.schema = schema;
   this.errors = [];
 }
 
-Validator.prototype.walk = function (schemas, values) {
+Validator.prototype.walk = function (schemas, values, accepted) {
   schemas = schemas || this.schema;
   values = values || this.values;
+  accepted = accepted || this.accepted;
   
   Object.keys(schemas).forEach(function (key) {
     var value = values[key]
       , schema = schemas[key];
     
     // Nested object
-    if (Object.prototype.toString.call(value) === '[object Object]')
-      return this.walk(schema, value);
+    if (Object.prototype.toString.call(value) === '[object Object]') {
+      accepted[key] = {}
+      return this.walk(schema, value, accepted[key]);
+    }
 
-    if (!Array.isArray(value))
-      return this.validate(schema, value);
+    if (!Array.isArray(value)) {
+      if (this.validate(schema, value) && value !== undefined) {
+        accepted[key] = value
+      }
+      return
+    }
       
-    for (var i = 0; i < value.length; i++)
-      this.validate(schema, value[i]);
-  }.bind(this));
+    var allValid = true
+
+    for (var i = 0; i < value.length; i++) {
+      valid = this.validate(schema, value[i])
+      allValid = allValid && valid
+    }
+
+    if (allValid) {
+      accepted[key] = value
+    }
+      
+  }, this);
   
   return this;
 };
@@ -42,17 +59,21 @@ Validator.prototype.walk = function (schemas, values) {
 Validator.prototype.run = Validator.prototype.walk;
 
 Validator.prototype.validate = function (schema, value) {
-  if (!value && !schema.required) return;
+  if (!value && !schema.required) return true;
   
   for (var key in schema) {
-    
-    if (!this[key] || !schema[key]) return;
+    if (key === "message") continue;
+
+
+    if (!this[key] || !schema[key]) return false;
     
     if (!this[key](schema[key], value)) {
       this.errors.push(new Error(schema.message || 'Invalid'));
-      return;
+      return false;
     }
   }
+
+  return true;
 };
 
 Validator.prototype.max = function (num, value) {

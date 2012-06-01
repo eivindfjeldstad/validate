@@ -26,6 +26,5 @@ if (Array.isArray(data)) {
     // blah blah
   });
 }
-
 ```
 

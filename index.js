@@ -25,7 +25,8 @@ Validator.prototype.walk = function (schemas, values, accepted) {
   
   Object.keys(schemas).forEach(function (key) {
     var value = values[key]
-      , schema = schemas[key];
+      , schema = schemas[key]
+      , allValid = true;
     
     // Nested object
     if (Object.prototype.toString.call(value) === '[object Object]') {
@@ -34,23 +35,16 @@ Validator.prototype.walk = function (schemas, values, accepted) {
     }
 
     if (!Array.isArray(value)) {
-      if (this.validate(schema, value) && value !== undefined) {
-        accepted[key] = value
-      }
-      return
-    }
-      
-    var allValid = true
-
-    for (var i = 0; i < value.length; i++) {
-      valid = this.validate(schema, value[i])
-      allValid = allValid && valid
+      if (this.validate(schema, value) && value !== undefined)
+        accepted[key] = value;
+        
+      return;
     }
 
-    if (allValid) {
-      accepted[key] = value
-    }
-      
+    for (var i = 0; i < value.length; i++)
+      allValid = this.validate(schema, value[i]) && allValid;
+
+    if (allValid) accepted[key] = value;
   }, this);
   
   return this;
@@ -63,7 +57,6 @@ Validator.prototype.validate = function (schema, value) {
   
   for (var key in schema) {
     if (key === "message") continue;
-
 
     if (!this[key] || !schema[key]) return false;
     

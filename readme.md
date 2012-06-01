@@ -17,7 +17,15 @@ var schema = {
   , array   : { type: 'number' }
 };
 
-var errors = validate(schema, { /* data to validate */ });
+var data = validate(schema, { /* data to validate */ });
+
+if (Array.isArray(data)) {
+  // Handle errors
+} else {
+  db.insert(data, function (err) {
+    // blah blah
+  });
+}
 
 ```
 

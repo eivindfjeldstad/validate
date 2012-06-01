@@ -42,13 +42,15 @@ Validator.prototype.walk = function (schemas, values) {
 Validator.prototype.run = Validator.prototype.walk;
 
 Validator.prototype.validate = function (schema, value) {
-  for (var key in schema)
+  if (!value && !schema.required) return;
+  
+  for (var key in schema) {
     
-    if (!this[key] || !schema[key] || (!value && !schema.required)) return;
+    if (!this[key] || !schema[key]) return;
     
     if (!this[key](schema[key], value)) {
       this.errors.push(new Error(schema.message || 'Invalid'));
-      break;
+      return;
     }
   }
 };

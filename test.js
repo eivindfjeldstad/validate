@@ -61,21 +61,29 @@ var tests = module.exports = {
   'test validate': function () {
     var schema = { test: { min: 2 } };
     
-    assert(!validate(schema, { test: 3 }));
+    assert.deepEqual(validate(schema, { test: 3 }), {
+      test: 3
+    });
     assert.equal(validate(schema, { test: 1 }).length, 1);
   },
   
   'test nested': function () {
     var schema = { test: { nested: { max: 3 } } };
     
-    assert(!validate(schema, { test: { nested: 2 } }));
+    assert.deepEqual(validate(schema, { test: { nested: 2 } }), {
+      test: {
+        nested: 2
+      }
+    });
     assert.equal(validate(schema, { test: { nested: 5 } }).length, 1);
   },
   
   'test array': function () {
     var schema = { test: { type: 'number' } };
     
-    assert(!validate(schema, { test: [3, 2, 1] }));
+    assert.deepEqual(validate(schema, { test: [3, 2, 1] }), {
+      test: [3,2,1]
+    });
     assert.equal(validate(schema, { test: [3, 'b', 'a'] }).length, 2);
   },
   
@@ -83,6 +91,41 @@ var tests = module.exports = {
     var schema = { test: { required: true, message: 'test' } };
     
     assert.equal(validate(schema, {})[0].message, 'test');
+  },
+  'test integration': function () {
+    var schema = {
+        name    : { type: 'string', required: true }
+      , email   : { type: 'email', required: true, message: "Invalid email" }
+      , number  : { type: 'number', min: 1, max: 99 }
+      , address : {
+          street    : { type: 'string' }
+        , city      : { type: 'string', required: true }
+        , zip       : { type: 'string', length: 8, message: "Invalid zip" }
+      }
+      , array   : { type: 'number' }
+    };
+
+    assert.deepEqual(validate(schema, {
+      name: "foo",
+      email: "foo@bar.com",
+      number: 50,
+      address: {
+        street: "foos",
+        city: "baz",
+        deepNotPresent: true
+      },
+      array: [1, 2, 3],
+      notPresent: true
+    }), {
+      name: "foo",
+      email: "foo@bar.com",
+      number: 50,
+      address: {
+        street: "foos",
+        city: "baz",
+      },
+      array: [1, 2, 3]
+    });
   }
 };
 

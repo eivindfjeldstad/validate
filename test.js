@@ -99,6 +99,12 @@ var tests = module.exports = {
     
     assert.equal(validate(schema, {})[0].message, 'test');
   },
+  
+  'test null': function () {
+    var schema = {};
+
+    assert.equal(validate(schema, null)[0].message, 'The data is malformed');
+  },
 
   'test integration': function () {
     var schema = {
@@ -110,10 +116,7 @@ var tests = module.exports = {
         , city      : { type: 'string', required: true }
         , zip       : { type: 'string', length: 8, message: "Invalid zip" }
       }
-      , array   : { type: 'array', minLen: 2, values: {
-                    type: 'number'
-                }
-      }
+      , array   : { type: 'array', minLen: 2, values: { type: 'number' } }
     };
 
     assert.deepEqual(validate(schema, {
@@ -141,18 +144,9 @@ var tests = module.exports = {
 
   'test arrays': function () {
     var schema = {
-        name: { type: 'array', len: 2, values: {
-                type: 'string'
-            }
-      }
-      , foos: { type: 'array', minLen: 1, values: {
-                type: 'string'
-            }
-      }
-      , bars: { type: 'array', maxLen: 3, values: {
-                type: 'string'
-            }
-      }
+        name: { type: 'array', len: 2, values: { type: 'string' } }
+      , foos: { type: 'array', minLen: 1, values: { type: 'string' } }
+      , bars: { type: 'array', maxLen: 3, values: { type: 'string' } }
     };
 
     assert.deepEqual(validate(schema, {

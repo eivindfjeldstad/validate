@@ -27,6 +27,7 @@ function Validator (schema, values) {
 
 // Default messages
 Validator.prototype.defaultMessage = 'A validation error occured';
+
 Validator.prototype.malformedMessage = 'The data is malformed';
 
 Validator.prototype.walk = function (schemas, values, accepted) {
@@ -131,7 +132,7 @@ Validator.prototype.required = function (bool, value) {
 };
 
 function isObject (obj) {
-  return Object.prototype.toString.call(value) === '[object Object]';
+  return Object.prototype.toString.call(obj) === '[object Object]';
 }
 
 module.exports = validate;

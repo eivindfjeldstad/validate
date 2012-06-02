@@ -53,7 +53,7 @@ Validator.prototype.walk = function (schemas, values, accepted) {
 
     if (!Array.isArray(value)) {
       if (this.validate(schema, value) && value)
-        accepted[key] = value;
+        accepted[key] = schema.convert ? schema.convert(value) : value;
         
       return;
     }
@@ -71,7 +71,8 @@ Validator.prototype.walk = function (schemas, values, accepted) {
       allValid = this.validate(schema.values, field) && allValid;
     }, this);
 
-    if (allValid) accepted[key] = value;
+    if (allValid) accepted[key] = schema.values.convert ? 
+      value.map(schema.values.convert) : value;
   }, this);
   
   return this;

@@ -65,7 +65,6 @@ Validator.prototype.walk = function (schemas, values, accepted) {
       
       if (isObject(field)) {
         this.walk(schema.values, field, accepted);
-        
         return value[index] = accepted;
       }
       

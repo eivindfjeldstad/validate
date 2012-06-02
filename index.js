@@ -1,5 +1,12 @@
-function validate (schema, values) {
-  var validator = new Validator(schema, values).run();
+function validate (schema, values, messages) {
+  var validator = new Validator(schema, values);
+  
+  if (messages) {
+    for (var m in messages)
+      validator[m] = messages[m];
+  }
+  
+  validator.run();
   return validator.errors.length ? validator.errors : validator.accepted;
 };
 
@@ -18,10 +25,19 @@ function Validator (schema, values) {
   this.errors = [];
 }
 
+// Default messages
+Validator.prototype.defaultMessage = 'A validation error occured';
+Validator.prototype.malformedMessage = 'The data is malformed';
+
 Validator.prototype.walk = function (schemas, values, accepted) {
   schemas = schemas || this.schema;
   values = values || this._values;
   accepted = accepted || this.accepted;
+  
+  if (!isObject(values)) {
+    this.errors.push(new Error(this.malformedMessage));	
+    return this;
+  }
   
   Object.keys(schemas).forEach(function (key) {
     var value = values[key]
@@ -29,7 +45,7 @@ Validator.prototype.walk = function (schemas, values, accepted) {
       , allValid = true;
     
     // Nested object
-    if (Object.prototype.toString.call(value) === '[object Object]') {
+    if (isObject(value)) {
       accepted[key] = {}
       return this.walk(schema, value, accepted[key]);
     }
@@ -61,7 +77,7 @@ Validator.prototype.validate = function (schema, value) {
     if (!this[key] || !schema[key] || key === "message") continue;
     
     if (!this[key](schema[key], value)) {
-      this.errors.push(new Error(schema.message || 'Invalid'));
+      this.errors.push(new Error(schema.message || this.defaultMessage));
       return false;
     }
   }
@@ -114,14 +130,8 @@ Validator.prototype.required = function (bool, value) {
   return !!value;
 };
 
-Validator.prototype.array = function (bool, value) {
-  return Array.isArray(value);
-};
-
-Validator.prototype.arrayMinLen = Validator.prototype.minLen;
-
-Validator.prototype.arrayMaxLen = Validator.prototype.maxLen;
-
-Validator.prototype.arrayLen = Validator.prototype.len
+function isObject (obj) {
+  return Object.prototype.toString.call(value) === '[object Object]';
+}
 
 module.exports = validate;

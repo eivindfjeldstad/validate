@@ -61,7 +61,7 @@ Validator.prototype.validate = function (schema, value) {
   if (!value && !schema.required) return true;
   
   for (var key in schema) {
-    if (key === "message") continue;
+    if (key === 'message') continue;
 
     if (!this[key] || !schema[key]) return false;
     

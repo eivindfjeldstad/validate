@@ -164,6 +164,17 @@ var tests = module.exports = {
       , foos: []
       , bars: ["foo", "bar", "baz", "bar"]
     }).length, 3);
+  },
+  
+  'test object in array': function () {
+    var schema1 = { a: { type: 'string' } }
+      , schema2 = { b: { type: 'array', values: schema1 } }
+      , values = { b: [{ a: 'test1' }, { a: 'test2' }] };
+      
+    assert.deepEqual(validate(schema2, values), values);
+    assert.equal(validate(schema2, { 
+      b: [{ a: 2 }, { a: 'test' }] 
+    }).length, 1);
   }
 };
 

@@ -60,8 +60,14 @@ Validator.prototype.walk = function (schemas, values, accepted) {
 
     allValid = this.validate(schema, value) && allValid;
 
-    for (var i = 0; i < value.length; i++)
+    for (var i = 0; i < value.length; i++) {
+      if (isObject(value[i])) {
+        this.walk(schema.values, value[i], value[i]);
+        continue;
+      }
+      
       allValid = this.validate(schema.values, value[i]) && allValid;
+    }
 
     if (allValid) accepted[key] = value;
   }, this);
@@ -75,6 +81,7 @@ Validator.prototype.validate = function (schema, value) {
   if (!value && !schema.required) return true;
   
   for (var key in schema) {
+    console.log(key)
     if (!this[key] || !schema[key] || key === "message") continue;
     
     if (!this[key](schema[key], value)) {

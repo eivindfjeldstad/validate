@@ -92,6 +92,11 @@ var tests = module.exports = {
     
     assert.equal(validate(schema, {})[0].message, 'test');
   },
+  'test null': function () {
+    var schema = {}
+
+    assert.equal(validate(schema, null)[0].message, 'values is not an object');
+  },
   'test integration': function () {
     var schema = {
         name    : { type: 'string', required: true }

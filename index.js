@@ -1,5 +1,11 @@
-function validate (schema, values) {
+function validate (schema, values, messages) {
   var validator = new Validator(schema, values).run();
+  if (messages && messages.defaultMessage) {
+    validator.defaultMessage = messages.defaultMessage;
+  }
+  if (messages && messages.malformedMessage) {
+    validator.malformedMessage = messages.malformedMessage;
+  }
   return validator.errors.length ? validator.errors : validator.accepted;
 };
 
@@ -22,6 +28,11 @@ Validator.prototype.walk = function (schemas, values, accepted) {
   schemas = schemas || this.schema;
   values = values || this.values;
   accepted = accepted || this.accepted;
+
+  if (Object.prototype.toString.call(values) !== '[object Object]') {
+    this.errors.push(new Error(this.malformedMessage));
+    return this;
+  }
   
   Object.keys(schemas).forEach(function (key) {
     var value = values[key]
@@ -56,12 +67,12 @@ Validator.prototype.validate = function (schema, value) {
   if (!value && !schema.required) return true;
   
   for (var key in schema) {
-    if (key === "message") continue;
+    if (key === 'message') continue;
 
     if (!this[key] || !schema[key]) return false;
     
     if (!this[key](schema[key], value)) {
-      this.errors.push(new Error(schema.message || 'Invalid'));
+      this.errors.push(new Error(schema.message || this.defaultMessage));
       return false;
     }
   }
@@ -111,5 +122,9 @@ Validator.prototype.type = function (type, value) {
 Validator.prototype.required = function (bool, value) {
   return !!value;
 };
+
+Validator.prototype.defaultMessage = "A validation error occurred";
+
+Validator.prototype.malformedMessage = "The data is malformed";
 
 module.exports = validate;

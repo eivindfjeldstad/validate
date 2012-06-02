@@ -175,6 +175,24 @@ var tests = module.exports = {
     assert.equal(validate(schema2, { 
       b: [{ a: 2 }, { a: 'test' }] 
     }).length, 1);
+  },
+
+  'test conversion of fields': function () {
+    var schema1 = { a: { type: 'number', convert: increment } }
+      , schema2 = { a: { type: 'array', values: schema1 } }
+      , schema3 = { a: { b: schema1 } }
+      , schema4 = { a: { type: 'array', values: { 
+          type: 'number', convert: increment } } 
+        };
+
+    assert.deepEqual(validate(schema1, { a: 4 }), { a: 5 });
+    assert.deepEqual(validate(schema2, { a: [{ a: 4 }] }), { a: [{ a: 5 }] });
+    assert.deepEqual(validate(schema3, { 
+      a: { b: { a: 4 } } 
+    }), { a: { b: { a: 5 } } })
+    assert.deepEqual(validate(schema4, { a: [4] }), { a: [5] })
+
+    function increment(x) { return x + 1; }
   }
 };
 

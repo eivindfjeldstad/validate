@@ -12,7 +12,7 @@ validate.re = {
 validate.Validator = Validator;
 
 function Validator (schema, values) {
-  this.values = values;
+  this._values = values;
   this.accepted = {};
   this.schema = schema;
   this.errors = [];
@@ -20,7 +20,7 @@ function Validator (schema, values) {
 
 Validator.prototype.walk = function (schemas, values, accepted) {
   schemas = schemas || this.schema;
-  values = values || this.values;
+  values = values || this._values;
   accepted = accepted || this.accepted;
   
   Object.keys(schemas).forEach(function (key) {
@@ -41,27 +41,10 @@ Validator.prototype.walk = function (schemas, values, accepted) {
       return;
     }
 
-    if (schema.arrayMinLen || schema.arrayMaxLen 
-      || schema.arrayLen || schema.array
-    ) {
-      var arraySchema = {
-          arrayMinLen: schema.arrayMinLen
-        , arrayMaxLen: schema.arrayMaxLen
-        , arrayLen: schema.arrayLen
-        , array: schema.array
-      };
-
-      schema = Object.create(schema);
-      schema.arrayMinLen = null;
-      schema.arrayMaxLen = null;
-      schema.arrayLen = null;
-      schema.array = null;
-
-      allValid = this.validate(arraySchema, value) && allValid;
-    }
+    allValid = this.validate(schema, value) && allValid;
 
     for (var i = 0; i < value.length; i++)
-      allValid = this.validate(schema, value[i]) && allValid;
+      allValid = this.validate(schema.values, value[i]) && allValid;
 
     if (allValid) accepted[key] = value;
   }, this);
@@ -120,6 +103,8 @@ Validator.prototype.type = function (type, value) {
       return validate.re.hex.test(value);
     case 'date':
       return value instanceof Date;
+    case 'array':
+      return Array.isArray(value);
     default:
       return typeof value === type;
   }

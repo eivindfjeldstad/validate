@@ -96,7 +96,7 @@ var tests = module.exports = {
   'test null': function () {
     var schema = {}
 
-    assert.equal(validate(schema, null)[0].message, 'values is not an object');
+    assert.equal(validate(schema, null)[0].message, 'The data is malformed');
   },
 
   'test integration': function () {
@@ -157,6 +157,32 @@ var tests = module.exports = {
       , foos: []
       , bars: ["foo", "bar", "baz", "bar"]
     }).length, 3);
+  },
+
+  'test objects in array': function () {
+    var schema = {
+        name: {
+            street: { type: 'string' }
+          , city: { type: 'string', required: true }
+        }
+    }
+
+    assert.deepEqual(validate(schema, {
+      name: [{
+        street: "foo",
+        city: "bar"
+      }, {
+        city: "bar",
+        notPresent: true
+      }]
+    }), {
+      name: [{
+        street: "foo",
+        city: "bar"
+      }, {
+        city: "bar"
+      }]
+    })
   }
 };
 

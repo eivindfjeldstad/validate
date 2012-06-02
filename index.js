@@ -71,8 +71,16 @@ Validator.prototype.walk = function (schemas, values, accepted) {
       allValid = this.validate(arraySchema, value) && allValid;
     }
 
-    for (var i = 0; i < value.length; i++)
-      allValid = this.validate(schema, value[i]) && allValid;
+    for (var i = 0; i < value.length; i++) {
+      var item = value[i]
+      if (Object.prototype.toString.call(item) === '[object Object]') {
+        var object = {};
+        allValid = this.walk(schema, item, object) && allValid;
+        value[i] = object;
+      } else {
+        allValid = this.validate(schema, item) && allValid;  
+      }
+    }
 
     if (allValid) accepted[key] = value;
   }, this);

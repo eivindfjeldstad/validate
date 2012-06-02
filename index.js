@@ -22,6 +22,11 @@ Validator.prototype.walk = function (schemas, values, accepted) {
   schemas = schemas || this.schema;
   values = values || this.values;
   accepted = accepted || this.accepted;
+
+  if (Object.prototype.toString.call(values) !== '[object Object]') {
+    this.errors.push(new Error('values is not an object'));
+    return this;
+  }
   
   Object.keys(schemas).forEach(function (key) {
     var value = values[key]

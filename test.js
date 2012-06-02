@@ -126,6 +126,32 @@ var tests = module.exports = {
       },
       array: [1, 2, 3]
     });
+  },
+
+  'test objects in array': function () {
+    var schema = {
+        name: {
+            street: { type: 'string' }
+          , city: { type: 'string', required: true }
+        }
+    }
+
+    assert.deepEqual(validate(schema, {
+      name: [{
+        street: "foo",
+        city: "bar"
+      }, {
+        city: "bar",
+        notPresent: true
+      }]
+    }), {
+      name: [{
+        street: "foo",
+        city: "bar"
+      }, {
+        city: "bar"
+      }]
+    })
   }
 };
 

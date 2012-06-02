@@ -14,7 +14,7 @@ var schema = {
     , city      : { type: 'string', required: true }
     , zip       : { type: 'string', length: 8, message: "Invalid zip" }
   }
-  , array   : { type: 'number' }
+  , array   : { type: 'number', array: true, arrayMinLen: 1 }
 };
 
 var data = validate(schema, { /* data to validate */ });

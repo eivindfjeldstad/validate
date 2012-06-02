@@ -92,6 +92,7 @@ var tests = module.exports = {
     
     assert.equal(validate(schema, {})[0].message, 'test');
   },
+
   'test integration': function () {
     var schema = {
         name    : { type: 'string', required: true }
@@ -102,7 +103,7 @@ var tests = module.exports = {
         , city      : { type: 'string', required: true }
         , zip       : { type: 'string', length: 8, message: "Invalid zip" }
       }
-      , array   : { type: 'number' }
+      , array   : { type: 'number', arrayMinLen: 2, array: true }
     };
 
     assert.deepEqual(validate(schema, {
@@ -126,6 +127,30 @@ var tests = module.exports = {
       },
       array: [1, 2, 3]
     });
+  },
+
+  'test arrays': function () {
+    var schema = {
+        name: { type: 'string', arrayLen: 2, array: true }
+      , foos: { type: 'string', arrayMinLen: 1, array: true }
+      , bars: { type: 'string', arrayMaxLen: 3, array: true }
+    };
+
+    assert.deepEqual(validate(schema, {
+        name: ["foo", "bar"]
+      , foos: ["foo"]
+      , bars: ["bar", "bar", "bar"]
+    }), {
+        name: ["foo", "bar"]
+      , foos: ["foo"]
+      , bars: ["bar", "bar", "bar"]
+    });
+
+    assert.equal(validate(schema, {
+        name: ["foo"]
+      , foos: []
+      , bars: ["foo", "bar", "baz", "bar"]
+    }).length, 3);
   }
 };
 

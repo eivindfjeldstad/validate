@@ -41,6 +41,25 @@ Validator.prototype.walk = function (schemas, values, accepted) {
       return;
     }
 
+    if (schema.arrayMinLen || schema.arrayMaxLen 
+      || schema.arrayLen || schema.array
+    ) {
+      var arraySchema = {
+          arrayMinLen: schema.arrayMinLen
+        , arrayMaxLen: schema.arrayMaxLen
+        , arrayLen: schema.arrayLen
+        , array: schema.array
+      };
+
+      schema = Object.create(schema);
+      schema.arrayMinLen = null;
+      schema.arrayMaxLen = null;
+      schema.arrayLen = null;
+      schema.array = null;
+
+      allValid = this.validate(arraySchema, value) && allValid;
+    }
+
     for (var i = 0; i < value.length; i++)
       allValid = this.validate(schema, value[i]) && allValid;
 
@@ -56,9 +75,7 @@ Validator.prototype.validate = function (schema, value) {
   if (!value && !schema.required) return true;
   
   for (var key in schema) {
-    if (key === "message") continue;
-
-    if (!this[key] || !schema[key]) return false;
+    if (!this[key] || !schema[key] || key === "message") continue;
     
     if (!this[key](schema[key], value)) {
       this.errors.push(new Error(schema.message || 'Invalid'));
@@ -111,5 +128,15 @@ Validator.prototype.type = function (type, value) {
 Validator.prototype.required = function (bool, value) {
   return !!value;
 };
+
+Validator.prototype.array = function (bool, value) {
+  return Array.isArray(value);
+};
+
+Validator.prototype.arrayMinLen = Validator.prototype.minLen;
+
+Validator.prototype.arrayMaxLen = Validator.prototype.maxLen;
+
+Validator.prototype.arrayLen = Validator.prototype.len
 
 module.exports = validate;

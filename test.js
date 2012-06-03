@@ -175,6 +175,36 @@ var tests = module.exports = {
     assert.equal(validate(schema2, { 
       b: [{ a: 2 }, { a: 'test' }] 
     }).length, 1);
+  },
+  
+  'test cast string': function () {
+    var schema = { a: { cast: 'number' } };
+
+    assert.strictEqual(validate(schema, { a: '2' }).a, 2);
+  },
+  
+  'test cast object': function () {
+    var schema = { a: { cast: { type: 'number', min: 5 } } }
+    
+    assert.strictEqual(validate(schema, { a: '10' }).a, 10);
+    assert(validate(schema, { a: '4' }).length);
+  },
+  
+  'test cast function': function () {
+    var schema = { a: { cast: function (x) { return 'a'; } } };
+    
+    assert.equal(validate(schema, { a: 2 }).a, 'a');
+  },
+  
+  'test cast inside array': function () {
+    var schema1 = { type: 'string', maxLen: 2, cast: { type: 'number', max: 10 } }
+      , schema2 = { b: { type: 'array', values: { a: schema1 } } }
+      
+    assert.strictEqual(validate(schema2, { 
+      b: [{ a: '2' }, { a: '3' }]
+    }).b[0].a, 2);
+    
+    assert(validate(schema2, { b: [{ a: '23' }] }).length);
   }
 };
 

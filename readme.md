@@ -12,7 +12,7 @@ var schema = {
   , address : {
       street    : { type: 'string' }
     , city      : { type: 'string', required: true }
-    , zip       : { type: 'string', length: 8, message: "Invalid zip" }
+    , zip       : { type: 'string', len: 8, message: "Invalid zip" }
   }
   , array   : { type: 'array', minLen: 1, values: { type: 'number' } }
 };
@@ -37,7 +37,6 @@ var schema = {
 var data = { test: '2' }; // test is a string
 
 data = validate(schema, data, { cast: true });
-
 console.log(typeof data.test); // number
 ```
 Or you can specify a cast property on the schema
@@ -48,7 +47,6 @@ var schema = {
 };
 
 var data = validate(schema, { test: '2' });
-
 console.log(typeof data.test); // number
 ```
 This allows you to do validation on both the raw and the casted value
@@ -57,7 +55,7 @@ var schema = {
   test: { type: 'string', len: '2', cast: { type: 'number', max: 10 } };
 };
 ```
-The cast property can also be a custom function: ```cast: fn```
+The cast property can also be a custom function: ```cast: function (a) {}```
 
 ## Licence
 MIT

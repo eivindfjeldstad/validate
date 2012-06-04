@@ -48,6 +48,11 @@ var tests = module.exports = {
     assert(!Validator.prototype.type.call(null, 'hex', '#fzfefe'));
   },
   
+  'test type regexp': function () {
+    assert(Validator.prototype.type.call(null, 'regexp', (/\w/)));
+    assert(!Validator.prototype.type.call(null, 'regexp', '\\w'));
+  },
+  
   'test required': function () {
     assert(Validator.prototype.required.call(null, true, 'test'));
     assert(!Validator.prototype.required.call(null, true, ''));
@@ -58,33 +63,30 @@ var tests = module.exports = {
     assert(!Validator.prototype.match.call(null, (/[a-z]/), 1));
   },
   
+  'test custom': function () {
+    var fn = function (b) { return b; };
+    
+    assert(Validator.prototype.custom.call(null, fn, true));
+    assert(!Validator.prototype.custom.call(null, fn, false));
+  },
+  
   'test validate': function () {
     var schema = { test: { min: 2 } };
     
     assert.deepEqual(validate(schema, { test: 3 }), { test: 3 });
-    assert.equal(validate(schema, { test: 1 }).length, 1);
+    assert(validate(schema, { test: 1 }).length);
   },
   
   'test nested': function () {
-    var schema = { test: { nested: { max: 3 } } };
+    var schema = { test: { nested: { max: 3 } } }
+      , data = { test: { nested: 2 } };
     
-    assert.deepEqual(validate(schema, { test: { nested: 2 } }), {
-      test: {
-        nested: 2
-      }
-    });
-    assert.equal(validate(schema, { test: { nested: 5 } }).length, 1);
+    assert.deepEqual(validate(schema, data), data);
+    assert(validate(schema, { test: { nested: 5 } }).length);
   },
   
   'test array': function () {
-    var schema = { 
-      test: { 
-        values: {
-          type: 'number'
-        },
-        type: 'array'
-      } 
-    };
+    var schema = { test: { values: { type: 'number' }, type: 'array' } };
     
     assert.deepEqual(validate(schema, { test: [3, 2, 1] }), { test: [3,2,1] });
     assert.equal(validate(schema, { test: [3, 'b', 'a'] }).length, 2);
@@ -116,25 +118,25 @@ var tests = module.exports = {
     };
 
     assert.deepEqual(validate(schema, {
-      name: "foo",
-      email: "foo@bar.com",
-      number: 50,
-      address: {
-        street: "foos",
-        city: "baz",
-        deepNotPresent: true
-      },
-      array: [1, 2, 3],
-      notPresent: true
+        name    : "foo"
+      , email   : "foo@bar.com"
+      , number  : 50
+      , address : {
+          street  : "foos"
+        , city    : "baz"
+        , ignored : true
+      }
+      , array   : [1, 2, 3]
+      , ignored : true
     }), {
-      name: "foo",
-      email: "foo@bar.com",
-      number: 50,
-      address: {
-        street: "foos",
-        city: "baz",
-      },
-      array: [1, 2, 3]
+        name    : "foo"
+      , email   : "foo@bar.com"
+      , number  : 50
+      , address : {
+          street  : "foos"
+        , city    : "baz"
+      }
+      , array: [1, 2, 3]
     });
   },
 
@@ -168,9 +170,7 @@ var tests = module.exports = {
       , values = { b: [{ a: 'test1' }, { a: 'test2' }] };
       
     assert.deepEqual(validate(schema2, values), values);
-    assert.equal(validate(schema2, { 
-      b: [{ a: 2 }, { a: 'test' }] 
-    }).length, 1);
+    assert(validate(schema2, { b: [{ a: 2 }, { a: 'test' }] }).length);
   },
   
   'test cast string': function () {
@@ -187,14 +187,14 @@ var tests = module.exports = {
   },
   
   'test cast function': function () {
-    var schema = { a: { cast: function (x) { return 'a'; } } };
+    var schema = { a: { cast: function () { return 'a'; } } };
     
     assert.equal(validate(schema, { a: 2 }).a, 'a');
   },
   
   'test cast inside array': function () {
-    var schema1 = { type: 'string', maxLen: 2, cast: { type: 'number', max: 10 } }
-      , schema2 = { b: { type: 'array', values: { a: schema1 } } }
+    var schema1 = { type: 'string', cast: { type: 'number', max: 10 } }
+      , schema2 = { b: { type: 'array', values: { a: schema1 } } };
       
     assert.strictEqual(validate(schema2, { 
       b: [{ a: '2' }, { a: '3' }]
@@ -215,7 +215,7 @@ var tests = module.exports = {
       , options = { cast: true };
 
     assert.strictEqual(validate(schema2, { b: [{ a : '7' }] }, options).b[0].a, 7);
-    assert.equal(validate(schema2, { b: [{ a : '100' }] }, options).length, 1);
+    assert(validate(schema2, { b: [{ a : '100' }] }, options).length);
   }
 };
 

@@ -1,14 +1,13 @@
 function validate (schema, values, options) {
-  var validator = new Validator(schema, values);
+  var validator;
   
-  if (options) {
-    for (var o in options)
-      validator[o] = options[o];
-  }
+  options = options || validate.options;
+  validator = new Validator(schema, values, options).run();
   
-  validator.run();
-  return validator.errors.length ? validator.errors : validator.accepted;
-};
+  return validator.errors.length 
+    ? validator.errors
+    : validator.accepted;
+}
 
 validate.re = {
     email : /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
@@ -18,11 +17,14 @@ validate.re = {
 
 validate.Validator = Validator;
 
-function Validator (schema, object) {
+function Validator (schema, object, options) {
   this.object = object;
   this.accepted = {};
   this.schema = schema;
   this.errors = [];
+  
+  for (var o in options)
+    this[o] = options[o];
 }
 
 // Default message
@@ -134,6 +136,9 @@ Validator.prototype.typecast = function (schema, parent, key, accepted) {
       value = parseInt(value, 10);
       if (!isNaN(value)) break;
       return this.errors.push(new Error(message));
+    case 'email':
+    case 'url':
+    case 'hex':
     case 'string':
       value = value.toString();
       break;
@@ -143,6 +148,9 @@ Validator.prototype.typecast = function (schema, parent, key, accepted) {
       return this.errors.push(new Error(message))
     case 'regexp':
       value = new RegExp(value);
+      break;
+    case 'boolean':
+      value = value && value !== 'false';
   }
   
   if (!this.cast || this.validate(schema, value))

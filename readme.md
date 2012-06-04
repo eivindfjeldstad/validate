@@ -59,3 +59,6 @@ var schema = {
 ```
 The cast property can also be a custom function: ```cast: fn```
 
+## Licence
+MIT
+

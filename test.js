@@ -61,9 +61,7 @@ var tests = module.exports = {
   'test validate': function () {
     var schema = { test: { min: 2 } };
     
-    assert.deepEqual(validate(schema, { test: 3 }), {
-      test: 3
-    });
+    assert.deepEqual(validate(schema, { test: 3 }), { test: 3 });
     assert.equal(validate(schema, { test: 1 }).length, 1);
   },
   
@@ -88,9 +86,7 @@ var tests = module.exports = {
       } 
     };
     
-    assert.deepEqual(validate(schema, { test: [3, 2, 1] }), {
-      test: [3,2,1]
-    });
+    assert.deepEqual(validate(schema, { test: [3, 2, 1] }), { test: [3,2,1] });
     assert.equal(validate(schema, { test: [3, 'b', 'a'] }).length, 2);
   },
   
@@ -158,7 +154,7 @@ var tests = module.exports = {
       , foos: ["foo"]
       , bars: ["bar", "bar", "bar"]
     });
-
+    
     assert.equal(validate(schema, {
         name: ["foo"]
       , foos: []
@@ -205,6 +201,15 @@ var tests = module.exports = {
     }).b[0].a, 2);
     
     assert(validate(schema2, { b: [{ a: '23' }] }).length);
+  },
+  
+  'test cast option': function () {
+    var schema1 = { a: { type: 'number', max: 10 } }
+      , schema2 = { b: { type: 'array', values: schema1 } }
+      , options = { cast: true };
+
+    assert.strictEqual(validate(schema2, { b: [{ a : '7' }] }, options).b[0].a, 7);
+    assert.equal(validate(schema2, { b: [{ a : '100' }] }, options).length, 1);
   }
 };
 

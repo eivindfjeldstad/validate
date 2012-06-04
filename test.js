@@ -174,7 +174,7 @@ var tests = module.exports = {
   },
   
   'test cast string': function () {
-    var schema = { a: { cast: 'number' } };
+    var schema = { a: { cast: 'number', len: 1 } };
 
     assert.strictEqual(validate(schema, { a: '2' }).a, 2);
   },

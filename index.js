@@ -53,11 +53,11 @@ Validator.prototype.walk = function (schema, object, accepted) {
     }
     
     if (!Array.isArray(fields)) {
-      if (this.cast || args.cast)
-        return this.typecast(args, object, key, accepted);
-
-      if (this.validate(args, fields) && fields)
+      if (!this.cast && this.validate(args, fields) && fields)
         accepted[key] = fields;
+      
+      if (this.cast || args.cast)
+        this.typecast(args, object, key, accepted);
         
       return;
     }
@@ -74,11 +74,11 @@ Validator.prototype.walk = function (schema, object, accepted) {
         return this.walk(schema, value, accepted[key][index]);
       }
       
-      if (this.cast || schema.cast)
-        return this.typecast(schema, fields, index, accepted[key]);
-      
-      if (this.validate(schema, value))
+      if (!this.cast && this.validate(schema, value))
         accepted[key][index] = value;
+      
+      if (this.cast || schema.cast)
+        this.typecast(schema, fields, index, accepted[key]);
     }, this);
   }, this);
   
@@ -113,9 +113,6 @@ Validator.prototype.typecast = function (schema, parent, key, accepted) {
     , field = {}
     , message = schema.message || this.defaultMessage
     , type = schema.cast || schema.type;
-
-  if (typeof type === 'function')
-    return accepted[key] = type.call(this, value);
   
   if (isObject(type)) {
     if (!type.type)
@@ -147,6 +144,9 @@ Validator.prototype.typecast = function (schema, parent, key, accepted) {
       break;
     case 'boolean':
       value = value && value !== 'false';
+      break;
+    default:
+      value = type.call(this, value);
   }
   
   if (!this.cast || this.validate(schema, value))

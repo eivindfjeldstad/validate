@@ -54,14 +54,11 @@ Validator.prototype.walk = function (schema, object, accepted) {
     
     if (!Array.isArray(fields)) {
       if (this.cast || args.cast)
-        this.typecast(args, object, key, accepted);
+        return this.typecast(args, object, key, accepted);
 
-      if (this.cast || !this.validate(args, fields) || !fields) return;
-
-      if (!args.cast)
-        return accepted[key] = fields;
-        
-      return;
+      if (!this.validate(args, fields) || !fields) return;
+      
+      return accepted[key] = fields;
     }
     
     if (!this.validate(args, fields)) return;
@@ -76,13 +73,12 @@ Validator.prototype.walk = function (schema, object, accepted) {
         return this.walk(schema, value, accepted[key][index]);
       }
       
-      if (this.cast || args.cast)
-        this.typecast(schema, fields, index, accepted[key]);
+      if (this.cast || schema.cast)
+        return this.typecast(schema, fields, index, accepted[key]);
       
-      if (this.cast || !this.validate(schema, value)) return;
+      if (!this.validate(schema, value)) return;
       
-      if (!schema.cast)
-        return accepted[key][index] = value;
+      accepted[key][index] = value;
     }, this);
   }, this);
   

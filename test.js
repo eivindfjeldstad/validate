@@ -203,6 +203,12 @@ var tests = module.exports = {
     assert(validate(schema2, { b: [{ a: '23' }] }).length);
   },
   
+  'test validate raw': function () {
+    var schema = { a: { type: 'string', cast: 'number' } };
+    
+    assert(validate(schema), { a: 2 }.length);
+  },
+  
   'test cast option': function () {
     var schema1 = { a: { type: 'number', max: 10 } }
       , schema2 = { b: { type: 'array', values: schema1 } }

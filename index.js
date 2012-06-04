@@ -25,15 +25,16 @@ function Validator (schema, object) {
   this.errors = [];
 }
 
-// Default messages
+// Default message
 Validator.prototype.defaultMessage = 'A validation error occured';
 
+// Malformed data
 Validator.prototype.malformedMessage = 'The data is malformed';
 
 Validator.prototype.walk = function (schema, object, accepted) {
-  schema = schema || this.schema;
+  schema = schema || this.schema;
   object = object || this.object;
-  accepted = accepted || this.accepted;
+  accepted = accepted || this.accepted;
 
   if (!isObject(object)) {
     this.errors.push(new Error(this.malformedMessage));
@@ -49,42 +50,38 @@ Validator.prototype.walk = function (schema, object, accepted) {
       return this.walk(args, fields, accepted[key]);
     }
     
-    if (Array.isArray(fields)) {
-      if (!this.validate(args, fields)) return;
+    if (!Array.isArray(fields)) {
+      if (this.cast || args.cast)
+        this.typecast(args, object, key, accepted);
 
-      accepted[key] = [];
-      
-      fields.forEach(function (value, index) {
-        var schema = args.values;
+      if (this.cast || !this.validate(args, fields) || !fields) return;
 
-        if (isObject(value)) {
-          accepted[key][index] = {};
-          return this.walk(schema, value, accepted[key][index]);
-        }
+      if (!args.cast)
+        return accepted[key] = fields;
         
-        if (this.cast)
-          return this.typecast(schema, fields, index, accepted[key]);
-        
-        if (!this.validate(schema, value)) return;
-        
-        if (!schema.cast)
-          return accepted[key][index] = value;
-        
-        this.typecast(schema, fields, index, accepted[key]);
-      }, this);
-      
       return;
     }
     
-    if (this.cast)
-      return this.typecast(args, object, key, accepted);
+    if (!this.validate(args, fields)) return;
+
+    accepted[key] = [];
     
-    if (!this.validate(args, fields) || !fields) return;
-    
-    if (!args.cast)
-      return accepted[key] = fields;
-    
-    this.typecast(args, object, key, accepted);
+    fields.forEach(function (value, index) {
+      var schema = args.values;
+
+      if (isObject(value)) {
+        accepted[key][index] = {};
+        return this.walk(schema, value, accepted[key][index]);
+      }
+      
+      if (this.cast || args.cast)
+        this.typecast(schema, fields, index, accepted[key]);
+      
+      if (this.cast || !this.validate(schema, value)) return;
+      
+      if (!schema.cast)
+        return accepted[key][index] = value;
+    }, this);
   }, this);
   
   return this;
@@ -93,16 +90,17 @@ Validator.prototype.walk = function (schema, object, accepted) {
 Validator.prototype.run = Validator.prototype.walk;
 
 Validator.prototype.validate = function (schema, value) {
-  var message = schema.message || this.defaultMessage
+  var message = schema.message || this.defaultMessage;
+    , skip = false
     , valid = true;
  
   if (!value && !schema.required) return true;
   
   for (var key in schema) {
-    valid = (['message', 'cast', 'values'].indexOf(key) >= 0)
-      || (this[key] && this[key](schema[key], value));
-
-    if (valid) continue;
+    skip = ['message', 'cast', 'values'].indexOf(key) >= 0;
+    valid = this[key] && this[key](schema[key], value);
+    
+    if (skip || valid) continue;
 
     this.errors.push(new Error(message));
     return false;
@@ -113,8 +111,8 @@ Validator.prototype.validate = function (schema, value) {
 
 Validator.prototype.typecast = function (schema, parent, key, accepted) {
   var value = parent[key]
-    , fieldSchema = {}
     , temp = {}
+    , field = {}
     , message = schema.message || this.defaultMessage
     , type = schema.cast || schema.type;
 
@@ -125,10 +123,10 @@ Validator.prototype.typecast = function (schema, parent, key, accepted) {
     if (!type.type)
       throw new Error('Typecasting requires a type');
       
-    fieldSchema[key] = type;
+    field[key] = type;
 
     this.typecast({ cast: type.type }, parent, key, temp);
-    return this.walk(fieldSchema, temp, accepted);
+    return this.walk(field, temp, accepted);
   }
 
   switch (type) {
@@ -140,9 +138,11 @@ Validator.prototype.typecast = function (schema, parent, key, accepted) {
       value = value.toString();
       break;
     case 'date':
-      value = Date.parse(value);
+      value = new Date(value);
       if (!isNaN(value.getTime())) break;
-      return this.errors.push(new Error())
+      return this.errors.push(new Error(message))
+    case 'regexp':
+      value = new RegExp(value);
   }
   
   if (!this.cast || this.validate(schema, value))
@@ -183,11 +183,17 @@ Validator.prototype.type = function (type, value) {
       return validate.re.hex.test(value);
     case 'date':
       return value instanceof Date;
+    case 'regexp':
+      return value instanceof RegExp;
     case 'array':
       return Array.isArray(value);
     default:
       return typeof value === type;
   }
+};
+
+Validator.prototype.custom = function (fn, value) {
+  return fn.call(this, value);
 };
 
 Validator.prototype.required = function (bool, value) {

@@ -92,7 +92,7 @@ Validator.prototype.walk = function (schema, object, accepted) {
 Validator.prototype.run = Validator.prototype.walk;
 
 Validator.prototype.validate = function (schema, value) {
-  var message = schema.message || this.defaultMessage;
+  var message = schema.message || this.defaultMessage
     , skip = false
     , valid = true;
  
@@ -126,8 +126,8 @@ Validator.prototype.typecast = function (schema, parent, key, accepted) {
       throw new Error('Typecasting requires a type');
       
     field[key] = type;
-
-    this.typecast({ cast: type.type }, parent, key, temp);
+    
+    this.typecast(type, parent, key, temp);
     return this.walk(field, temp, accepted);
   }
 

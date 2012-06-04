@@ -1,5 +1,5 @@
 # Validate
-Validate object properties in javascript
+Validate object properties in javascript.
 
 ## Use
 ```javascript
@@ -27,4 +27,35 @@ if (Array.isArray(data)) {
   });
 }
 ```
+## Typecasting
+You can either set ```options.cast = true```:
+```javascript
+var schema = { 
+  test: { type: 'number', max: 5 }
+};
+
+var data = { test: '2' }; // test is a string
+
+data = validate(schema, data, { cast: true });
+
+console.log(typeof data.test); // number
+```
+Or you can specify a cast property on the schema
+
+```javascript
+var schema = {
+  test: { type: 'string', cast: 'number' }
+};
+
+var data = validate(schema, { test: '2' });
+
+console.log(typeof data.test); // number
+```
+This allows you to do validation on both the raw and the casted value
+```javascript
+var schema = {
+  test: { type: 'string', len: '2', cast: { type: 'number', max: 10 } };
+};
+```
+The cast property can also be a custom function: ```cast: fn```
 

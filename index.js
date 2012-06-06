@@ -87,11 +87,11 @@ Validator.prototype.walk = function (schema, object, accepted) {
 
 Validator.prototype.run = Validator.prototype.walk;
 
-Validator.prototype.validate = function (schema, value) {
+Validator.prototype.validate = function (schema, value, ignore) {
   var message = schema.message || this.defaultMessage
     , skip = false
     , valid = true;
- 
+
   if (!value && !schema.required) return true;
   
   for (var key in schema) {
@@ -99,8 +99,10 @@ Validator.prototype.validate = function (schema, value) {
     valid = this[key] && this[key](schema[key], value);
     
     if (skip || valid) continue;
-
-    this.errors.push(new Error(message));
+    
+    if (!ignore)
+      this.errors.push(new Error(message));
+      
     return false;
   }
 
@@ -114,6 +116,9 @@ Validator.prototype.typecast = function (schema, parent, key, accepted) {
     , message = schema.message || this.defaultMessage
     , type = schema.cast || schema.type;
   
+  if (!value && this.validate(schema, value, true))
+    return accepted[key] = value;
+  
   if (isObject(type)) {
     if (!type.type)
       throw new Error('Typecasting requires a type');
@@ -125,6 +130,8 @@ Validator.prototype.typecast = function (schema, parent, key, accepted) {
   }
 
   switch (type) {
+    case undefined:
+      break;
     case 'number':
       value = parseInt(value, 10);
       if (!isNaN(value)) break;

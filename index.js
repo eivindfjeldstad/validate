@@ -53,7 +53,7 @@ Validator.prototype.walk = function (schema, object, accepted) {
     }
 
     if (!Array.isArray(fields) || args.cast) {
-      if (!this.cast && this.validate(args, fields) && fields)
+      if (!this.cast && this.validate(key, args, fields) && fields)
         accepted[key] = fields;
 
       if (this.cast || args.cast)
@@ -62,7 +62,7 @@ Validator.prototype.walk = function (schema, object, accepted) {
       return;
     }
 
-    if (!this.validate(args, fields)) return;
+    if (!this.validate(key, args, fields)) return;
 
     accepted[key] = [];
 
@@ -74,7 +74,7 @@ Validator.prototype.walk = function (schema, object, accepted) {
         return this.walk(schema, value, accepted[key][index]);
       }
 
-      if (!this.cast && this.validate(schema, value))
+      if (!this.cast && this.validate(key, schema, value))
         accepted[key][index] = value;
 
       if (this.cast || schema.cast)
@@ -87,8 +87,8 @@ Validator.prototype.walk = function (schema, object, accepted) {
 
 Validator.prototype.run = Validator.prototype.walk;
 
-Validator.prototype.validate = function (schema, value, ignore) {
-  var message = schema.message || this.defaultMessage
+Validator.prototype.validate = function (key, schema, value, ignore) {
+  var message = schema.message || this.defaultMessage + ' on field ' + key
     , skip = false
     , valid = true;
 
@@ -113,10 +113,10 @@ Validator.prototype.typecast = function (schema, parent, key, accepted) {
   var value = parent[key]
     , temp = {}
     , field = {}
-    , message = schema.message || this.defaultMessage
+    , message = schema.message || this.defaultMessage + ' on field ' + key
     , type = schema.cast || schema.type;
 
-  if (!value && this.validate(schema, value, true))
+  if (!value && this.validate(key, schema, value, true))
     return accepted[key] = value;
 
   if (isObject(type)) {
@@ -156,7 +156,7 @@ Validator.prototype.typecast = function (schema, parent, key, accepted) {
       value = type.call(this, value);
   }
 
-  if (!this.cast || this.validate(schema, value))
+  if (!this.cast || this.validate(key, schema, value))
     return accepted[key] = value;
 };
 

@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/eivindfjeldstad/validate.png)](http://travis-ci.org/eivindfjeldstad/validate)
 # Validate
 Validate object properties in javascript.
 

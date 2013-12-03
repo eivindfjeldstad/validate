@@ -29,12 +29,8 @@ user
   
 var res = user.validate(obj);
 
-if (res.errors) {
-  // deal with errors
-}
-
-// accepted object
-console.log(res.accepted);
+res.errors; // array of errors or null
+res.accepted; // the accepted object
 ```
 
 You can also define a schema by passing an object

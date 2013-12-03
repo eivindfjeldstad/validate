@@ -30,7 +30,7 @@ user
 var errors = user.validate(obj);
 ```
 
-You can also define the schema with an object
+You can also define a schema by passing an object
 ```js
 var user = validate({
   name: { type: 'string', required: true },

@@ -39,7 +39,7 @@ describe('Schema', function () {
   })
   
   describe('.validate()', function () {
-    it('should return an array of errors', function () {
+    it('should return an array of error messages', function () {
       var schema = new Schema({ name: { type: 'string' }});
       var res = schema.validate({ name: 123 });
       res.errors.should.be.an.Array.and.have.length(1);

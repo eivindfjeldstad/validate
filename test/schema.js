@@ -26,9 +26,7 @@ describe('Schema', function () {
       it('should register validators', function () {
         var schema = new Schema();
         schema.path('name', { first: { required: true }});
-        schema.validate({}).length.should.eql(1);
-        var err = schema.validate({ name: { first: 'abc' }});
-        (err === null).should.be.ok;
+        schema.validate({}).errors.should.have.length(1);
       })
       
       it('should return a Property', function () {
@@ -43,20 +41,22 @@ describe('Schema', function () {
   describe('.validate()', function () {
     it('should return an array of errors', function () {
       var schema = new Schema({ name: { type: 'string' }});
-      schema.validate({ name: 123 }).should.be.an.Array.and.have.length(1);
+      var res = schema.validate({ name: 123 });
+      res.errors.should.be.an.Array.and.have.length(1);
     })
     
-    it('should return null if no errors were found', function () {
+    it('should return the accepted object', function () {
       var schema = new Schema({ name: { type: 'string' }});
-      var err = schema.validate({ name: 'name' });
-      (err === null).should.be.ok;
+      var res = schema.validate({ name: 'name', age: 23 });
+      res.accepted.should.have.not.have.property('age');
+      res.accepted.should.have.property('name', 'name');
     })
     
     describe('with typecasting enabled', function () {
       it('should typecast before validation', function () {
         var schema = new Schema({ name: { type: 'string' }});
-        var err = schema.validate({ name: 'name' }, { typecast: true });
-        (err === null).should.be.ok;
+        var res = schema.validate({ name: 'name' }, { typecast: true });
+        res.should.have.property('errors', null);
       });
     });
   });

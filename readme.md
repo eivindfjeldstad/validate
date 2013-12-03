@@ -27,7 +27,14 @@ user
   .required()
   .message('last name is required');
   
-var errors = user.validate(obj);
+var res = user.validate(obj);
+
+if (res.errors) {
+  // deal with errors
+}
+
+// accepted object
+console.log(res.accepted);
 ```
 
 You can also define a schema by passing an object

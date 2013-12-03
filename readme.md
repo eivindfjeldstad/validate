@@ -1,4 +1,4 @@
-# Validate
+# validate
 Validate object properties in javascript.
 
 [![Build Status](https://travis-ci.org/eivindfjeldstad/validate.png?branch=master)](https://travis-ci.org/eivindfjeldstad/validate)

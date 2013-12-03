@@ -33,8 +33,8 @@ var errors = user.validate(obj);
 You can also define the schema with an object
 ```js
 var user = validate({
-  name  : { type: 'string', required: true },
-  age   : { type: 'number' }
+  name: { type: 'string', required: true },
+  age: { type: 'number' }
 });
 
 // add another path

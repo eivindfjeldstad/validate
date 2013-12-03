@@ -28,7 +28,6 @@ user
   .message('last name is required');
   
 var res = user.validate(obj);
-
 res.errors; // array of errors or null
 res.accepted; // the accepted object
 ```

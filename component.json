@@ -2,17 +2,15 @@
   "name": "validate",
   "repo": "eivindfjeldstad/validate",
   "description": "Validate object properties",
-  "version": "0.0.1",
-  "keywords": [],
+  "version": "1.0.0",
+  "keywords": ["validate", "object", "schema", "properties"],
   "dependencies": {
     "component/type": "*",
     "eivindfjeldstad/dot": "*"
   },
-  "development": {},
   "license": "MIT",
   "main": "index.js",
   "scripts": [
     "index.js"
-  ],
-  "remotes": []
+  ]
 }

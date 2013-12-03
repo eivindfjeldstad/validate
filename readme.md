@@ -1,7 +1,7 @@
 # Validate
 Validate object properties in javascript.
 
-[![build status](https://secure.travis-ci.org/eivindfjeldstad/validate.png)](http://travis-ci.org/eivindfjeldstad/validate)
+[![Build Status](https://travis-ci.org/eivindfjeldstad/validate.png)](https://travis-ci.org/eivindfjeldstad/validate)
 
 ## Example
 ```js
@@ -33,8 +33,8 @@ var errors = user.validate(obj);
 You can also define the schema with an object
 ```js
 var user = validate({
-  name: { type: 'string', required: true }
-  age: { type: 'number' }
+  name  : { type: 'string', required: true },
+  age   : { type: 'number' }
 });
 
 // add another path

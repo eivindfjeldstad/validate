@@ -19,7 +19,7 @@ describe('Property', function () {
       prop.validate(1).should.eql('fail');
     })
     
-    it('should support nesting', function () {
+    it('should support chaining', function () {
       var prop = new Property();
       prop.use(function () {}).should.eql(prop);
     });

@@ -81,6 +81,10 @@ user
 ### Property#match(regexp, [msg])
 
   Proprety should match given `regexp`.
+  
+### Property#message(msg)
+
+  Set default error message for property.
 
 ## Licence
 MIT

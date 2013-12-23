@@ -35,7 +35,7 @@ res.errors; // array of error messages
 res.accepted; // the accepted object
 ```
 
-You also add paths to a schema by using the chainable API 
+You can also add paths to a schema by using the chainable API 
 ```js
 user
   .path('username')

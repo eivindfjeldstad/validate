@@ -52,7 +52,7 @@ user
   .message('zip is required');
 ```
 ## API
-### schema([paths])
+### schema(paths, [opts])
 
   Creates a new `Schema` with the given paths.
 
@@ -60,7 +60,7 @@ user
 
   Add path to schema with optional rules. Returns a `Property`.
 
-### Schema#validate(obj)
+### Schema#validate(obj, [opts])
 
   Validate given object. Returns an object containing an array of error messages,
   `.errors`, and the accepted object, `.accepted`.

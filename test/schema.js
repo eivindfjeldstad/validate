@@ -60,4 +60,29 @@ describe('Schema', function () {
       });
     });
   });
+  
+  describe('.assert()', function () {
+    it('should throw if validation fails', function () {
+      var schema = new Schema({ name: { type: 'string' }});
+      (function () {
+        schema.assert({ name: 123 });
+      }).should.throw(/failed/);
+    })
+    
+    it('should return the accepted object', function () {
+      var schema = new Schema({ name: { type: 'string' }});
+      var res = schema.assert({ name: 'name', age: 23 });
+      res.should.have.not.have.property('age');
+      res.should.have.property('name', 'name');
+    })
+    
+    describe('with typecasting enabled', function () {
+      it('should typecast before validation', function () {
+        var schema = new Schema({ name: { type: 'string' }});
+        (function () {
+          schema.assert({ name: 'name' }, { typecast: true });
+        }).should.not.throw();
+      });
+    });
+  });
 })

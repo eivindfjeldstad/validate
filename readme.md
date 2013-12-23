@@ -64,6 +64,10 @@ user
 
   Validate given object. Returns an object containing an array of error messages,
   `.errors`, and the accepted object, `.accepted`.
+  
+### Schema#assert(obj, [opts])
+
+  Validate given object and throw if the validation fails. Returns the accepted object.
 
 ### Property#use(fn, [msg])
 

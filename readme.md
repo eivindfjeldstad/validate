@@ -5,9 +5,38 @@ Validate object properties in javascript.
 
 ## Example
 ```js
-var validate = require('validate');
-var user = validate();
+var schema = require('validate');
+var user = schema({
+  name: {
+    type: 'string',
+    required: true,
+    message: 'name is required'
+  },
+  email: {
+    type: 'string',
+    required: true,
+    match: /+\@.+\..+/,
+    message: 'email must be valid'
+  },
+  address: {
+    street: {
+      type: 'string',
+      required: true
+    }
+    city: {
+      type: 'string',
+      required: true
+    }
+  },
+});
+  
+var res = user.validate(obj);
+res.errors; // array of error messages
+res.accepted; // the accepted object
+```
 
+You also add paths to a schema by using the chainable API 
+```js
 user
   .path('username')
   .type('string')
@@ -16,38 +45,42 @@ user
   .message('username must be 2-16 chars');
 
 user
-  .path('name.first')
+  .path('address.zip')
   .type('string')
   .required()
-  .message('first name is required');
-  
-user
-  .path('name.last')
-  .type('string')
-  .required()
-  .message('last name is required');
-  
-var res = user.validate(obj);
-res.errors; // array of error messages or null
-res.accepted; // the accepted object
-```
-
-You can also define a schema by passing an object
-```js
-var user = validate({
-  name: { type: 'string', required: true },
-  age: { type: 'number' }
-});
-
-// add another path
-user.path('email', { 
-  type: 'string',
-  required: true,
-  message: 'email is required'
-});
+  .match(/[0-9]+/)
+  .message('zip is required');
 ```
 ## API
-TODO
+### schema([paths])
+
+  Creates a new `Schema` with the given paths.
+
+### Schema#path(path, [rules])
+
+  Add path to schema with optional rules. Returns a `Property`.
+
+### Schema#validate(obj)
+
+  Validate given object. Returns an object containing an array of error messages,
+  `.errors`, and the accepted object, `.accepted`.
+
+### Property#use(fn, [msg])
+
+  Use the given validation function with and optional error message.
+  `fn` should accept a value and return `true` if the value is considered valid.
+
+### Property#type(name, [msg])
+
+  Property should be of type `name`.
+
+### Property#required(bool, [msg])
+
+  Property is required.
+
+### Property#match(regexp, [msg])
+
+  Proprety should match given `regexp`.
 
 ## Licence
 MIT

@@ -22,7 +22,7 @@ var user = schema({
     street: {
       type: 'string',
       required: true
-    }
+    },
     city: {
       type: 'string',
       required: true

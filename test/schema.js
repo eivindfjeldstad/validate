@@ -56,7 +56,7 @@ describe('Schema', function () {
       it('should typecast before validation', function () {
         var schema = new Schema({ name: { type: 'string' }});
         var res = schema.validate({ name: 'name' }, { typecast: true });
-        res.should.have.property('errors', null);
+        res.errors.should.have.length(0);
       });
     });
   });

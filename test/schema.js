@@ -55,7 +55,7 @@ describe('Schema', function () {
     describe('with typecasting enabled', function () {
       it('should typecast before validation', function () {
         var schema = new Schema({ name: { type: 'string' }});
-        var res = schema.validate({ name: 'name' }, { typecast: true });
+        var res = schema.validate({ name: 123 }, { typecast: true });
         res.errors.should.have.length(0);
       });
     });
@@ -80,7 +80,7 @@ describe('Schema', function () {
       it('should typecast before validation', function () {
         var schema = new Schema({ name: { type: 'string' }});
         (function () {
-          schema.assert({ name: 'name' }, { typecast: true });
+          schema.assert({ name: 123 }, { typecast: true });
         }).should.not.throw();
       });
     });

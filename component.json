@@ -12,6 +12,8 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": [
-    "index.js"
+    "index.js",
+    "lib/schema.js",
+    "lib/property.js"
   ]
 }

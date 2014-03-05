@@ -30,19 +30,17 @@ var user = schema({
   },
 });
   
-var res = user.validate(obj);
-res.errors; // array of error messages
-res.accepted; // the accepted object
+var errors = user.validate(obj);
 ```
 
 You can also add paths to a schema by using the chainable API 
 ```js
 user
   .path('username')
-  .type('string')
-  .required()
-  .match(/[a-z]{2,16}/)
-  .message('username must be 2-16 chars');
+    .type('string')
+    .required()
+    .match(/[a-z]{2,16}/)
+    .message('username must be 2-16 chars');
 
 user
   .path('address.zip')
@@ -53,7 +51,9 @@ user
 ```
 
 ## Typecasting
-Values can be automatically typecasted before validation. To enable typecasting, pass an options object to the schema constructor with `typecast` set to `true`. You can override this setting by passing options to ```.validate()```
+Values can be automatically typecasted before validation.
+To enable typecasting, pass an options object to the schema constructor with `typecast` set to `true`.
+You can override this setting by passing options to ```.validate()```
 
 ```js
 var user = schema({
@@ -66,6 +66,11 @@ To override
 ```js
 user.validate(obj, { typecast: false });
 ```
+
+## Property stripping
+By default, all values not defined in the schema will be stripped from the object.
+Set `.strip = false` on the options object to disable this behavior.
+
 ## API
 ### schema(paths, [opts])
 

@@ -49,10 +49,10 @@ describe('Property', function () {
       prop.validate(null).should.eql(false);
     })
     
-    it('should have an `is` property', function () {
+    it('should have an `_type` property', function () {
       var prop = new Property();
       prop.type('string');
-      prop.is.should.eql('string');
+      prop._type.should.eql('string');
     })
     
     it('should return an error message', function () {
@@ -96,6 +96,15 @@ describe('Property', function () {
       prop.validate(null).should.match(/failed/);
       prop.validate('abc').should.eql(false);
       prop.validate('cab').should.match(/failed/);
+    });
+    
+    it('should accept a context', function () {
+      var obj;
+      var prop = new Property();
+      var ctx = { hello: 'world' };
+      prop.use(function () { obj = this; });
+      prop.validate('abc', ctx);
+      obj.should.equal(ctx);
     });
   });
   

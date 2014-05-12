@@ -37,10 +37,10 @@ You can also add paths to a schema by using the chainable API
 ```js
 user
   .path('username')
-    .type('string')
-    .required()
-    .match(/[a-z]{2,16}/)
-    .message('username must be 2-16 chars');
+  .type('string')
+  .required()
+  .match(/[a-z]{2,16}/)
+  .message('username must be 2-16 chars');
 
 user
   .path('address.zip')

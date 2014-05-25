@@ -1,7 +1,7 @@
 {
   "name": "validate",
   "description": "Validate object properties in javascript.",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "author": "Eivind Fjeldstad",
   "repository": "eivindfjeldstad/validate",
   "keywords": [

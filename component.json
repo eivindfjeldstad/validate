@@ -2,7 +2,7 @@
   "name": "validate",
   "repo": "eivindfjeldstad/validate",
   "description": "Validate object properties",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "keywords": ["validate", "object", "schema", "properties"],
   "dependencies": {
     "component/type": "*",

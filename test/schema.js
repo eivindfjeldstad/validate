@@ -68,6 +68,13 @@ describe('Schema', function () {
         var res = schema.validate({ name: 123 }, { typecast: true });
         res.should.have.length(0);
       });
+      
+      it('should not typecast undefineds', function () {
+        var schema = new Schema({ name: { type: 'string' }});
+        (function () {
+          schema.validate({}, { typecast: true });
+        }).should.not.throw();
+      });
     });
   });
   

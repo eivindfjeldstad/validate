@@ -10,6 +10,8 @@ clean:
 
 test:
 	@./node_modules/.bin/mocha \
-		--require should
+		--require should \
+		--reporter spec \
+		--bail
 
 .PHONY: test clean

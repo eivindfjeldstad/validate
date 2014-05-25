@@ -88,6 +88,14 @@ describe('Property', function () {
     })
   })
   
+  describe('.typecast()', function () {
+    it('should work', function () {
+      var prop = new Property();
+      prop.type('string');
+      prop.typecast(123).should.eql('123');
+    })
+  })
+  
   describe('.validate()', function () {
     it('should work', function () {
       var prop = new Property();

@@ -82,12 +82,11 @@ Set `.strip = false` on the options object to disable this behavior.
 
 ### Schema#validate(obj, [opts])
 
-  Validate given object. Returns an object containing an array of error messages,
-  `.errors`, and the accepted object, `.accepted`.
+  Validate given object. Returns an array of error messages.
   
 ### Schema#assert(obj, [opts])
 
-  Validate given object and throw if the validation fails. Returns the accepted object.
+  Validate given object and throw if the validation fails.
 
 ### Property#use(fn, [msg])
 

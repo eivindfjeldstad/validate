@@ -38,6 +38,25 @@ describe('Schema', function () {
     })
   })
   
+  describe('.strip()', function () {
+    it('should delete all keys not in the schema', function () {
+      var obj = { name: 'name', age: 23 };
+      var schema = new Schema({ name: { type: 'string' }});
+      schema.strip(obj);
+      obj.should.not.have.property('age');
+      obj.should.have.property('name', 'name');
+    });
+    
+    it('should work with nested objects', function () {
+      var obj = { name: { first: 'first', last: 'last' }};
+      var schema = new Schema({ name: { first: { type: 'string' }}});
+      schema.strip(obj);
+      obj.should.have.property('name');
+      obj.name.should.have.property('first');
+      obj.name.should.not.have.property('last');
+    });
+  });
+  
   describe('.validate()', function () {
     it('should return an array of error messages', function () {
       var schema = new Schema({ name: { type: 'string' }});

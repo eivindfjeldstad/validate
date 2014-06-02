@@ -104,6 +104,10 @@ Set `.strip = false` on the options object to disable this behavior.
 ### Property#match(regexp, [msg])
 
   Proprety should match given `regexp`.
+
+### Property#each(fn, [msg])
+
+  Validate each value in array against given function `fn`.
   
 ### Property#message(msg)
 

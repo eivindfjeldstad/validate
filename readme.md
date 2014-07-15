@@ -1,7 +1,8 @@
 # validate
 Validate object properties in javascript.
 
-[![Build Status](https://travis-ci.org/eivindfjeldstad/validate.svg?branch=master)](https://travis-ci.org/eivindfjeldstad/validate)
+[![npm version](http://img.shields.io/npm/v/validate.svg?style=flat)](https://npmjs.org/package/validate)
+[![Build Status](http://img.shields.io/travis/eivindfjeldstad/validate.svg?style=flat)](https://travis-ci.org/eivindfjeldstad/validate)
 
 ## Example
 ```js

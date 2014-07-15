@@ -34,6 +34,16 @@ var user = schema({
 var errors = user.validate(obj);
 ```
 
+You can get an specific error message from a field
+```js
+var errors = user.validate(obj);
+for(var i=0; i < errors.length; i++) {
+  if(errors[i].field === fieldName) {
+    console.log(errors[i].message);
+  }
+}
+```
+
 You can also add paths to a schema by using the chainable API 
 ```js
 user

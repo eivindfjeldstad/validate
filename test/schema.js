@@ -1,3 +1,5 @@
+require("should");
+require("mocha");
 var Schema = require('../lib/schema');
 var Property = require('../lib/property');
 

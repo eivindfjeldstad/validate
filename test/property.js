@@ -1,3 +1,5 @@
+require("should");
+require("mocha");
 var Property = require('../lib/property');
 var Schema = require('../lib/schema');
 
@@ -17,7 +19,7 @@ describe('Property', function () {
     it('should return an error message', function () {
       var prop = new Property('test', Schema());
       prop.use(function () { return false; }, 'fail');
-      prop.validate(1).should.eql('fail');
+      prop.validate(1).should.eql(new Error('fail'));
     })
     
     it('should support chaining', function () {
@@ -37,7 +39,7 @@ describe('Property', function () {
     it('should return an error message', function () {
       var prop = new Property('test', Schema());
       prop.required('fail');
-      prop.validate(null).should.eql('fail');
+      prop.validate(null).should.eql(new Error('fail'));
     })
   })
   
@@ -59,7 +61,7 @@ describe('Property', function () {
     it('should return an error message', function () {
       var prop = new Property('test', Schema());
       prop.type('string', 'fail');
-      prop.validate(1).should.eql('fail');
+      prop.validate(1).should.eql(new Error('fail'));
     })
   })
   
@@ -75,7 +77,7 @@ describe('Property', function () {
     it('should return an error message', function () {
       var prop = new Property('test', Schema());
       prop.match(/^abc$/, 'fail');
-      prop.validate('cab').should.eql('fail');
+      prop.validate('cab').should.eql(new Error('fail'));
     })
   })
   
@@ -95,7 +97,7 @@ describe('Property', function () {
       var prop = new Property('test', Schema());
       prop.message('fail');
       prop.use(function (val) { return val });
-      prop.validate(false).should.eql('fail');
+      prop.validate(false).should.eql(new Error('fail'));
       prop.validate(true).should.eql(false);
     })
   })

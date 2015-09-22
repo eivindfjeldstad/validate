@@ -28,6 +28,12 @@ describe('Schema', function () {
         schema.path('name', { first: { required: true }});
         schema.validate({}).should.have.length(1);
       })
+
+      it('should respect `required: false`', function () {
+        var schema = new Schema();
+        schema.path('name', { first: { required: false }});
+        schema.validate({}).should.have.length(0);
+      })
       
       it('should return a Property', function () {
         var schema = new Schema();

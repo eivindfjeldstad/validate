@@ -10,7 +10,7 @@
     "valid",
     "object"
   ],
-  "scirpts": {
+  "scripts": {
     "test": "make test"
   },
   "dependencies": {

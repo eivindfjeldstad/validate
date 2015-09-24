@@ -9,28 +9,25 @@ describe('Schema', function () {
     })
 
     it('should create nested properties', function () {
-      var schema = new Schema({
-        name: {
-          first: { type: 'string' },
-          last: { type: 'string' }
-        }
-      });
+      var schema = new Schema({ name: { first: { type: 'string' }, last: { type: 'string' }}});
       schema.props.should.have.property('name');
       schema.props.should.have.property('name.first');
       schema.props.should.have.property('name.last');
     });
 
     it('should pass full path to properties', function () {
-      var schema = new Schema({
-        name: {
-          first: { type: 'string' },
-          last: { type: 'string' }
-        }
-      });
+      var schema = new Schema({ name: { first: { type: 'string' }, last: { type: 'string' }}});
       schema.props['name'].name.should.equal('name');
       schema.props['name.first'].name.should.equal('name.first');
       schema.props['name.last'].name.should.equal('name.last');
     })
+
+    it('should allow type shorthand', function () {
+      var schema = new Schema({ name: { first: 'string', last: 'string' }, age: 'number' });
+      schema.props['name.first']._type.should.equal('string');
+      schema.props['name.last']._type.should.equal('string');
+      schema.props['age']._type.should.equal('number');
+    });
   })
 
   describe('.path()', function () {

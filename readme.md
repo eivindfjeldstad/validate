@@ -30,7 +30,7 @@ var user = schema({
       required: true,
       message: 'City is required.'
     }
-  },
+  }
 });
 
 var errors = user.validate(obj);

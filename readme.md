@@ -11,44 +11,54 @@ var user = schema({
   name: {
     type: 'string',
     required: true,
-    message: 'name is required'
+    message: 'Name is required.'
   },
   email: {
     type: 'string',
     required: true,
     match: /+\@.+\..+/,
-    message: 'email must be valid'
+    message: 'Email must be valid.'
   },
   address: {
     street: {
       type: 'string',
-      required: true
+      required: true,
+      message: 'Street is required.'
     },
     city: {
       type: 'string',
-      required: true
+      required: true,
+      message: 'City is required.'
     }
   },
 });
-  
+
 var errors = user.validate(obj);
 ```
 
-You can also add paths to a schema by using the chainable API 
+Each error has a `.path`, describing the full path of the property that failed validation,
+and a `.message` property.
+
+```js
+errors[0].path //=> 'address.street'
+errors[0].message //=> 'Street is required.'
+```
+
+You can also add paths to a schema by using the chainable API
 ```js
 user
   .path('username')
   .type('string')
   .required()
   .match(/[a-z]{2,16}/)
-  .message('username must be 2-16 chars');
+  .message('Username must be 2-16 chars.');
 
 user
   .path('address.zip')
   .type('string')
   .required()
   .match(/[0-9]+/)
-  .message('zip is required');
+  .message('Zip is required.');
 ```
 
 ## Typecasting
@@ -83,8 +93,8 @@ Set `.strip = false` on the options object to disable this behavior.
 
 ### Schema#validate(obj, [opts])
 
-  Validate given object. Returns an array of error messages.
-  
+  Validate given object. Returns an array of errors.
+
 ### Schema#assert(obj, [opts])
 
   Validate given object and throw if the validation fails.
@@ -109,11 +119,10 @@ Set `.strip = false` on the options object to disable this behavior.
 ### Property#each(fn, [msg])
 
   Validate each value in array against given function `fn`.
-  
+
 ### Property#message(msg)
 
   Set default error message for property.
 
 ## Licence
 MIT
-

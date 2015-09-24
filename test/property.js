@@ -34,6 +34,12 @@ describe('Property', function () {
       prop.validate(100).should.eql(false);
     })
 
+    it('should respect boolean argument', function () {
+      var prop = new Property('test', Schema());
+      prop.required(false);
+      prop.validate(null).should.eql(false);
+    })
+
     it('should return an error with a message', function () {
       var prop = new Property('test', Schema());
       prop.required('fail');

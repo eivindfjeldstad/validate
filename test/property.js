@@ -85,6 +85,23 @@ describe('Property', function () {
     })
   })
 
+  describe('.length()', function () {
+    it('should work', function () {
+      var prop = new Property('test', Schema());
+      prop.length({ min: 2, max: 3 });
+      prop.validate('abcd').should.be.an.instanceOf(Error);
+      prop.validate('a').should.be.an.instanceOf(Error);
+      prop.validate('abc').should.eql(false);
+      prop.validate(null).should.eql(false);
+    })
+
+    it('should produce an error with a message', function () {
+      var prop = new Property('test', Schema());
+      prop.length({ max: 1 }, 'fail');
+      prop.validate('cab').message.should.eql('fail');
+    })
+  })
+
   describe('.each()', function () {
     it('should work', function () {
       var prop = new Property('test', Schema());

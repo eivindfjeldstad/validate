@@ -11,7 +11,7 @@
     "object"
   ],
   "scripts": {
-    "test": "make test"
+    "test": "mocha --require should --reporter spec --bail"
   },
   "dependencies": {
     "eivindfjeldstad-dot": "0.0.1",

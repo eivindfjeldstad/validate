@@ -8,28 +8,41 @@ Validate object properties in javascript.
 ```js
 var schema = require('validate');
 var user = schema({
+  username: {
+    type: 'string',
+    required: true,
+    length: { min: 3, max: 32 }
+  },
   name: {
     type: 'string',
-    required: true,
-    message: 'Name is required.'
-  },
-  email: {
-    type: 'string',
-    required: true,
-    match: /+\@.+\..+/,
-    message: 'Email must be valid.'
+    required: true
   },
   address: {
     street: {
       type: 'string',
-      required: true,
-      message: 'Street is required.'
+      required: true
     },
     city: {
       type: 'string',
-      required: true,
-      message: 'City is required.'
+      required: true
     }
+  }
+});
+
+var errors = user.validate(obj);
+```
+
+You can also specify your own error messages by using an array:
+```js
+var post = schema({
+  title: {
+    type: 'string',
+    required: [true, 'Title is required.'],
+    length: [{ min: 1, max: 255 }, 'Title must be between 1 and 255 characters']
+  }
+  content: {
+    type: 'string',
+    required: [true, 'Content is required.']
   }
 });
 
@@ -49,16 +62,14 @@ You can also add paths to a schema by using the chainable API
 user
   .path('username')
   .type('string')
-  .required()
-  .match(/[a-z]{2,16}/)
-  .message('Username must be 2-16 chars.');
+  .required(true, 'Username is required')
+  .match(/[a-z]{2,16}/, 'Username must be 2-16 chars');
 
 user
   .path('address.zip')
   .type('string')
-  .required()
-  .match(/[0-9]+/)
-  .message('Zip is required.');
+  .required(true, 'Zip is required')
+  .match(/[0-9]+/, 'Zip must be valid')
 ```
 
 ## Typecasting
@@ -110,7 +121,11 @@ Set `.strip = false` on the options object to disable this behavior.
 
 ### Property#match(regexp, [msg])
 
-  Proprety should match given `regexp`.
+  Property should match given `regexp`.
+
+### Property#length(obj, [msg])
+
+  Property length should be between `obj.min` and `obj.max`.
 
 ### Property#each(fn, [msg])
 

@@ -32,7 +32,7 @@ var user = schema({
 var errors = user.validate(obj);
 ```
 
-You can also specify your own error messages by using an array:
+You can specify your own error messages by using an array:
 ```js
 var post = schema({
   title: {
@@ -45,8 +45,6 @@ var post = schema({
     required: [true, 'Content is required.']
   }
 });
-
-var errors = user.validate(obj);
 ```
 
 Each error has a `.path`, describing the full path of the property that failed validation,

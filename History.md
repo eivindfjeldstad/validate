@@ -1,4 +1,15 @@
 
+3.1.0 / 2018-03-07
+==================
+
+  * version 3.1.0
+  * update readme
+  * add length validator
+  * remove component.json and Makefile
+  * fix typo
+  * update readme
+  * Allow type shorthand, closes #18
+
 3.0.1 / 2015-09-24
 ==================
 

@@ -235,6 +235,7 @@ Set `.strip = false` on the options object to disable this behavior.
     -   [required](#required)
     -   [type](#type)
     -   [length](#length)
+    -   [enum](#enum)
     -   [match](#match)
     -   [each](#each)
     -   [path](#path)
@@ -340,6 +341,24 @@ Registers a validator that checks length.
 
 ```javascript
 prop.length({ min: 8, max: 255 })
+```
+
+Returns **[Property](#property)** 
+
+#### enum
+
+Registers a validator for enums.
+
+**Parameters**
+
+-   `enums`  
+-   `message` **([Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?** error message to use
+-   `rules` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** allowed values
+
+**Examples**
+
+```javascript
+prop.enum(['cat', 'dog'])
 ```
 
 Returns **[Property](#property)** 

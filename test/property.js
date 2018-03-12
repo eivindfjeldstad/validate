@@ -169,6 +169,36 @@ describe('Property', () => {
     })
   })
 
+  describe('.enum()', () => {
+    it('should register a validator', () => {
+      const prop = new Property('test', new Schema())
+      prop.enum(['one', 'two'])
+      prop.validate('three').should.be.an.instanceOf(Error)
+      prop.validate('one').should.equal(false)
+      prop.validate('two').should.equal(false)
+      prop.validate(null).should.equal(false)
+    })
+
+    it('should use default error messages', () => {
+      const prop = new Property('test', new Schema())
+      const enums = ['one', 'two']
+      prop.enum(enums)
+      prop.validate('three').message.should.equal(messages.enum(prop.name, enums))
+    })
+
+    it('should support custom error messages', () => {
+      const prop = new Property('test', new Schema())
+      prop.enum(['one', 'two'], 'fail')
+      prop.validate('three').message.should.equal('fail')
+    })
+
+    it('should support chaining', () => {
+      const prop = new Property('test', new Schema())
+      prop.enum(['one', 'two']).should.equal(prop)
+    })
+  })
+
+
   describe('.schema()', () => {
     it('should mount given schema on parent schema ', () => {
       const schema1 = new Schema()

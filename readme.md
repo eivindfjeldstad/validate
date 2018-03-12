@@ -22,7 +22,10 @@ const user = new Schema({
     type: 'string',
     required: true
   },
-  things: [{ type: 'string' }],
+  pets: [{
+    name: { type: 'string' },
+    type: { enum: ['cat', 'dog']}
+  }],
   address: {
     street: {
       type: 'string',
@@ -30,6 +33,11 @@ const user = new Schema({
     },
     city: {
       type: 'string',
+      required: true
+    }
+    zip: {
+      type: 'string',
+      match: /[0-9]+/,
       required: true
     }
   }
@@ -55,7 +63,7 @@ const post = new Schema({
 })
 
 post.messsages({
-  required: (path, bool) => `${path} can not be empty.`
+  required: (path) => `${path} can not be empty.`
 })
 
 const [error] = post.validate({})
@@ -69,7 +77,7 @@ const post = new Schema({
   title: {
     type: 'string',
     required: [true, 'Title is required.'],
-    length: [{ min: 1, max: 255 }, 'Title must be between 1 and 255 characters']
+    length: [{ max: 255 }, 'Title must be less than 255 chars.']
   },
   content: {
     type: 'string',
@@ -78,13 +86,13 @@ const post = new Schema({
 })
 ```
 
-Alternatively, you can pass a function to generate messages on the fly:
+A function can be used to generate messages on the fly:
 
 ```js
 const user = new Schema({
   email: {
     type: 'string',
-    match: [/.+@.+\..+/, (path, regexp) => `${path} must be a valid email`]
+    match: [/.+@.+\..+/, path => `${path} must be a valid email.`]
   }
 })
 ```
@@ -97,15 +105,18 @@ Objects and arrays can be nested as deep as you want:
 const event = new Schema({
   title: { type: 'string' },
   participants: [{
-    name: { type: 'string' },
-    email: { type: 'string', required: true },
-    friends: [{ name: { type: 'string' }}]
-  }],
-  dates: {
-    start: { type: 'date' },
-    end: { type: 'date' }
-  },
-  keywords: [{ type: 'string'}]
+    name: {
+      type: 'string'
+    },
+    email: {
+      type: 'string',
+      required: true
+    },
+    things: [{
+      name: { type: 'string' },
+      amount: { type: 'number' }
+    }]
+  }]
 })
 ```
 
@@ -113,8 +124,8 @@ Arrays can be defined implicitly, like in the above example, or explicitly:
 
 ```js
 const post = new Schema({
-  title: { type: 'string' }
-  content: { type: 'string' }
+  title: { type: 'string' },
+  content: { type: 'string' },
   keywords: {
     type: 'array',
     each: { type: 'string' }
@@ -122,7 +133,7 @@ const post = new Schema({
 })
 ```
 
-Nesting also works by passing in pre-defined schemas:
+Nesting also works with schemas:
 
 ```js
 const user = new Schema({
@@ -141,20 +152,26 @@ If you think it should work, it probably works.
 
 ### Custom validators
 
-Custom validators can be defined by writing:
+Custom validators can be defined by using `.use`:
 
 ```js
+const customValidator = (value, ctx) => {
+  // Do some validation
+}
+
 const book = new Schema({
   isbn: {
     type: 'string',
-    use: [customValidator, 'custom validator failed.']
+    use: [customValidator, 'Custom validator failed.']
   }
 })
 ```
 
-### Alternative API
+The custom validator gets passed the value being validated and the object the value belongs to.
 
-You can add paths to a schema by using the chain-able API:
+### Chainable API
+
+If you want to avoid constructing large objects, you can add paths to a schema by using the chainable API:
 
 ```js
 const user = new Schema()
@@ -180,7 +197,7 @@ user
     .type('string')
 ```
 
-is equivalent to writing
+This is equivalent to writing
 
 ```js
 const user = new Schema({ pets: [{ type: 'string' }]})
@@ -188,11 +205,11 @@ const user = new Schema({ pets: [{ type: 'string' }]})
 
 ### Typecasting
 
-Values can be automatically typecasted before validation.
+Values can be automatically typecast before validation.
 To enable typecasting, pass an options object to the `Schema` constructor with `typecast` set to `true`.
 
 ```js
-const user = new Schema({ name: 'string', age: 'number' }, { typecast: true })
+const user = new Schema(definition, { typecast: true })
 ```
 
 You can override this setting by passing an option to `.validate()`.
@@ -390,8 +407,7 @@ Typecast given `value`
 
 **Parameters**
 
--   `value`  
--   `val` **Mixed** value to typecast
+-   `value` **Mixed** value to typecast
 
 **Examples**
 
@@ -424,7 +440,7 @@ Returns **([Error](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 ### Schema
 
-Schema class.
+A Schema defines the structure that objects should be validated against.
 
 **Parameters**
 
@@ -489,7 +505,7 @@ Returns **[Property](#property)**
 
 #### validate
 
-Validate given `obj`
+Validate given `obj`.
 
 **Parameters**
 
@@ -510,7 +526,7 @@ Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Gl
 
 #### assert
 
-Assert that given `obj` is valid
+Assert that given `obj` is valid.
 
 **Parameters**
 
@@ -526,7 +542,7 @@ schema.assert({ name: 1 }) // => Throws an error
 
 #### messages
 
-Override default error messages
+Override default error messages.
 
 **Parameters**
 
@@ -536,7 +552,7 @@ Returns **([Schema](#schema) \| [Object](https://developer.mozilla.org/docs/Web/
 
 #### validators
 
-Override default validators
+Override default validators.
 
 **Parameters**
 

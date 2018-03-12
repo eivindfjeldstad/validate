@@ -11,14 +11,16 @@
     "object"
   ],
   "scripts": {
-    "test": "mocha --require should --reporter spec --bail"
+    "test": "mocha --require should --reporter spec --bail",
+    "docs": "documentation readme ./lib/*.js --section=API"
   },
   "dependencies": {
-    "eivindfjeldstad-dot": "0.0.1",
     "component-type": "1.0.0",
+    "eivindfjeldstad-dot": "0.0.1",
     "typecast": "0.0.1"
   },
   "devDependencies": {
+    "documentation": "^6.1.0",
     "mocha": "^5.0.4",
     "should": "^13.2.1"
   },

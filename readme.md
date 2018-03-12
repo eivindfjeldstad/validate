@@ -1,13 +1,18 @@
 # validate
+
 Validate object properties in javascript.
 
 [![npm version](http://img.shields.io/npm/v/validate.svg?style=flat)](https://npmjs.org/package/validate)
 [![Build Status](http://img.shields.io/travis/eivindfjeldstad/validate.svg?style=flat)](https://travis-ci.org/eivindfjeldstad/validate)
 
-## Example
+## Usage
+
+The `.validate()` function returns an array of validation errors.
+
 ```js
-var schema = require('validate');
-var user = schema({
+const Schema = require('validate')
+
+const user = new Schema({
   username: {
     type: 'string',
     required: true,
@@ -17,6 +22,7 @@ var user = schema({
     type: 'string',
     required: true
   },
+  things: [{ type: 'string' }],
   address: {
     street: {
       type: 'string',
@@ -27,111 +33,517 @@ var user = schema({
       required: true
     }
   }
-});
+})
 
-var errors = user.validate(obj);
+const errors = user.validate(obj)
 ```
 
-You can specify your own error messages by using an array:
+Each error has a `.path`, describing the full path of the property that failed validation, and a `.message` describing the error.
+
 ```js
-var post = schema({
+errors[0].path //=> 'address.street'
+errors[0].message //=> 'address.street is required.'
+```
+
+### Custom error messages
+
+You can override the default error messages on the schema level by passing an object to `Schema#messages()`.
+
+```js
+const post = new Schema({
+  title: { required: true }
+})
+
+post.messsages({
+  required: (path, bool) => `${path} can not be empty.`
+})
+
+const [error] = post.validate({})
+assert(error.message = 'title can not be empty.')
+```
+
+Customizing error messages on the property level is possible by using arrays in the schema definition:
+
+```js
+const post = new Schema({
   title: {
     type: 'string',
     required: [true, 'Title is required.'],
     length: [{ min: 1, max: 255 }, 'Title must be between 1 and 255 characters']
-  }
+  },
   content: {
     type: 'string',
     required: [true, 'Content is required.']
   }
-});
+})
 ```
 
-Each error has a `.path`, describing the full path of the property that failed validation,
-and a `.message` property.
+Alternatively, you can pass a function to generate messages on the fly:
 
 ```js
-errors[0].path //=> 'address.street'
-errors[0].message //=> 'Street is required.'
+const user = new Schema({
+  email: {
+    type: 'string',
+    match: [/.+@.+\..+/, (path, regexp) => `${path} must be a valid email`]
+  }
+})
 ```
 
-You can also add paths to a schema by using the chainable API
+### Nesting
+
+Objects and arrays can be nested as deep as you want:
+
 ```js
+const event = new Schema({
+  title: { type: 'string' },
+  participants: [{
+    name: { type: 'string' },
+    email: { type: 'string', required: true },
+    friends: [{ name: { type: 'string' }}]
+  }],
+  dates: {
+    start: { type: 'date' },
+    end: { type: 'date' }
+  },
+  keywords: [{ type: 'string'}]
+})
+```
+
+Arrays can be defined implicitly, like in the above example, or explicitly:
+
+```js
+const post = new Schema({
+  title: { type: 'string' }
+  content: { type: 'string' }
+  keywords: {
+    type: 'array',
+    each: { type: 'string' }
+  }
+})
+```
+
+Nesting also works by passing in pre-defined schemas:
+
+```js
+const user = new Schema({
+  name: { type: 'string' },
+  email: { type: 'string' }
+})
+
+const post = new Schema({
+  title: { type: 'string' },
+  content: { type: 'string' },
+  author: user
+})
+```
+
+If you think it should work, it probably works.
+
+### Custom validators
+
+Custom validators can be defined by writing:
+
+```js
+const book = new Schema({
+  isbn: {
+    type: 'string',
+    use: [customValidator, 'custom validator failed.']
+  }
+})
+```
+
+### Alternative API
+
+You can add paths to a schema by using the chain-able API:
+
+```js
+const user = new Schema()
+
 user
   .path('username')
-  .type('string')
-  .required(true, 'Username is required')
-  .match(/[a-z]{2,16}/, 'Username must be 2-16 chars');
+    .type('string')
+    .required(true, 'Username is required')
+  .path('address.zip')
+    .type('string')
+    .required(true, 'Zip is required')
+```
+
+Array elements can be defined by using `$` as a placeholder for indices:
+
+```js
+const user = new Schema()
 
 user
-  .path('address.zip')
-  .type('string')
-  .required(true, 'Zip is required')
-  .match(/[0-9]+/, 'Zip must be valid')
+  .path('pets')
+    .type('array')
+  .path('pets.$')
+    .type('string')
 ```
 
-## Typecasting
+is equivalent to writing
+
+```js
+const user = new Schema({ pets: [{ type: 'string' }]})
+```
+
+### Typecasting
+
 Values can be automatically typecasted before validation.
-To enable typecasting, pass an options object to the schema constructor with `typecast` set to `true`.
+To enable typecasting, pass an options object to the `Schema` constructor with `typecast` set to `true`.
 
 ```js
-var user = schema({ name: 'string', age: 'number' }, { typecast: true });
+const user = new Schema({ name: 'string', age: 'number' }, { typecast: true })
 ```
 
-You can override this setting by passing options to `.validate()`
+You can override this setting by passing an option to `.validate()`.
+
 ```js
-user.validate(obj, { typecast: false });
+user.validate(obj, { typecast: false })
 ```
 
-## Property stripping
+### Property stripping
+
 By default, all values not defined in the schema will be stripped from the object.
 Set `.strip = false` on the options object to disable this behavior.
 
 ## API
-### schema(paths, [opts])
 
-  Creates a new `Schema` with the given paths.
+<!-- Generated by documentation.js. Update this documentation by updating the source code. -->
 
-### Schema#path(path, [rules])
+#### Table of Contents
 
-  Add path to schema with optional rules. Returns a `Property`.
+-   [Property](#property)
+    -   [schema](#schema)
+    -   [use](#use)
+    -   [required](#required)
+    -   [type](#type)
+    -   [length](#length)
+    -   [match](#match)
+    -   [each](#each)
+    -   [path](#path)
+    -   [typecast](#typecast)
+    -   [validate](#validate)
+-   [Schema](#schema-1)
+    -   [path](#path-1)
+    -   [validate](#validate-1)
+    -   [assert](#assert)
+    -   [messages](#messages)
+    -   [validators](#validators)
 
-### Schema#validate(obj, [opts])
+### Property
 
-  Validate given object. Returns an array of errors.
+A property instance gets returned whenever you call `schema.path()`.
+Properties are also created internally when an object is passed to the Schema constructor.
 
-### Schema#assert(obj, [opts])
+**Parameters**
 
-  Validate given object and throw if the validation fails.
+-   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the name of the property
+-   `schema` **[Schema](#schema)** parent schema
 
-### Property#use(fn, [msg])
+#### schema
 
-  Use the given validation function with and optional error message.
-  `fn` should accept a value and return `true` if the value is considered valid.
+Mount given `schema` on current path.
 
-### Property#type(name, [msg])
+**Parameters**
 
-  Property should be of type `name`.
+-   `schema` **[Schema](#schema)** the schema to mount
 
-### Property#required(bool, [msg])
+**Examples**
 
-  Property is required.
+```javascript
+const user = new Schema({ email: 'string' });
+prop.schema(user);
+```
 
-### Property#match(regexp, [msg])
+Returns **[Property](#property)** 
 
-  Property should match given `regexp`.
+#### use
 
-### Property#length(obj, [msg])
+Validate with given `fn` and optional `message`.
 
-  Property length should be between `obj.min` and `obj.max`.
+**Parameters**
 
-### Property#each(fn, [msg])
+-   `fn` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** validation function to call
+-   `message` **([Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?** error message to use
 
-  Validate each value in array against given function `fn`.
+**Examples**
 
-### Property#message(msg)
+```javascript
+prop.use(val => val == 2);
+```
 
-  Set default error message for property.
+Returns **[Property](#property)** 
+
+#### required
+
+Registers a validator that checks for presence.
+
+**Parameters**
+
+-   `bool` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** `true` if required, `false` otherwise (optional, default `true`)
+-   `message` **([Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?** error message to use
+
+**Examples**
+
+```javascript
+prop.required()
+```
+
+Returns **[Property](#property)** 
+
+#### type
+
+Registers a validator that checks if a value is of a given `type`
+
+**Parameters**
+
+-   `type` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type to check for
+-   `message` **([Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?** error message to use
+
+**Examples**
+
+```javascript
+prop.type('string')
+```
+
+Returns **[Property](#property)** 
+
+#### length
+
+Registers a validator that checks length.
+
+**Parameters**
+
+-   `rules` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** object with `.min` and `.max` properties
+    -   `rules.min` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** minimum length
+    -   `rules.max` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** maximum length
+-   `message` **([Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?** error message to use
+
+**Examples**
+
+```javascript
+prop.length({ min: 8, max: 255 })
+```
+
+Returns **[Property](#property)** 
+
+#### match
+
+Registers a validator that checks if a value matches given `regexp`.
+
+**Parameters**
+
+-   `regexp` **[RegExp](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp)** regular expression to match
+-   `message` **([Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?** error message to use
+
+**Examples**
+
+```javascript
+prop.match(/some\sregular\sexpression/)
+```
+
+Returns **[Property](#property)** 
+
+#### each
+
+Registers a validator that checks each value in an array against given `rules`.
+
+**Parameters**
+
+-   `rules` **([Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Schema](#schema) \| [Property](#property))** rules to use
+-   `message` **([Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?** error message to use
+
+**Examples**
+
+```javascript
+prop.each({ type: 'string' })
+prop.each([{ type: 'number' }])
+prop.each({ things: [{ type: 'string' }]})
+prop.each(schema)
+```
+
+Returns **[Property](#property)** 
+
+#### path
+
+Proxy method for schema path. Allows chaining properties together.
+
+**Parameters**
+
+-   `args` **...any** 
+
+**Examples**
+
+```javascript
+schema
+  .path('name')
+    .type('string')
+    .required()
+  .path('email')
+    .type('string')
+    .required()
+```
+
+#### typecast
+
+Typecast given `value`
+
+**Parameters**
+
+-   `value`  
+-   `val` **Mixed** value to typecast
+
+**Examples**
+
+```javascript
+prop.type('string')
+prop.typecast(123) // => '123'
+```
+
+Returns **Mixed** 
+
+#### validate
+
+Validate given `value`
+
+**Parameters**
+
+-   `value` **Mixed** value to validate
+-   `ctx` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** the object containing the value
+-   `path` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** path of the value being validated (optional, default `this.name`)
+
+**Examples**
+
+```javascript
+prop.type('number')
+assert(prop.validate(2) == false)
+assert(prop.validate('hello world') instanceof Error)
+```
+
+Returns **([Error](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error) \| [Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean))** 
+
+### Schema
+
+Schema class.
+
+**Parameters**
+
+-   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** schema definition (optional, default `{}`)
+-   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** options (optional, default `{}`)
+    -   `opts.typecast` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** typecast values before validation (optional, default `false`)
+    -   `opts.strip` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** strip properties not defined in the schema (optional, default `true`)
+
+**Examples**
+
+```javascript
+const post = new Schema({
+  title: {
+    type: 'string',
+    required: true,
+    length: { min: 1, max: 255 }
+  },
+  content: {
+    type: 'string',
+    required: true
+  },
+  published: {
+    type: 'date',
+    required: true
+  },
+  keywords: [{ type: 'string' }]
+})
+```
+
+```javascript
+const author = new Schema({
+  name: {
+    type: 'string',
+    required: true
+  },
+  email: {
+    type: 'string',
+    required: true
+  },
+  posts: [post]
+})
+```
+
+#### path
+
+Create or update `path` with given `rules`.
+
+**Parameters**
+
+-   `path` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** full path using dot-notation
+-   `rules` **([Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Schema](#schema) \| [Property](#property))?** rules to apply
+
+**Examples**
+
+```javascript
+const schema = new Schema()
+schema.path('name.first', { type: 'string' })
+schema.path('name.last').type('string').required()
+```
+
+Returns **[Property](#property)** 
+
+#### validate
+
+Validate given `obj`
+
+**Parameters**
+
+-   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** the object to validate
+-   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** options, see [Schema](#schema-1) (optional, default `{}`)
+
+**Examples**
+
+```javascript
+const schema = new Schema({ name: { required: true }})
+const errors = schema.validate({})
+assert(errors.length == 1)
+assert(errors[0].message == 'name is required')
+assert(errors[0].path == 'name')
+```
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** 
+
+#### assert
+
+Assert that given `obj` is valid
+
+**Parameters**
+
+-   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+-   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
+
+**Examples**
+
+```javascript
+const schema = new Schema({ name: 'string' })
+schema.assert({ name: 1 }) // => Throws an error
+```
+
+#### messages
+
+Override default error messages
+
+**Parameters**
+
+-   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** an object containing new messages
+
+Returns **([Schema](#schema) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object))** 
+
+#### validators
+
+Override default validators
+
+**Parameters**
+
+-   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** an object containing new validators
+
+Returns **([Schema](#schema) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object))** 
 
 ## Licence
+
 MIT

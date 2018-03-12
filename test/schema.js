@@ -194,33 +194,33 @@ describe('Schema', () => {
     })
   })
 
-  describe('.messages()', () => {
+  describe('.message()', () => {
     it('should set default messages', () => {
       const schema = new Schema({ name: { required: true }})
-      schema.messages({ required: 'test' })
+      schema.message({ required: 'test' })
       const [error] = schema.validate({})
       error.message.should.equal('test')
     })
 
     context('with no messages given', () => {
       it('should return current messages', () => {
-        const messages = (new Schema()).messages()
+        const messages = (new Schema()).messages
         messages.required.should.be.a.Function()
       })
     })
   })
 
-  describe('.validators()', () => {
+  describe('.validator()', () => {
     it('should set default validators', () => {
       const schema = new Schema({ name: { required: true }})
-      schema.validators({ required: () => false })
+      schema.validator({ required: () => false })
       const [error] = schema.validate({ name: 'hello' })
       error.message.should.equal('name is required.')
     })
 
     context('with no validators given', () => {
       it('should return current validators', () => {
-        const validators = (new Schema()).validators()
+        const validators = (new Schema()).validators
         validators.required.should.be.a.Function()
       })
     })

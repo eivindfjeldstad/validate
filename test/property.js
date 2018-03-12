@@ -9,27 +9,38 @@ describe('Property', () => {
   })
 
   describe('.use()', () => {
-    it('should register given function as a validator', () => {
+    it('should register each object property as a validator', () => {
       const prop = new Property('test', new Schema())
-      prop.use(() => false)
+      prop.use({
+        one: (v) => v != 1,
+        two: (v) => v != 2
+      })
       prop.validate(1).should.be.an.instanceOf(Error)
+      prop.validate(2).should.be.an.instanceOf(Error)
+      prop.validate(3).should.equal(false)
     })
 
-    it('should use default error messages', () => {
-      const prop = new Property('test', new Schema())
-      prop.use(() => false)
-      prop.validate(null).message.should.equal(messages.use(prop.name, true))
-    })
+    it('should use property names to look up error messages', () => {
+      const schema = new Schema()
+      const prop = new Property('test', schema)
 
-    it('should support custom error messages', () => {
-      const prop = new Property('test', new Schema())
-      prop.use(() => false, 'fail')
-      prop.validate(1).message.should.equal('fail')
+      schema.message({
+        one: () => 'error 1',
+        two: () => 'error 2'
+      })
+
+      prop.use({
+        one: (v) => v != 1,
+        two: (v) => v != 2
+      })
+
+      prop.validate(1).message.should.equal('error 1')
+      prop.validate(2).message.should.equal('error 2')
     })
 
     it('should support chaining', () => {
       const prop = new Property('test', new Schema())
-      prop.use(() => {}).should.equal(prop)
+      prop.use({ one: () => {}}).should.equal(prop)
     })
   })
 
@@ -55,16 +66,10 @@ describe('Property', () => {
       prop.validate(null).should.equal(false)
     })
 
-    it('should use default error messages', () => {
+    it('should use the correct error message', () => {
       const prop = new Property('test', new Schema())
       prop.required()
       prop.validate(null).message.should.equal(messages.required(prop.name, true))
-    })
-
-    it('should support custom error messages', () => {
-      const prop = new Property('test', new Schema())
-      prop.required(true, 'fail')
-      prop.validate(null).message.should.equal('fail')
     })
 
     it('should support chaining', () => {
@@ -88,16 +93,10 @@ describe('Property', () => {
       prop._type.should.equal('string')
     })
 
-    it('should use default error messages', () => {
+    it('should use the correct error message', () => {
       const prop = new Property('test', new Schema())
       prop.type('string')
       prop.validate(1).message.should.equal(messages.type(prop.name, 'string'))
-    })
-
-    it('should support custom error messages', () => {
-      const prop = new Property('test', new Schema())
-      prop.type('number', 'fail')
-      prop.validate('hello').message.should.equal('fail')
     })
 
     it('should support chaining', () => {
@@ -115,23 +114,11 @@ describe('Property', () => {
       prop.validate(null).should.equal(false)
     })
 
-    it('should produce an error with a message', () => {
-      const prop = new Property('test', new Schema())
-      prop.match(/^abc$/, 'fail')
-      prop.validate('cab').message.should.equal('fail')
-    })
-
-    it('should use default error messages', () => {
+    it('should use the correct error message', () => {
       const prop = new Property('test', new Schema())
       const regexp = /^abc$/
       prop.match(regexp)
       prop.validate('cab').message.should.equal(messages.match(prop.name, regexp))
-    })
-
-    it('should support custom error messages', () => {
-      const prop = new Property('test', new Schema())
-      prop.match(/^abc$/, 'fail')
-      prop.validate('cab').message.should.equal('fail')
     })
 
     it('should support chaining', () => {
@@ -150,17 +137,11 @@ describe('Property', () => {
       prop.validate(null).should.equal(false)
     })
 
-    it('should use default error messages', () => {
+    it('should use the correct error message', () => {
       const prop = new Property('test', new Schema())
       const rule = { max: 1 }
       prop.length(rule)
       prop.validate('abc').message.should.equal(messages.length(prop.name, rule))
-    })
-
-    it('should support custom error messages', () => {
-      const prop = new Property('test', new Schema())
-      prop.length({ min: 10 }, 'fail')
-      prop.validate('hello').message.should.equal('fail')
     })
 
     it('should support chaining', () => {
@@ -179,17 +160,11 @@ describe('Property', () => {
       prop.validate(null).should.equal(false)
     })
 
-    it('should use default error messages', () => {
+    it('should use the correct error message', () => {
       const prop = new Property('test', new Schema())
       const enums = ['one', 'two']
       prop.enum(enums)
       prop.validate('three').message.should.equal(messages.enum(prop.name, enums))
-    })
-
-    it('should support custom error messages', () => {
-      const prop = new Property('test', new Schema())
-      prop.enum(['one', 'two'], 'fail')
-      prop.validate('three').message.should.equal('fail')
     })
 
     it('should support chaining', () => {
@@ -248,6 +223,29 @@ describe('Property', () => {
       prop.validate('cab').should.be.an.instanceOf(Error)
     })
 
+    it('should run `required` and `type` validators first', () => {
+      const schema = new Schema();
+      const prop = new Property('test', schema)
+      const done = {};
+      let counter = 0;
+
+      schema.validator({
+        required: () => done.required = ++counter,
+        type: () => done.type = ++counter,
+        match: () => done.match = ++counter,
+        enum: () => done.enum = ++counter
+      })
+
+      prop.match()
+      prop.enum()
+      prop.type()
+      prop.required()
+      prop.validate('something')
+
+      done.required.should.eql(1)
+      done.type.should.eql(2)
+    })
+
     it('should assign errors a .path', () => {
       const prop = new Property('some.path', new Schema())
       prop.required()
@@ -265,9 +263,11 @@ describe('Property', () => {
       const obj = { hello: 'world' }
       let ctx1, ctx2
 
-      prop.use(function (val, ctx) {
-        ctx1 = this
-        ctx2 = ctx
+      prop.use({
+        context: function (val, ctx) {
+          ctx1 = this
+          ctx2 = ctx
+        }
       })
 
       prop.validate('abc', obj)

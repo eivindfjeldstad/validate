@@ -55,46 +55,19 @@ errors[0].message //=> 'address.street is required.'
 
 ### Custom error messages
 
-You can override the default error messages on the schema level by passing an object to `Schema#messages()`.
+You can override the default error messages by passing an object to `Schema#message()`.
 
 ```js
 const post = new Schema({
   title: { required: true }
 })
 
-post.messsages({
+post.messsage({
   required: (path) => `${path} can not be empty.`
 })
 
 const [error] = post.validate({})
 assert(error.message = 'title can not be empty.')
-```
-
-Customizing error messages on the property level is possible by using arrays in the schema definition:
-
-```js
-const post = new Schema({
-  title: {
-    type: 'string',
-    required: [true, 'Title is required.'],
-    length: [{ max: 255 }, 'Title must be less than 255 chars.']
-  },
-  content: {
-    type: 'string',
-    required: [true, 'Content is required.']
-  }
-})
-```
-
-A function can be used to generate messages on the fly:
-
-```js
-const user = new Schema({
-  email: {
-    type: 'string',
-    match: [/.+@.+\..+/, path => `${path} must be a valid email.`]
-  }
-})
 ```
 
 ### Nesting
@@ -152,22 +125,26 @@ If you think it should work, it probably works.
 
 ### Custom validators
 
-Custom validators can be defined by using `.use`:
+Custom validators can be defined by passing an object with named validators to `.use`:
 
 ```js
-const customValidator = (value, ctx) => {
-  // Do some validation
-}
+const hexColor = val => /^#[0-9a-fA-F]$/.test(val)
 
-const book = new Schema({
-  isbn: {
+const building = new Schema({
+  color: {
     type: 'string',
-    use: [customValidator, 'Custom validator failed.']
+    use: { hexColor }
   }
 })
 ```
 
-The custom validator gets passed the value being validated and the object the value belongs to.
+Define a custom error message for the validator:
+
+```js
+building.message({
+  hexColor: path => `${path} must be a valid color.`
+})
+```
 
 ### Chainable API
 
@@ -179,10 +156,10 @@ const user = new Schema()
 user
   .path('username')
     .type('string')
-    .required(true, 'Username is required')
+    .required()
   .path('address.zip')
     .type('string')
-    .required(true, 'Zip is required')
+    .required()
 ```
 
 Array elements can be defined by using `$` as a placeholder for indices:
@@ -245,8 +222,7 @@ Set `.strip = false` on the options object to disable this behavior.
     -   [path](#path-1)
     -   [validate](#validate-1)
     -   [assert](#assert)
-    -   [messages](#messages)
-    -   [validators](#validators)
+    -   [message](#message)
 
 ### Property
 
@@ -277,17 +253,29 @@ Returns **[Property](#property)**
 
 #### use
 
-Validate with given `fn` and optional `message`.
+Validate using named functions from the given object.
+Error messages can be defined by providing an object with
+named error messages/generators to `schema.messages()`
 
 **Parameters**
 
--   `fn` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** validation function to call
--   `message` **([Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?** error message to use
+-   `fns` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** object with named validation functions to call
 
 **Examples**
 
 ```javascript
-prop.use(val => val == 2);
+const schema = new Schema()
+const prop = schema.path('some.amount')
+
+schema.messages({
+  moreThanTwo: path => `${path} must be more than 2`,
+  lessThanFour: path => `${path} must be less than 4`
+})
+
+prop.use({
+  moreThanTwo: val => val < 2,
+  lessThanFour: val => val > 4
+})
 ```
 
 Returns **[Property](#property)** 
@@ -299,7 +287,6 @@ Registers a validator that checks for presence.
 **Parameters**
 
 -   `bool` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** `true` if required, `false` otherwise (optional, default `true`)
--   `message` **([Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?** error message to use
 
 **Examples**
 
@@ -316,7 +303,6 @@ Registers a validator that checks if a value is of a given `type`
 **Parameters**
 
 -   `type` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type to check for
--   `message` **([Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?** error message to use
 
 **Examples**
 
@@ -335,7 +321,6 @@ Registers a validator that checks length.
 -   `rules` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** object with `.min` and `.max` properties
     -   `rules.min` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** minimum length
     -   `rules.max` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** maximum length
--   `message` **([Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?** error message to use
 
 **Examples**
 
@@ -352,7 +337,6 @@ Registers a validator for enums.
 **Parameters**
 
 -   `enums`  
--   `message` **([Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?** error message to use
 -   `rules` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** allowed values
 
 **Examples**
@@ -370,7 +354,6 @@ Registers a validator that checks if a value matches given `regexp`.
 **Parameters**
 
 -   `regexp` **[RegExp](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp)** regular expression to match
--   `message` **([Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?** error message to use
 
 **Examples**
 
@@ -387,7 +370,6 @@ Registers a validator that checks each value in an array against given `rules`.
 **Parameters**
 
 -   `rules` **([Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Schema](#schema) \| [Property](#property))** rules to use
--   `message` **([Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))?** error message to use
 
 **Examples**
 
@@ -402,7 +384,7 @@ Returns **[Property](#property)**
 
 #### path
 
-Proxy method for schema path. Allows chaining properties together.
+Proxy method for schema path. Makes chaining properties together easier.
 
 **Parameters**
 
@@ -559,7 +541,7 @@ const schema = new Schema({ name: 'string' })
 schema.assert({ name: 1 }) // => Throws an error
 ```
 
-#### messages
+#### message
 
 Override default error messages.
 
@@ -567,17 +549,7 @@ Override default error messages.
 
 -   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** an object containing new messages
 
-Returns **([Schema](#schema) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object))** 
-
-#### validators
-
-Override default validators.
-
-**Parameters**
-
--   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** an object containing new validators
-
-Returns **([Schema](#schema) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object))** 
+Returns **[Schema](#schema)** 
 
 ## Licence
 

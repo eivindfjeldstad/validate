@@ -99,6 +99,11 @@ describe('Property', () => {
       prop.type('number', 'fail')
       prop.validate('hello').message.should.equal('fail')
     })
+
+    it('should support chaining', () => {
+      const prop = new Property('test', new Schema())
+      prop.type('number').should.equal(prop)
+    })
   })
 
   describe('.match()', () => {
@@ -128,6 +133,11 @@ describe('Property', () => {
       prop.match(/^abc$/, 'fail')
       prop.validate('cab').message.should.equal('fail')
     })
+
+    it('should support chaining', () => {
+      const prop = new Property('test', new Schema())
+      prop.match(/abc/).should.equal(prop)
+    })
   })
 
   describe('.length()', () => {
@@ -152,6 +162,11 @@ describe('Property', () => {
       prop.length({ min: 10 }, 'fail')
       prop.validate('hello').message.should.equal('fail')
     })
+
+    it('should support chaining', () => {
+      const prop = new Property('test', new Schema())
+      prop.length({}).should.equal(prop)
+    })
   })
 
   describe('.schema()', () => {
@@ -163,6 +178,12 @@ describe('Property', () => {
       prop1.schema(schema2)
       schema1.path('hello.world').should.equal(prop2)
     })
+
+    it('should support chaining', () => {
+      const schema = new Schema()
+      const prop = new Property('test', new Schema())
+      prop.schema(schema).should.equal(prop)
+    })
   })
 
   describe('.each()', () => {
@@ -171,6 +192,11 @@ describe('Property', () => {
       const prop = new Property('test', schema)
       prop.each({ type: 'number' })
       schema.path('test.$')._type.should.equal('number')
+    })
+
+    it('should support chaining', () => {
+      const prop = new Property('test', new Schema())
+      prop.each({}).should.equal(prop)
     })
   })
 

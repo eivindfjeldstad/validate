@@ -41,6 +41,14 @@ describe('Property', () => {
       prop.validate(100).should.equal(false)
     })
 
+    it('should not consider `0` or `false` to be invalid', () => {
+      const prop = new Property('test', new Schema())
+      prop.required(true)
+      prop.validate(0).should.equal(false)
+      prop.validate(false).should.equal(false)
+      prop.validate('').should.be.an.instanceOf(Error)
+    })
+
     it('should respect boolean argument', () => {
       const prop = new Property('test', new Schema())
       prop.required(false)

@@ -130,7 +130,7 @@ Custom validators can be defined by passing an object with named validators to `
 ```js
 const hexColor = val => /^#[0-9a-fA-F]$/.test(val)
 
-const building = new Schema({
+const car = new Schema({
   color: {
     type: 'string',
     use: { hexColor }
@@ -141,7 +141,7 @@ const building = new Schema({
 Define a custom error message for the validator:
 
 ```js
-building.message({
+car.message({
   hexColor: path => `${path} must be a valid color.`
 })
 ```
@@ -255,7 +255,10 @@ Returns **[Property](#property)**
 
 Validate using named functions from the given object.
 Error messages can be defined by providing an object with
-named error messages/generators to `schema.messages()`
+named error messages/generators to `schema.message()`
+
+The message generator receives the value being validated,
+the object it belongs to and any additional arguments.
 
 **Parameters**
 
@@ -265,16 +268,16 @@ named error messages/generators to `schema.messages()`
 
 ```javascript
 const schema = new Schema()
-const prop = schema.path('some.amount')
+const prop = schema.path('some.path')
 
-schema.messages({
-  moreThanTwo: path => `${path} must be more than 2`,
-  lessThanFour: path => `${path} must be less than 4`
+schema.message({
+  binary: (path, ctx) => `${path} must be binary.`,
+  bits: (path, ctx, bits) => `${path} must be ${bits}-bit`
 })
 
 prop.use({
-  moreThanTwo: val => val < 2,
-  lessThanFour: val => val > 4
+  binary: (val, ctx) => /[01]+/i.test(val),
+  bits: [(val, ctx, bits) => val.length == bits, 32]
 })
 ```
 

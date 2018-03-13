@@ -38,6 +38,18 @@ describe('Property', () => {
       prop.validate(2).message.should.equal('error 2')
     })
 
+    it('should pass additional arguments to the function', () => {
+      const prop = new Property('test', new Schema())
+      let first, second;
+      prop.use({
+        one: [(v, c, arg) => first = arg, 1],
+        two: [(v, c, arg) => second = arg, 2]
+      })
+      prop.validate({ test: 1 })
+      first.should.equal(1)
+      second.should.equal(2)
+    })
+
     it('should support chaining', () => {
       const prop = new Property('test', new Schema())
       prop.use({ one: () => {}}).should.equal(prop)
@@ -68,8 +80,9 @@ describe('Property', () => {
 
     it('should use the correct error message', () => {
       const prop = new Property('test', new Schema())
+      const message = messages.required(prop.name, {}, true)
       prop.required()
-      prop.validate(null).message.should.equal(messages.required(prop.name, true))
+      prop.validate(null).message.should.equal(message)
     })
 
     it('should support chaining', () => {
@@ -95,8 +108,9 @@ describe('Property', () => {
 
     it('should use the correct error message', () => {
       const prop = new Property('test', new Schema())
+      const message = messages.type(prop.name, {}, 'string')
       prop.type('string')
-      prop.validate(1).message.should.equal(messages.type(prop.name, 'string'))
+      prop.validate(1).message.should.equal(message)
     })
 
     it('should support chaining', () => {
@@ -117,8 +131,9 @@ describe('Property', () => {
     it('should use the correct error message', () => {
       const prop = new Property('test', new Schema())
       const regexp = /^abc$/
+      const message = messages.match(prop.name, {}, regexp)
       prop.match(regexp)
-      prop.validate('cab').message.should.equal(messages.match(prop.name, regexp))
+      prop.validate('cab').message.should.equal(message)
     })
 
     it('should support chaining', () => {
@@ -140,8 +155,9 @@ describe('Property', () => {
     it('should use the correct error message', () => {
       const prop = new Property('test', new Schema())
       const rule = { max: 1 }
+      const message = messages.length(prop.name, {}, rule)
       prop.length(rule)
-      prop.validate('abc').message.should.equal(messages.length(prop.name, rule))
+      prop.validate('abc').message.should.equal(message)
     })
 
     it('should support chaining', () => {
@@ -163,8 +179,9 @@ describe('Property', () => {
     it('should use the correct error message', () => {
       const prop = new Property('test', new Schema())
       const enums = ['one', 'two']
+      const message = messages.enum(prop.name, {}, enums)
       prop.enum(enums)
-      prop.validate('three').message.should.equal(messages.enum(prop.name, enums))
+      prop.validate('three').message.should.equal(message)
     })
 
     it('should support chaining', () => {
@@ -261,18 +278,16 @@ describe('Property', () => {
     it('should pass context to validators', () => {
       const prop = new Property('test', new Schema())
       const obj = { hello: 'world' }
-      let ctx1, ctx2
+      let ctx;
 
       prop.use({
-        context: function (val, ctx) {
-          ctx1 = this
-          ctx2 = ctx
+        context: function (v, c) {
+          ctx = c
         }
       })
 
       prop.validate('abc', obj)
-      obj.should.equal(ctx1)
-      obj.should.equal(ctx2)
+      obj.should.equal(ctx)
     })
   })
 

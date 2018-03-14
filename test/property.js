@@ -38,7 +38,7 @@ describe('Property', () => {
       prop.validate(2).message.should.equal('error 2')
     })
 
-    it('should pass additional arguments to the function', () => {
+    it('should register additional arguments', () => {
       const prop = new Property('test', new Schema())
       let first, second;
       prop.use({
@@ -62,20 +62,6 @@ describe('Property', () => {
       prop.required()
       prop.validate(null).should.be.an.instanceOf(Error)
       prop.validate(100).should.equal(false)
-    })
-
-    it('should not consider `0` or `false` to be invalid', () => {
-      const prop = new Property('test', new Schema())
-      prop.required(true)
-      prop.validate(0).should.equal(false)
-      prop.validate(false).should.equal(false)
-      prop.validate('').should.be.an.instanceOf(Error)
-    })
-
-    it('should respect boolean argument', () => {
-      const prop = new Property('test', new Schema())
-      prop.required(false)
-      prop.validate(null).should.equal(false)
     })
 
     it('should use the correct error message', () => {

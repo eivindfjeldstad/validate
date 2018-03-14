@@ -223,6 +223,7 @@ Set `.strip = false` on the options object to disable this behavior.
     -   [validate](#validate-1)
     -   [assert](#assert)
     -   [message](#message)
+    -   [validator](#validator)
 
 ### Property
 
@@ -550,7 +551,41 @@ Override default error messages.
 
 **Parameters**
 
--   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** an object containing new messages
+-   `name` **([String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object))** name of the validator or an object with name-message pairs
+-   `message` **([String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function))?** the message or message generator to use
+
+**Examples**
+
+```javascript
+const hex = (val) => /^0x[0-9a-f]+$/.test(val)
+schema.path('some.path').use({ hex })
+schema.message('hex', path => `${path} must be hexadecimal`)
+```
+
+```javascript
+schema.message({ hex: path => `${path} must be hexadecimal` })
+```
+
+Returns **[Schema](#schema)** 
+
+#### validator
+
+Override default validators.
+
+**Parameters**
+
+-   `name` **([String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object))** name of the validator or an object with name-function pairs
+-   `fn` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** the function to use
+
+**Examples**
+
+```javascript
+schema.validator('required', val => val != null)
+```
+
+```javascript
+schema.validator({ required: val => val != null })
+```
 
 Returns **[Schema](#schema)** 
 

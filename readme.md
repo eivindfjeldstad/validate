@@ -7,6 +7,7 @@ Validate object properties in javascript.
 
 ## Usage
 
+Define a schema and call `.validate()` with the object you want to validate.
 The `.validate()` function returns an array of validation errors.
 
 ```js
@@ -246,8 +247,8 @@ Mount given `schema` on current path.
 **Examples**
 
 ```javascript
-const user = new Schema({ email: 'string' });
-prop.schema(user);
+const user = new Schema({ email: 'string' })
+prop.schema(user)
 ```
 
 Returns **[Property](#property)**

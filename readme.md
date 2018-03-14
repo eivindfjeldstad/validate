@@ -24,7 +24,7 @@ const user = new Schema({
   },
   pets: [{
     name: { type: 'string' },
-    type: { enum: ['cat', 'dog']}
+    animal: { enum: ['cat', 'dog']}
   }],
   address: {
     street: {
@@ -250,7 +250,7 @@ const user = new Schema({ email: 'string' });
 prop.schema(user);
 ```
 
-Returns **[Property](#property)** 
+Returns **[Property](#property)**
 
 #### use
 
@@ -282,7 +282,7 @@ prop.use({
 })
 ```
 
-Returns **[Property](#property)** 
+Returns **[Property](#property)**
 
 #### required
 
@@ -298,7 +298,7 @@ Registers a validator that checks for presence.
 prop.required()
 ```
 
-Returns **[Property](#property)** 
+Returns **[Property](#property)**
 
 #### type
 
@@ -314,7 +314,7 @@ Registers a validator that checks if a value is of a given `type`
 prop.type('string')
 ```
 
-Returns **[Property](#property)** 
+Returns **[Property](#property)**
 
 #### length
 
@@ -332,7 +332,7 @@ Registers a validator that checks length.
 prop.length({ min: 8, max: 255 })
 ```
 
-Returns **[Property](#property)** 
+Returns **[Property](#property)**
 
 #### enum
 
@@ -349,7 +349,7 @@ Registers a validator for enums.
 prop.enum(['cat', 'dog'])
 ```
 
-Returns **[Property](#property)** 
+Returns **[Property](#property)**
 
 #### match
 
@@ -365,7 +365,7 @@ Registers a validator that checks if a value matches given `regexp`.
 prop.match(/some\sregular\sexpression/)
 ```
 
-Returns **[Property](#property)** 
+Returns **[Property](#property)**
 
 #### each
 
@@ -384,7 +384,7 @@ prop.each({ things: [{ type: 'string' }]})
 prop.each(schema)
 ```
 
-Returns **[Property](#property)** 
+Returns **[Property](#property)**
 
 #### path
 
@@ -392,7 +392,7 @@ Proxy method for schema path. Makes chaining properties together easier.
 
 **Parameters**
 
--   `args` **...any** 
+-   `args` **...any**
 
 **Examples**
 
@@ -421,7 +421,7 @@ prop.type('string')
 prop.typecast(123) // => '123'
 ```
 
-Returns **Mixed** 
+Returns **Mixed**
 
 #### validate
 
@@ -441,7 +441,7 @@ assert(prop.validate(2) == false)
 assert(prop.validate('hello world') instanceof Error)
 ```
 
-Returns **([Error](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error) \| [Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean))** 
+Returns **([Error](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error) \| [Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean))**
 
 ### Schema
 
@@ -506,7 +506,7 @@ schema.path('name.first', { type: 'string' })
 schema.path('name.last').type('string').required()
 ```
 
-Returns **[Property](#property)** 
+Returns **[Property](#property)**
 
 #### validate
 
@@ -527,7 +527,7 @@ assert(errors[0].message == 'name is required')
 assert(errors[0].path == 'name')
 ```
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** 
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)**
 
 #### assert
 
@@ -535,8 +535,8 @@ Assert that given `obj` is valid.
 
 **Parameters**
 
--   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
--   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
+-   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
+-   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?**
 
 **Examples**
 
@@ -566,7 +566,7 @@ schema.message('hex', path => `${path} must be hexadecimal`)
 schema.message({ hex: path => `${path} must be hexadecimal` })
 ```
 
-Returns **[Schema](#schema)** 
+Returns **[Schema](#schema)**
 
 #### validator
 
@@ -587,7 +587,7 @@ schema.validator('required', val => val != null)
 schema.validator({ required: val => val != null })
 ```
 
-Returns **[Schema](#schema)** 
+Returns **[Schema](#schema)**
 
 ## Licence
 

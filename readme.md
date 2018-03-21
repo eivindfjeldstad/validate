@@ -77,7 +77,10 @@ Objects and arrays can be nested as deep as you want:
 
 ```js
 const event = new Schema({
-  title: { type: 'string' },
+  title: {
+    type: 'string',
+    required: true
+  },
   participants: [{
     name: {
       type: 'string'
@@ -98,8 +101,6 @@ Arrays can be defined implicitly, like in the above example, or explicitly:
 
 ```js
 const post = new Schema({
-  title: { type: 'string' },
-  content: { type: 'string' },
   keywords: {
     type: 'array',
     each: { type: 'string' }
@@ -111,13 +112,25 @@ Nesting also works with schemas:
 
 ```js
 const user = new Schema({
-  name: { type: 'string' },
-  email: { type: 'string' }
+  name: {
+    type: 'string',
+    required: true
+  },
+  email: {
+    type: 'string',
+    required: true
+  }
 })
 
 const post = new Schema({
-  title: { type: 'string' },
-  content: { type: 'string' },
+  title: {
+    type: 'string',
+    required: true
+  },
+  content: {
+    type: 'string',
+    required: true
+  },
   author: user
 })
 ```
@@ -167,12 +180,7 @@ Array elements can be defined by using `$` as a placeholder for indices:
 
 ```js
 const user = new Schema()
-
-user
-  .path('pets')
-    .type('array')
-  .path('pets.$')
-    .type('string')
+user.path('pets.$').type('string')
 ```
 
 This is equivalent to writing

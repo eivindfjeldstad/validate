@@ -2,8 +2,9 @@
 
 Validate object properties in javascript.
 
-[![npm version](http://img.shields.io/npm/v/validate.svg?style=flat)](https://npmjs.org/package/validate)
-[![Build Status](http://img.shields.io/travis/eivindfjeldstad/validate.svg?style=flat)](https://travis-ci.org/eivindfjeldstad/validate)
+[![npm version](http://img.shields.io/npm/v/validate.svg?style=flat-square)](https://npmjs.org/package/validate)
+[![Build Status](http://img.shields.io/travis/eivindfjeldstad/validate.svg?style=flat-square)](https://travis-ci.org/eivindfjeldstad/validate)
+![Codecov](https://img.shields.io/codecov/c/github/eivindfjeldstad/validate.svg?style=flat-square)
 
 ## Usage
 

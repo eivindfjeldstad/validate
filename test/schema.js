@@ -141,6 +141,13 @@ describe('Schema', () => {
       expect(obj).to.deep.equal({ a: 1 })
     })
 
+    it('should not strip array elements', () => {
+      const schema = new Schema({ a: { type: 'array' }})
+      const obj = { a: [1, 2, 3] }
+      const res = schema.validate(obj)
+      expect(obj).to.deep.equal({ a: [1, 2, 3] })
+    })
+
     context('with strip disabled', () => {
       it('should not delete any keys', () => {
         const obj = { name: 'name', age: 23 }

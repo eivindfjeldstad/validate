@@ -195,6 +195,29 @@ describe('Property', () => {
     })
   })
 
+  describe('.elements()', () => {
+    it('should define paths for given array elements', () => {
+      const schema = new Schema()
+      const prop = new Property('test', schema)
+      prop.elements([{ type: 'number' }, { type: 'string' }])
+      expect(schema.path('test.0')._type).to.equal('number')
+      expect(schema.path('test.1')._type).to.equal('string')
+    })
+
+    it('should work', () => {
+      const schema = new Schema()
+      const prop = new Property('test', schema)
+      prop.elements([{ type: 'number' }, { type: 'string' }])
+      expect(schema.validate({ test: [1, 'hello']})).to.have.length(0)
+      expect(schema.validate({ test: ['hello', 'hello']})).to.have.length(1)
+    })
+
+    it('should support chaining', () => {
+      const prop = new Property('test', new Schema())
+      expect(prop.elements([])).to.equal(prop)
+    })
+  })
+
   describe('.each()', () => {
     it('should define a new array path on the parent schema', () => {
       const schema = new Schema()

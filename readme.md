@@ -225,6 +225,7 @@ Set `.strip = false` on the options object to disable this behavior.
     -   [enum](#enum)
     -   [match](#match)
     -   [each](#each)
+    -   [elements](#elements)
     -   [path](#path)
     -   [typecast](#typecast)
     -   [validate](#validate)
@@ -392,6 +393,22 @@ prop.each({ type: 'string' })
 prop.each([{ type: 'number' }])
 prop.each({ things: [{ type: 'string' }]})
 prop.each(schema)
+```
+
+Returns **[Property](#property)**
+
+#### elements
+
+Registers paths for array elements on the parent schema, with given array of rules.
+
+**Parameters**
+
+-   `arr` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** array of rules to use
+
+**Examples**
+
+```javascript
+prop.elements([{ type: 'string' }, { type: 'number' }])
 ```
 
 Returns **[Property](#property)**

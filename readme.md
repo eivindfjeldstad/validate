@@ -109,6 +109,21 @@ const post = new Schema({
 })
 ```
 
+Array elements can also be defined individually:
+
+```js
+const user = new Schema({
+  something: {
+    type: 'array',
+    elements: [
+      { type: 'number' },
+      { type: 'string' }
+    ]
+  }
+})
+
+```
+
 Nesting also works with schemas:
 
 ```js

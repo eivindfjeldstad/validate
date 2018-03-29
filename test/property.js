@@ -291,13 +291,27 @@ describe('Property', () => {
       let ctx;
 
       prop.use({
-        context: function (v, c) {
+        context: (v, c) => {
           ctx = c
         }
       })
 
       prop.validate('abc', obj)
       expect(obj).to.equal(ctx)
+    })
+
+    it('should pass path to validators', () => {
+      const prop = new Property('test', new Schema())
+      let path
+
+      prop.use({
+        context: (v, c, p) => {
+          path = p
+        }
+      })
+
+      prop.validate('abc', { test: 1 })
+      expect(path).to.equal('test')
     })
   })
 

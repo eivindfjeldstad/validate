@@ -121,7 +121,6 @@ const user = new Schema({
     ]
   }
 })
-
 ```
 
 Nesting also works with schemas:
@@ -235,6 +234,7 @@ Set `.strip = false` on the options object to disable this behavior.
     -   [schema](#schema)
     -   [use](#use)
     -   [required](#required)
+    -   [nonempty](#nonempty)
     -   [type](#type)
     -   [length](#length)
     -   [enum](#enum)
@@ -322,6 +322,22 @@ Registers a validator that checks for presence.
 
 ```javascript
 prop.required()
+```
+
+Returns **[Property](#property)**
+
+#### nonempty
+
+Registers a validator that checks for emptyness.
+
+**Parameters**
+
+-   `bool` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** `true` if nonempty, `false` otherwise (optional, default `true`)
+
+**Examples**
+
+```javascript
+prop.nonempty()
 ```
 
 Returns **[Property](#property)**

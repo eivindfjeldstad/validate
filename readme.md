@@ -121,7 +121,6 @@ const user = new Schema({
     ]
   }
 })
-
 ```
 
 Nesting also works with schemas:
@@ -348,7 +347,7 @@ Registers a validator that checks length.
 
 **Parameters**
 
--   `rules` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** object with `.min` and `.max` properties
+-   `rules` **([Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number))** object with `.min` and `.max` properties or a number
     -   `rules.min` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** minimum length
     -   `rules.max` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** maximum length
 
@@ -356,6 +355,7 @@ Registers a validator that checks length.
 
 ```javascript
 prop.length({ min: 8, max: 255 })
+prop.length(10)
 ```
 
 Returns **[Property](#property)**

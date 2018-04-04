@@ -22,6 +22,7 @@ describe('Messages', () => {
 
   describe('.length()', () => {
     it('should return the correct message', () => {
+      expect(Messages.length('a', {}, 2)).to.equal('a must have a length of 2.')
       expect(Messages.length('a', {}, { min: 2 })).to.equal('a must have a minimum length of 2.')
       expect(Messages.length('a', {}, { max: 2 })).to.equal('a must have a maximum length of 2.')
       expect(Messages.length('a', {}, { min: 2, max: 4 })).to.equal('a must have a length between 2 and 4.')

@@ -65,6 +65,11 @@ describe('Validators', () => {
       expect(Validators.length('a', {}, { min: 2 })).to.equal(false)
       expect(Validators.length('abcde', {}, { max: 4 })).to.equal(false)
     })
+
+    it('should work with a number as an exact length', () => {
+      expect(Validators.length('a', {}, 2)).to.equal(false)
+      expect(Validators.length('ab', {}, 2)).to.equal(true)
+    })
   })
 
   describe('.enum()', () => {

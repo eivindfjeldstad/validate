@@ -3,20 +3,41 @@ const Validators = require('../lib/validators')
 
 describe('Validators', () => {
   describe('.required()', () => {
-    it('should return false if given value is null, undefined or an empty string', () => {
+    it('should return false if given value is null or undefined', () => {
       expect(Validators.required(null, {}, true)).to.equal(false)
       expect(Validators.required(undefined, {}, true)).to.equal(false)
-      expect(Validators.required('', {}, true)).to.equal(false)
     })
 
     it('should return true otherwise', () => {
       expect(Validators.required(0, {}, true)).to.equal(true)
       expect(Validators.required(false, {}, true)).to.equal(true)
-      expect(Validators.required('test', {}, true)).to.equal(true)
+      expect(Validators.required('', {}, true)).to.equal(true)
     })
 
     it('should return true when boolean argument is false', () => {
       expect(Validators.required(null, {}, false)).to.equal(true)
+    })
+  })
+
+  describe('.nonempty()', () => {
+    it('should return false if given value is empty', () => {
+      expect(Validators.nonempty(null, {}, true)).to.equal(false)
+      expect(Validators.nonempty(undefined, {}, true)).to.equal(false)
+      expect(Validators.nonempty('', {}, true)).to.equal(false)
+      expect(Validators.nonempty([], {}, true)).to.equal(false)
+      expect(Validators.nonempty({}, {}, true)).to.equal(false)
+    })
+
+    it('should return true otherwise', () => {
+      expect(Validators.nonempty(0, {}, true)).to.equal(true)
+      expect(Validators.nonempty(false, {}, true)).to.equal(true)
+      expect(Validators.nonempty('a', {}, true)).to.equal(true)
+      expect(Validators.nonempty([1], {}, true)).to.equal(true)
+      expect(Validators.nonempty({ a: 1 }, {}, true)).to.equal(true)
+    })
+
+    it('should return true when boolean argument is false', () => {
+      expect(Validators.nonempty(null, {}, false)).to.equal(true)
     })
   })
 

@@ -8,6 +8,12 @@ describe('Messages', () => {
     })
   })
 
+  describe('.nonempty()', () => {
+    it('should return the correct message', () => {
+      expect(Messages.nonempty('a')).to.equal('a must not be empty.')
+    })
+  })
+
   describe('.type()', () => {
     it('should return the correct message', () => {
       expect(Messages.type('a', {}, 'string')).to.equal('a must be of type string.')

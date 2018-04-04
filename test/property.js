@@ -78,6 +78,27 @@ describe('Property', () => {
     })
   })
 
+  describe('.nonempty()', () => {
+    it('should register a validator', () => {
+      const prop = new Property('test', new Schema())
+      prop.nonempty()
+      expect(prop.validate('')).to.be.an.instanceOf(Error)
+      expect(prop.validate('a')).to.equal(false)
+    })
+
+    it('should use the correct error message', () => {
+      const prop = new Property('test', new Schema())
+      const message = messages.nonempty(prop.name, {}, true)
+      prop.nonempty()
+      expect(prop.validate('').message).to.equal(message)
+    })
+
+    it('should support chaining', () => {
+      const prop = new Property('test', new Schema())
+      expect(prop.nonempty()).to.equal(prop)
+    })
+  })
+
   describe('.type()', () => {
     it('should register a validator', () => {
       const prop = new Property('test', new Schema())
@@ -250,7 +271,7 @@ describe('Property', () => {
       expect(prop.validate('cab')).to.be.an.instanceOf(Error)
     })
 
-    it('should run `required` and `type` validators first', () => {
+    it('should run `required`, `nonempty` and `type` validators first', () => {
       const schema = new Schema();
       const prop = new Property('test', schema)
       const done = {};
@@ -258,6 +279,7 @@ describe('Property', () => {
 
       schema.validator({
         required: () => done.required = ++counter,
+        nonempty: () => done.nonempty = ++counter,
         type: () => done.type = ++counter,
         match: () => done.match = ++counter,
         enum: () => done.enum = ++counter
@@ -266,11 +288,13 @@ describe('Property', () => {
       prop.match()
       prop.enum()
       prop.type()
+      prop.nonempty()
       prop.required()
       prop.validate('something')
 
       expect(done.required).to.equal(1)
-      expect(done.type).to.equal(2)
+      expect(done.nonempty).to.equal(2)
+      expect(done.type).to.equal(3)
     })
 
     it('should assign errors a .path', () => {

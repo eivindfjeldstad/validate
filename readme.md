@@ -39,7 +39,7 @@ const user = new Schema({
     }
     zip: {
       type: 'string',
-      match: /[0-9]+/,
+      match: /^[0-9]+$/,
       required: true
     }
   }
@@ -183,12 +183,8 @@ If you want to avoid constructing large objects, you can add paths to a schema b
 const user = new Schema()
 
 user
-  .path('username')
-    .type('string')
-    .required()
-  .path('address.zip')
-    .type('string')
-    .required()
+  .path('username').type('string').required()
+  .path('address.zip').type('string').required()
 ```
 
 Array elements can be defined by using `$` as a placeholder for indices:

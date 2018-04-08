@@ -193,14 +193,6 @@ describe('Schema', () => {
     })
   })
 
-  describe('.assert()', () => {
-    it('should throw if validation fails', () => {
-      const schema = new Schema({ name: { type: 'string' }})
-      const wrap = () => schema.assert({ name: 123 })
-      expect(wrap).to.throw()
-    })
-  })
-
   describe('.message()', () => {
     it('should set default messages', () => {
       const schema = new Schema({ name: { required: true }})

@@ -567,22 +567,6 @@ assert(errors[0].path == 'name')
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)**
 
-#### assert
-
-Assert that given `obj` is valid.
-
-**Parameters**
-
--   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
--   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?**
-
-**Examples**
-
-```javascript
-const schema = new Schema({ name: 'string' })
-schema.assert({ name: 1 }) // => Throws an error
-```
-
 #### message
 
 Override default error messages.

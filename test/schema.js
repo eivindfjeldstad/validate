@@ -37,10 +37,10 @@ describe('Schema', () => {
       expect(schema.props).to.have.property('a.b')
     })
 
-    it('should register validators', () => {
+    it('should register validators', async () => {
       const schema = new Schema()
       schema.path('a', { b: { required: true }})
-      expect(schema.validate({})).to.have.length(1)
+      expect(await schema.validate({})).to.have.length(1)
     })
 
     it('should return a Property', () => {
@@ -49,15 +49,15 @@ describe('Schema', () => {
         .and.have.property('name', 'a')
     })
 
-    it('should work with nested schemas', () => {
+    it('should work with nested schemas', async () => {
       const schema1 = new Schema()
       const schema2 = new Schema()
       schema2.path('hello', { required: true })
       schema1.path('schema2', schema2).required(true)
       expect(schema1.props).to.have.property('schema2.hello')
-      expect(schema1.validate({})).to.have.length(2)
-      expect(schema1.validate({ schema2: { hello: null }})).to.have.length(1)
-      expect(schema1.validate({ schema2: { hello: 'world' }})).to.have.length(0)
+      expect(await schema1.validate({})).to.have.length(2)
+      expect(await schema1.validate({ schema2: { hello: null }})).to.have.length(1)
+      expect(await schema1.validate({ schema2: { hello: 'world' }})).to.have.length(0)
     })
 
     it('should propagate new props from nested schema', () => {
@@ -101,16 +101,16 @@ describe('Schema', () => {
   })
 
   describe('.validate()', () => {
-    it('should return an array of errors', () => {
+    it('should return an array of errors', async () => {
       const schema = new Schema({ name: { type: 'string' }})
-      const res = schema.validate({ name: 123 })
+      const res = await schema.validate({ name: 123 })
       expect(res).to.be.an.instanceOf(Array)
       expect(res).to.have.length(1)
     })
 
-    it('should set the correct paths on the error objects', () => {
+    it('should set the correct paths on the error objects', async () => {
       const schema = new Schema({ things: [{ type: 'string' }]})
-      const res = schema.validate({ things: ['car', 1, 3] })
+      const res = await schema.validate({ things: ['car', 1, 3] })
       const [err1, err2] = res
       expect(res).to.have.length(2)
       expect(err1.path).to.equal('things.1')
@@ -119,12 +119,12 @@ describe('Schema', () => {
       expect(err2.message).to.match(/things\.2/)
     })
 
-    it('should work with $ a placeholder for array indices', () => {
+    it('should work with $ a placeholder for array indices', async () => {
       const schema = new Schema()
       schema.path('a.$.b').required()
       schema.path('a.$.b.$').type('string')
       schema.path('a.$.c.$.$').type('string')
-      const res = schema.validate({
+      const res = await schema.validate({
         a: [
           { b: ['hello', 'world'] },
           { b: ['hello', 1] },
@@ -134,37 +134,37 @@ describe('Schema', () => {
       expect(res).to.have.length(3)
     })
 
-    it('should strip by default', () => {
+    it('should strip by default', async () => {
       const schema = new Schema({ a: { type: 'number' }})
       const obj = { a: 1, b: 1 }
-      const res = schema.validate(obj)
+      const res = await schema.validate(obj)
       expect(obj).to.deep.equal({ a: 1 })
     })
 
-    it('should not strip array elements', () => {
+    it('should not strip array elements', async () => {
       const schema = new Schema({ a: { type: 'array' }})
       const obj = { a: [1, 2, 3] }
-      const res = schema.validate(obj)
+      const res = await schema.validate(obj)
       expect(obj).to.deep.equal({ a: [1, 2, 3] })
     })
 
     context('with strip disabled', () => {
-      it('should not delete any keys', () => {
+      it('should not delete any keys', async () => {
         const obj = { name: 'name', age: 23 }
         const schema = new Schema({ name: { type: 'string' }})
-        const res = schema.validate(obj, { strip: false })
+        const res = await schema.validate(obj, { strip: false })
         expect(obj).to.have.property('age', 23)
       })
     })
 
     context('with typecasting enabled', () => {
-      it('should typecast before validation', () => {
+      it('should typecast before validation', async () => {
         const schema = new Schema({ name: { type: 'string' }})
-        const res = schema.validate({ name: 123 }, { typecast: true })
+        const res = await schema.validate({ name: 123 }, { typecast: true })
         expect(res).to.have.length(0)
       })
 
-      it('should typecast arrays and elements within arrays', () => {
+      it('should typecast arrays and elements within arrays', async () => {
         const schema = new Schema()
         schema.path('a.$.b').required()
         schema.path('a.$.b.$').type('string')
@@ -176,7 +176,7 @@ describe('Schema', () => {
           b: '1,2,3,4,5'
         }
 
-        const res = schema.validate(obj, { typecast: true })
+        const res = await schema.validate(obj, { typecast: true })
         expect(res).to.have.length(0)
 
         expect(obj).to.deep.equal({
@@ -185,42 +185,43 @@ describe('Schema', () => {
         })
       })
 
-      it('should not typecast undefined', () => {
+      it('should not typecast undefined', async () => {
         const schema = new Schema({ name: { type: 'string' }})
-        const wrap = () => schema.validate({}, { typecast: true })
-        expect(wrap).to.not.throw()
+        const obj = {}
+        await schema.validate({}, { typecast: true })
+        expect(obj.name).to.equal(undefined)
       })
     })
   })
 
   describe('.message()', () => {
-    it('should set default messages', () => {
+    it('should set default messages', async () => {
       const schema = new Schema({ name: { required: true }})
       schema.message('required', 'test')
-      const [error] = schema.validate({})
+      const [error] = await schema.validate({})
       expect(error.message).to.equal('test')
     })
 
-    it('should accept an object of name-message pairs', () => {
+    it('should accept an object of name-message pairs', async () => {
       const schema = new Schema({ name: { required: true }})
       schema.message({ required: 'test' })
-      const [error] = schema.validate({})
+      const [error] = await schema.validate({})
       expect(error.message).to.equal('test')
     })
   })
 
   describe('.validator()', () => {
-    it('should set default validators', () => {
+    it('should set default validators', async () => {
       const schema = new Schema({ name: { required: true }})
       schema.validator('required', () => false)
-      const [error] = schema.validate({ name: 'hello' })
+      const [error] = await schema.validate({ name: 'hello' })
       expect(error.message).to.equal('name is required.')
     })
 
-    it('should accept an object of name-function pairs', () => {
+    it('should accept an object of name-function pairs', async () => {
       const schema = new Schema({ name: { required: true }})
       schema.validator({ required: () => false })
-      const [error] = schema.validate({ name: 'hello' })
+      const [error] = await schema.validate({ name: 'hello' })
       expect(error.message).to.equal('name is required.')
     })
   })

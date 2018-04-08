@@ -10,18 +10,39 @@ describe('Property', () => {
   })
 
   describe('.use()', () => {
-    it('should register each object property as a validator', () => {
+    it('should register each object property as a validator', async () => {
       const prop = new Property('test', new Schema())
       prop.use({
         one: (v) => v != 1,
         two: (v) => v != 2
       })
-      expect(prop.validate(1)).to.be.an.instanceOf(Error)
-      expect(prop.validate(2)).to.be.an.instanceOf(Error)
-      expect(prop.validate(3)).to.equal(false)
+
+      expect(await prop.validate(1)).to.be.an.instanceOf(Error)
+      expect(await prop.validate(2)).to.be.an.instanceOf(Error)
+      expect(await prop.validate(3)).to.equal(false)
     })
 
-    it('should use property names to look up error messages', () => {
+    it('should work with async functions', async () => {
+      const prop = new Property('test', new Schema())
+      const tick = () => new Promise((r) => setTimeout(r, 0))
+
+      prop.use({
+        one: async (v) => {
+          await tick()
+          return v != 1
+        },
+        two: async (v) => {
+          await tick()
+          return v != 2
+        }
+      })
+
+      expect(await prop.validate(1)).to.be.an.instanceOf(Error)
+      expect(await prop.validate(2)).to.be.an.instanceOf(Error)
+      expect(await prop.validate(3)).to.equal(false)
+    })
+
+    it('should use property names to look up error messages', async () => {
       const schema = new Schema()
       const prop = new Property('test', schema)
 
@@ -35,18 +56,18 @@ describe('Property', () => {
         two: (v) => v != 2
       })
 
-      expect(prop.validate(1).message).to.equal('error 1')
-      expect(prop.validate(2).message).to.equal('error 2')
+      expect(((await prop.validate(1))).message).to.equal('error 1')
+      expect(((await prop.validate(2))).message).to.equal('error 2')
     })
 
-    it('should register additional arguments', () => {
+    it('should register additional arguments', async () => {
       const prop = new Property('test', new Schema())
       let first, second;
       prop.use({
         one: [(v, c, arg) => first = arg, 1],
         two: [(v, c, arg) => second = arg, 2]
       })
-      prop.validate({ test: 1 })
+      await prop.validate({ test: 1 })
       expect(first).to.equal(1)
       expect(second).to.equal(2)
     })
@@ -58,18 +79,18 @@ describe('Property', () => {
   })
 
   describe('.required()', () => {
-    it('should register a validator', () => {
+    it('should register a validator', async () => {
       const prop = new Property('test', new Schema())
       prop.required()
-      expect(prop.validate(null)).to.be.an.instanceOf(Error)
-      expect(prop.validate(100)).to.equal(false)
+      expect(await prop.validate(null)).to.be.an.instanceOf(Error)
+      expect(await prop.validate(100)).to.equal(false)
     })
 
-    it('should use the correct error message', () => {
+    it('should use the correct error message', async () => {
       const prop = new Property('test', new Schema())
       const message = messages.required(prop.name, {}, true)
       prop.required()
-      expect(prop.validate(null).message).to.equal(message)
+      expect(((await prop.validate(null))).message).to.equal(message)
     })
 
     it('should support chaining', () => {
@@ -79,12 +100,12 @@ describe('Property', () => {
   })
 
   describe('.type()', () => {
-    it('should register a validator', () => {
+    it('should register a validator', async () => {
       const prop = new Property('test', new Schema())
       prop.type('string')
-      expect(prop.validate(1)).to.be.an.instanceOf(Error)
-      expect(prop.validate('test')).to.equal(false)
-      expect(prop.validate(null)).to.equal(false)
+      expect(await prop.validate(1)).to.be.an.instanceOf(Error)
+      expect(await prop.validate('test')).to.equal(false)
+      expect(await prop.validate(null)).to.equal(false)
     })
 
     it('should set the internal ._type property', () => {
@@ -93,11 +114,11 @@ describe('Property', () => {
       expect(prop._type).to.equal('string')
     })
 
-    it('should use the correct error message', () => {
+    it('should use the correct error message', async () => {
       const prop = new Property('test', new Schema())
       const message = messages.type(prop.name, {}, 'string')
       prop.type('string')
-      expect(prop.validate(1).message).to.equal(message)
+      expect((await prop.validate(1)).message).to.equal(message)
     })
 
     it('should support chaining', () => {
@@ -107,20 +128,20 @@ describe('Property', () => {
   })
 
   describe('.match()', () => {
-    it('should register a validator', () => {
+    it('should register a validator', async () => {
       const prop = new Property('test', new Schema())
       prop.match(/^abc$/)
-      expect(prop.validate('cab')).to.be.an.instanceOf(Error)
-      expect(prop.validate('abc')).to.equal(false)
-      expect(prop.validate(null)).to.equal(false)
+      expect(await prop.validate('cab')).to.be.an.instanceOf(Error)
+      expect(await prop.validate('abc')).to.equal(false)
+      expect(await prop.validate(null)).to.equal(false)
     })
 
-    it('should use the correct error message', () => {
+    it('should use the correct error message', async () => {
       const prop = new Property('test', new Schema())
       const regexp = /^abc$/
       const message = messages.match(prop.name, {}, regexp)
       prop.match(regexp)
-      expect(prop.validate('cab').message).to.equal(message)
+      expect((await prop.validate('cab')).message).to.equal(message)
     })
 
     it('should support chaining', () => {
@@ -130,21 +151,21 @@ describe('Property', () => {
   })
 
   describe('.length()', () => {
-    it('should register a validator', () => {
+    it('should register a validator', async () => {
       const prop = new Property('test', new Schema())
       prop.length({ min: 2, max: 3 })
-      expect(prop.validate('abcd')).to.be.an.instanceOf(Error)
-      expect(prop.validate('a')).to.be.an.instanceOf(Error)
-      expect(prop.validate('abc')).to.equal(false)
-      expect(prop.validate(null)).to.equal(false)
+      expect(await prop.validate('abcd')).to.be.an.instanceOf(Error)
+      expect(await prop.validate('a')).to.be.an.instanceOf(Error)
+      expect(await prop.validate('abc')).to.equal(false)
+      expect(await prop.validate(null)).to.equal(false)
     })
 
-    it('should use the correct error message', () => {
+    it('should use the correct error message', async () => {
       const prop = new Property('test', new Schema())
       const rule = { max: 1 }
       const message = messages.length(prop.name, {}, rule)
       prop.length(rule)
-      expect(prop.validate('abc').message).to.equal(message)
+      expect((await prop.validate('abc')).message).to.equal(message)
     })
 
     it('should support chaining', () => {
@@ -154,21 +175,21 @@ describe('Property', () => {
   })
 
   describe('.enum()', () => {
-    it('should register a validator', () => {
+    it('should register a validator', async () => {
       const prop = new Property('test', new Schema())
       prop.enum(['one', 'two'])
-      expect(prop.validate('three')).to.be.an.instanceOf(Error)
-      expect(prop.validate('one')).to.equal(false)
-      expect(prop.validate('two')).to.equal(false)
-      expect(prop.validate(null)).to.equal(false)
+      expect(await prop.validate('three')).to.be.an.instanceOf(Error)
+      expect(await prop.validate('one')).to.equal(false)
+      expect(await prop.validate('two')).to.equal(false)
+      expect(await prop.validate(null)).to.equal(false)
     })
 
-    it('should use the correct error message', () => {
+    it('should use the correct error message', async () => {
       const prop = new Property('test', new Schema())
       const enums = ['one', 'two']
       const message = messages.enum(prop.name, {}, enums)
       prop.enum(enums)
-      expect(prop.validate('three').message).to.equal(message)
+      expect((await prop.validate('three')).message).to.equal(message)
     })
 
     it('should support chaining', () => {
@@ -208,8 +229,8 @@ describe('Property', () => {
       const schema = new Schema()
       const prop = new Property('test', schema)
       prop.elements([{ type: 'number' }, { type: 'string' }])
-      expect(schema.validate({ test: [1, 'hello']})).to.have.length(0)
-      expect(schema.validate({ test: ['hello', 'hello']})).to.have.length(1)
+      expect(schema.path('test.0')._type).to.equal('number');
+      expect(schema.path('test.1')._type).to.equal('string');
     })
 
     it('should support chaining', () => {
@@ -241,16 +262,16 @@ describe('Property', () => {
   })
 
   describe('.validate()', () => {
-    it('should validate using using registered validators', () => {
+    it('should validate using using registered validators', async () => {
       const prop = new Property('test', new Schema())
       prop.required()
       prop.match(/^abc$/)
-      expect(prop.validate(null)).to.be.an.instanceOf(Error)
-      expect(prop.validate('abc')).to.equal(false)
-      expect(prop.validate('cab')).to.be.an.instanceOf(Error)
+      expect(await prop.validate(null)).to.be.an.instanceOf(Error)
+      expect(await prop.validate('abc')).to.equal(false)
+      expect(await prop.validate('cab')).to.be.an.instanceOf(Error)
     })
 
-    it('should run `required` and `type` validators first', () => {
+    it('should run `required` and `type` validators first', async () => {
       const schema = new Schema();
       const prop = new Property('test', schema)
       const done = {};
@@ -267,25 +288,25 @@ describe('Property', () => {
       prop.enum()
       prop.type()
       prop.required()
-      prop.validate('something')
+      await prop.validate('something')
 
       expect(done.required).to.equal(1)
       expect(done.type).to.equal(2)
     })
 
-    it('should assign errors a .path', () => {
+    it('should assign errors a .path', async () => {
       const prop = new Property('some.path', new Schema())
       prop.required()
-      expect(prop.validate(null).path).to.equal('some.path')
+      expect((await prop.validate(null)).path).to.equal('some.path')
     })
 
-    it('should allow path to be overridden', () => {
+    it('should allow path to be overridden', async () => {
       const prop = new Property('some.path', new Schema())
       prop.required()
-      expect(prop.validate(null, {}, 'some.other.path').path).to.equal('some.other.path')
+      expect((await prop.validate(null, {}, 'some.other.path')).path).to.equal('some.other.path')
     })
 
-    it('should pass context to validators', () => {
+    it('should pass context to validators', async () => {
       const prop = new Property('test', new Schema())
       const obj = { hello: 'world' }
       let ctx;
@@ -296,11 +317,11 @@ describe('Property', () => {
         }
       })
 
-      prop.validate('abc', obj)
+      await prop.validate('abc', obj)
       expect(obj).to.equal(ctx)
     })
 
-    it('should pass path to validators', () => {
+    it('should pass path to validators', async () => {
       const prop = new Property('test', new Schema())
       let path
 
@@ -310,7 +331,7 @@ describe('Property', () => {
         }
       })
 
-      prop.validate('abc', { test: 1 })
+      await prop.validate('abc', { test: 1 })
       expect(path).to.equal('test')
     })
   })

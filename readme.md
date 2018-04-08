@@ -45,7 +45,7 @@ const user = new Schema({
   }
 })
 
-const errors = user.validate(obj)
+const errors = await user.validate(obj)
 ```
 
 Each error has a `.path`, describing the full path of the property that failed validation, and a `.message` describing the error.
@@ -68,7 +68,7 @@ post.messsage({
   required: (path) => `${path} can not be empty.`
 })
 
-const [error] = post.validate({})
+const [error] = await post.validate({})
 assert(error.message = 'title can not be empty.')
 ```
 
@@ -175,6 +175,17 @@ car.message({
 })
 ```
 
+Async functions are also allowed:
+
+```js
+const unique = async (email) => await db.exists({ email });
+const user = new Schema({
+  email: {
+    use: { unique }
+  }
+})
+```
+
 ### Chainable API
 
 If you want to avoid constructing large objects, you can add paths to a schema by using the chainable API:
@@ -212,7 +223,7 @@ const user = new Schema(definition, { typecast: true })
 You can override this setting by passing an option to `.validate()`.
 
 ```js
-user.validate(obj, { typecast: false })
+await user.validate(obj, { typecast: false })
 ```
 
 ### Property stripping
@@ -242,7 +253,6 @@ Set `.strip = false` on the options object to disable this behavior.
 -   [Schema](#schema-1)
     -   [path](#path-1)
     -   [validate](#validate-1)
-    -   [assert](#assert)
     -   [message](#message)
     -   [validator](#validator)
 
@@ -300,6 +310,15 @@ schema.message({
 prop.use({
   binary: (val, ctx) => /^[01]+$/i.test(val),
   bits: [(val, ctx, bits) => val.length == bits, 32]
+})
+```
+
+```javascript
+const schema = new Schema()
+const prop = schema.path('thing')
+
+prop.use({
+  unique: async (thing, ctx) => await db.exists({ thing })
 })
 ```
 
@@ -436,12 +455,8 @@ Proxy method for schema path. Makes chaining properties together easier.
 
 ```javascript
 schema
-  .path('name')
-    .type('string')
-    .required()
-  .path('email')
-    .type('string')
-    .required()
+  .path('name').type('string').required()
+  .path('email').type('string').required()
 ```
 
 #### typecast
@@ -475,8 +490,8 @@ Validate given `value`
 
 ```javascript
 prop.type('number')
-assert(prop.validate(2) == false)
-assert(prop.validate('hello world') instanceof Error)
+assert(await prop.validate(2) == false)
+assert(await prop.validate('hello world') instanceof Error)
 ```
 
 Returns **([Error](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error) \| [Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean))**
@@ -559,7 +574,7 @@ Validate given `obj`.
 
 ```javascript
 const schema = new Schema({ name: { required: true }})
-const errors = schema.validate({})
+const errors = await schema.validate({})
 assert(errors.length == 1)
 assert(errors[0].message == 'name is required')
 assert(errors[0].path == 'name')

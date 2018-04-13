@@ -16,7 +16,7 @@
     "docs": "documentation readme ./lib/*.js --section=API"
   },
   "dependencies": {
-    "component-type": "1.0.0",
+    "component-type": "1.2.1",
     "eivindfjeldstad-dot": "0.0.1",
     "typecast": "0.0.1"
   },

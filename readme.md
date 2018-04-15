@@ -74,6 +74,32 @@ const [error] = post.validate({})
 assert(error.message = 'title can not be empty.')
 ```
 
+It is also possible to define messages for individual properties:
+
+```js
+const post = new Schema({
+  title: {
+    required: true,
+    message: 'Title is required.'
+  }
+})
+```
+
+And for individual validators:
+
+```js
+const post = new Schema({
+  title: {
+    type: 'string',
+    required: true,
+    message: {
+      type: 'Title must be a string.',
+      required: 'Title is required.'
+    }
+  }
+})
+```
+
 ### Nesting
 
 Objects and arrays can be nested as deep as you want:
@@ -229,6 +255,7 @@ Set `.strip = false` on the options object to disable this behavior.
 #### Table of Contents
 
 -   [Property](#property)
+    -   [message](#message)
     -   [schema](#schema)
     -   [use](#use)
     -   [required](#required)
@@ -245,7 +272,7 @@ Set `.strip = false` on the options object to disable this behavior.
     -   [path](#path-1)
     -   [validate](#validate-1)
     -   [assert](#assert)
-    -   [message](#message)
+    -   [message](#message-1)
     -   [validator](#validator)
 
 ### Property
@@ -257,6 +284,23 @@ Properties are also created internally when an object is passed to the Schema co
 
 -   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the name of the property
 -   `schema` **[Schema](#schema)** parent schema
+
+#### message
+
+Registers messages.
+
+**Parameters**
+
+-   `messages` **([Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))**
+
+**Examples**
+
+```javascript
+prop.message('something is wrong')
+prop.message({ required: 'thing is required.' })
+```
+
+Returns **[Property](#property)**
 
 #### schema
 
@@ -438,12 +482,8 @@ Proxy method for schema path. Makes chaining properties together easier.
 
 ```javascript
 schema
-  .path('name')
-    .type('string')
-    .required()
-  .path('email')
-    .type('string')
-    .required()
+  .path('name').type('string').required()
+  .path('email').type('string').required()
 ```
 
 #### typecast
@@ -582,7 +622,7 @@ Assert that given `obj` is valid.
 
 ```javascript
 const schema = new Schema({ name: 'string' })
-schema.assert({ name: 1 }) // => Throws an error
+schema.assert({ name: 1 }) // Throws an error
 ```
 
 #### message

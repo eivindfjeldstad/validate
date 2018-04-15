@@ -9,6 +9,39 @@ describe('Property', () => {
     expect(prop.name).to.equal('test')
   })
 
+  describe('.message()', () => {
+    it('should register messages', () => {
+      const prop = new Property('test', new Schema())
+      prop.required()
+      prop.message({ required: 'hello' })
+      expect(prop.validate(null).message).to.equal('hello')
+    })
+
+    it('should accept a string as a default message', () => {
+      const prop = new Property('test', new Schema())
+      prop.required()
+      prop.type('string')
+      prop.message('hello')
+      expect(prop.validate('').message).to.equal('hello')
+      expect(prop.validate(null).message).to.equal('hello')
+    })
+
+    it('should fall back to default error messages', () => {
+      const prop = new Property('test', new Schema())
+      const message = messages.required(prop.name, {}, true)
+      prop.message({ type: 'hello' })
+      prop.type('string');
+      prop.required()
+      expect(prop.validate('').message).to.equal(message)
+      expect(prop.validate(1).message).to.equal('hello')
+    })
+
+    it('should support chaining', () => {
+      const prop = new Property('test', new Schema())
+      expect(prop.message('hello')).to.equal(prop)
+    })
+  })
+
   describe('.use()', () => {
     it('should register each object property as a validator', () => {
       const prop = new Property('test', new Schema())

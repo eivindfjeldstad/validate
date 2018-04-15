@@ -1,7 +1,5 @@
 # validate
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/eivindfjeldstad/validate.svg)](https://greenkeeper.io/)
-
 Validate object properties in javascript.
 
 [![npm version](http://img.shields.io/npm/v/validate.svg?style=flat-square)](https://npmjs.org/package/validate)

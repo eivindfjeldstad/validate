@@ -2,6 +2,7 @@ const { expect } = require('chai')
 const Property = require('../lib/property')
 const Schema = require('../lib/schema')
 const messages = require('../lib/messages')
+const ValidationError = require('../lib/error');
 
 describe('Property', () => {
   it('should have a .name property', () => {
@@ -304,6 +305,12 @@ describe('Property', () => {
 
       expect(done.required).to.equal(1)
       expect(done.type).to.equal(2)
+    })
+
+    it('should return a ValidationError', () => {
+      const prop = new Property('some.path', new Schema())
+      prop.required()
+      expect(prop.validate(null)).to.be.an.instanceOf(ValidationError);
     })
 
     it('should assign errors a .path', () => {

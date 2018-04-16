@@ -1,6 +1,7 @@
 const { expect } = require('chai')
 const Schema = require('..')
 const Property = require('../lib/property')
+const ValidationError = require('../lib/error');
 
 describe('Schema', () => {
   context('when given an object', () => {
@@ -230,6 +231,12 @@ describe('Schema', () => {
       schema.validator({ required: () => false })
       const [error] = schema.validate({ name: 'hello' })
       expect(error.message).to.equal('name is required.')
+    })
+  })
+
+  describe('.ValidationError', () => {
+    it('should expose ValidationError', () => {
+      expect(Schema.ValidationError).to.equal(ValidationError);
     })
   })
 })

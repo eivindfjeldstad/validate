@@ -519,7 +519,7 @@ assert(prop.validate(2) == false)
 assert(prop.validate('hello world') instanceof Error)
 ```
 
-Returns **([Error](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error) \| [Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean))**
+Returns **(ValidationError | [Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean))**
 
 ### Schema
 

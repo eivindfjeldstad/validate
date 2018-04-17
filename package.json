@@ -11,8 +11,8 @@
     "object"
   ],
   "scripts": {
-    "test": "mocha --reporter spec --check-leaks --bail",
-    "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks",
+    "test": "jest",
+    "test-cov": "jest --coverage --runInBand --forceExit",
     "docs": "documentation readme ./lib/*.js --section=API"
   },
   "dependencies": {
@@ -21,10 +21,19 @@
     "typecast": "0.0.1"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
     "documentation": "^6.1.0",
-    "istanbul": "^0.4.5",
-    "mocha": "^5.0.4"
+    "jest": "^22.4.3"
+  },
+  "jest": {
+    "testMatch": [
+      "**/test/**/*.js"
+    ],
+    "coverageReporters": [
+      "text-summary",
+      "lcov"
+    ],
+    "bail": true,
+    "testEnvironment": "node"
   },
   "main": "lib/schema.js",
   "license": "MIT"

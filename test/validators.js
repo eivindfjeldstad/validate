@@ -1,85 +1,87 @@
-const { expect } = require('chai')
 const Validators = require('../lib/validators')
 
 describe('Validators', () => {
   describe('.required()', () => {
-    it('should return false if given value is null, undefined or an empty string', () => {
-      expect(Validators.required(null, {}, true)).to.equal(false)
-      expect(Validators.required(undefined, {}, true)).to.equal(false)
-      expect(Validators.required('', {}, true)).to.equal(false)
+    test('should return false if given value is null, undefined or an empty string', () => {
+      expect(Validators.required(null, {}, true)).toBe(false)
+      expect(Validators.required(undefined, {}, true)).toBe(false)
+      expect(Validators.required('', {}, true)).toBe(false)
     })
 
-    it('should return true otherwise', () => {
-      expect(Validators.required(0, {}, true)).to.equal(true)
-      expect(Validators.required(false, {}, true)).to.equal(true)
-      expect(Validators.required('test', {}, true)).to.equal(true)
+    test('should return true otherwise', () => {
+      expect(Validators.required(0, {}, true)).toBe(true)
+      expect(Validators.required(false, {}, true)).toBe(true)
+      expect(Validators.required('test', {}, true)).toBe(true)
     })
 
-    it('should return true when boolean argument is false', () => {
-      expect(Validators.required(null, {}, false)).to.equal(true)
+    test('should return true when boolean argument is false', () => {
+      expect(Validators.required(null, {}, false)).toBe(true)
     })
   })
 
   describe('.type()', () => {
-    it('should return true if given value is of given type', () => {
-      expect(Validators.type(0, {}, 'number')).to.equal(true)
-      expect(Validators.type('', {}, 'string')).to.equal(true)
-      expect(Validators.type(true, {}, 'boolean')).to.equal(true)
-      expect(Validators.type(new Date(), {}, 'date')).to.equal(true)
-      expect(Validators.type([], {}, 'array')).to.equal(true)
-      expect(Validators.type({}, {}, 'object')).to.equal(true)
+    test('should return true if given value is of given type', () => {
+      expect(Validators.type(0, {}, 'number')).toBe(true)
+      expect(Validators.type('', {}, 'string')).toBe(true)
+      expect(Validators.type(true, {}, 'boolean')).toBe(true)
+      expect(Validators.type(new Date(), {}, 'date')).toBe(true)
+      expect(Validators.type([], {}, 'array')).toBe(true)
+      expect(Validators.type({}, {}, 'object')).toBe(true)
     })
 
-    it('should return false otherwise', () => {
-      expect(Validators.type('not a number', {}, 'number')).to.equal(false)
-      expect(Validators.type(1, {}, 'string')).to.equal(false)
-      expect(Validators.type(1, {}, 'boolean')).to.equal(false)
-      expect(Validators.type(1, {}, 'date')).to.equal(false)
-      expect(Validators.type(1, {}, 'array')).to.equal(false)
-      expect(Validators.type(1, {}, 'object')).to.equal(false)
+    test('should return false otherwise', () => {
+      expect(Validators.type('not a number', {}, 'number')).toBe(false)
+      expect(Validators.type(1, {}, 'string')).toBe(false)
+      expect(Validators.type(1, {}, 'boolean')).toBe(false)
+      expect(Validators.type(1, {}, 'date')).toBe(false)
+      expect(Validators.type(1, {}, 'array')).toBe(false)
+      expect(Validators.type(1, {}, 'object')).toBe(false)
     })
   })
 
   describe('.match()', () => {
-    it('should return true if given regexp matches given value', () => {
-      expect(Validators.match('abc', {}, /^abc$/)).to.equal(true)
+    test('should return true if given regexp matches given value', () => {
+      expect(Validators.match('abc', {}, /^abc$/)).toBe(true)
     })
 
-    it('should return false otherwise', () => {
-      expect(Validators.match('cba', {}, /^abc$/)).to.equal(false)
+    test('should return false otherwise', () => {
+      expect(Validators.match('cba', {}, /^abc$/)).toBe(false)
     })
   })
 
   describe('.length()', () => {
-    it('should return true if given value has length between given min and max', () => {
-      expect(Validators.length('ab', {}, { min: 2, max: 4 })).to.equal(true)
-      expect(Validators.length('abc', {}, { min: 2, max: 4 })).to.equal(true)
-      expect(Validators.length('abcd', {}, { min: 2, max: 4 })).to.equal(true)
-      expect(Validators.length('abcde', {}, { min: 2 })).to.equal(true)
-      expect(Validators.length('a', {}, { max: 4 })).to.equal(true)
+    test(
+      'should return true if given value has length between given min and max',
+      () => {
+        expect(Validators.length('ab', {}, { min: 2, max: 4 })).toBe(true)
+        expect(Validators.length('abc', {}, { min: 2, max: 4 })).toBe(true)
+        expect(Validators.length('abcd', {}, { min: 2, max: 4 })).toBe(true)
+        expect(Validators.length('abcde', {}, { min: 2 })).toBe(true)
+        expect(Validators.length('a', {}, { max: 4 })).toBe(true)
+      }
+    )
+
+    test('should return false otherwise', () => {
+      expect(Validators.length('a', {}, { min: 2, max: 4 })).toBe(false)
+      expect(Validators.length('abcde', {}, { min: 2, max: 4 })).toBe(false)
+      expect(Validators.length('a', {}, { min: 2 })).toBe(false)
+      expect(Validators.length('abcde', {}, { max: 4 })).toBe(false)
     })
 
-    it('should return false otherwise', () => {
-      expect(Validators.length('a', {}, { min: 2, max: 4 })).to.equal(false)
-      expect(Validators.length('abcde', {}, { min: 2, max: 4 })).to.equal(false)
-      expect(Validators.length('a', {}, { min: 2 })).to.equal(false)
-      expect(Validators.length('abcde', {}, { max: 4 })).to.equal(false)
-    })
-
-    it('should work with a number as an exact length', () => {
-      expect(Validators.length('a', {}, 2)).to.equal(false)
-      expect(Validators.length('ab', {}, 2)).to.equal(true)
+    test('should work with a number as an exact length', () => {
+      expect(Validators.length('a', {}, 2)).toBe(false)
+      expect(Validators.length('ab', {}, 2)).toBe(true)
     })
   })
 
   describe('.enum()', () => {
-    it('should return true if given value is included in given array', () => {
-      expect(Validators.enum('a', {}, ['a', 'b'])).to.equal(true)
-      expect(Validators.enum('b', {}, ['a', 'b'])).to.equal(true)
+    test('should return true if given value is included in given array', () => {
+      expect(Validators.enum('a', {}, ['a', 'b'])).toBe(true)
+      expect(Validators.enum('b', {}, ['a', 'b'])).toBe(true)
     })
 
-    it('should return false otherwise', () => {
-      expect(Validators.enum('c', {}, ['a', 'b'])).to.equal(false)
+    test('should return false otherwise', () => {
+      expect(Validators.enum('c', {}, ['a', 'b'])).toBe(false)
     })
   })
 })

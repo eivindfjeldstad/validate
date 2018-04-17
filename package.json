@@ -15,6 +15,9 @@
     "test-cov": "jest --coverage --runInBand --forceExit",
     "docs": "documentation readme ./lib/*.js --section=API"
   },
+  "engines": {
+    "node": ">=7.6"
+  },
   "dependencies": {
     "component-type": "1.2.1",
     "eivindfjeldstad-dot": "0.0.1",

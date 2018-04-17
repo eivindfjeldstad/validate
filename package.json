@@ -38,6 +38,9 @@
     "bail": true,
     "testEnvironment": "node"
   },
+  "files": [
+    "lib"
+  ],
   "main": "lib/schema.js",
   "license": "MIT"
 }

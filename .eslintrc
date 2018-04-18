@@ -1,0 +1,9 @@
+{
+  "extends": "standard",
+  "rules": {
+    "semi": ["error", "always"],
+    "space-before-function-paren": ["error", "never"],
+    "eqeqeq": ["error", "smart"],
+    "no-return-assign": 0
+  }
+}

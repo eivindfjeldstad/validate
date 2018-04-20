@@ -1,7 +1,6 @@
 import Property from '../src/property';
 import Schema from '../src/schema';
 import Messages from '../src/messages';
-import ValidationError from '../src/error';
 
 describe('Property', () => {
   test('should have a .name property', () => {

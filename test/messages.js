@@ -1,4 +1,4 @@
-const Messages = require('../lib/messages');
+import Messages from '../src/messages';
 
 describe('Messages', () => {
   describe('.required()', () => {

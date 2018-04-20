@@ -1,4 +1,4 @@
-const typeOf = require('component-type');
+import typeOf from 'component-type';
 
 /**
  * Default validators.
@@ -82,4 +82,4 @@ const Validators = {
   }
 };
 
-module.exports = Validators;
+export default Validators;

@@ -1,7 +1,7 @@
-const Property = require('../lib/property');
-const Schema = require('../lib/schema');
-const Messages = require('../lib/messages');
-const ValidationError = require('../lib/error');
+import Property from '../src/property';
+import Schema from '../src/schema';
+import Messages from '../src/messages';
+import ValidationError from '../src/error';
 
 describe('Property', () => {
   test('should have a .name property', () => {
@@ -308,7 +308,7 @@ describe('Property', () => {
     test('should return a ValidationError', () => {
       const prop = new Property('some.path', new Schema());
       prop.required();
-      expect(prop.validate(null)).toBeInstanceOf(ValidationError);
+      expect(prop.validate(null)).toBeInstanceOf(Error);
     });
 
     test('should assign errors a .path', () => {

@@ -52,4 +52,4 @@ const Messages = {
   }
 };
 
-module.exports = Messages;
+export default Messages;

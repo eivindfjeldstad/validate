@@ -4,7 +4,7 @@
  * @private
  */
 
-class ValidationError extends Error {
+export default class ValidationError extends Error {
   constructor(message, path) {
     super(message);
     Object.defineProperty(this, 'path', {
@@ -15,5 +15,3 @@ class ValidationError extends Error {
     });
   }
 }
-
-module.exports = ValidationError;

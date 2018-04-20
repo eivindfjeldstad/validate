@@ -1,6 +1,6 @@
-const Schema = require('..');
-const Property = require('../lib/property');
-const ValidationError = require('../lib/error');
+import Schema from '../src/schema';
+import Property from '../src/property';
+import ValidationError from '../src/error';
 
 describe('Schema', () => {
   describe('when given an object', () => {

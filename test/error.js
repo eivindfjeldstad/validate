@@ -1,4 +1,4 @@
-const ValidationError = require('../lib/error');
+import ValidationError from '../src/error';
 
 describe('ValidationError', () => {
   test('should accpet a message and a path', () => {

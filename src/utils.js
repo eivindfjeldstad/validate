@@ -1,4 +1,4 @@
-const dot = require('eivindfjeldstad-dot');
+import dot from 'eivindfjeldstad-dot';
 
 /**
  * Enumerate paths
@@ -6,7 +6,7 @@ const dot = require('eivindfjeldstad-dot');
  * @private
  */
 
-function enumerate(path, obj, prefix = '', map = {}) {
+export function enumerate(path, obj, prefix = '', map = {}) {
   const original = map[prefix] || '';
   const parts = path.split(/\.\$(?=\.|$)/);
   const first = parts.shift();
@@ -37,10 +37,8 @@ function enumerate(path, obj, prefix = '', map = {}) {
  * @private
  */
 
-function join(path, prefix) {
+export function join(path, prefix) {
   return prefix
     ? `${prefix}.${path}`
     : path;
 }
-
-module.exports = { join, enumerate };

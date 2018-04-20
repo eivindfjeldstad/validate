@@ -1,4 +1,4 @@
-const Validators = require('../lib/validators');
+import Validators from '../src/validators';
 
 describe('Validators', () => {
   describe('.required()', () => {

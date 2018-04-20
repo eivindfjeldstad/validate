@@ -1,5 +1,5 @@
-const typecast = require('typecast');
-const ValidationError = require('./error');
+import typecast from 'typecast';
+import ValidationError from './error';
 
 /**
  * A property instance gets returned whenever you call `schema.path()`.
@@ -9,7 +9,7 @@ const ValidationError = require('./error');
  * @param {Schema} schema - parent schema
  */
 
-class Property {
+export default class Property {
   constructor(name, schema) {
     this.name = name;
     this.registry = {};
@@ -340,5 +340,3 @@ class Property {
     return new ValidationError(message, path);
   }
 }
-
-module.exports = Property;

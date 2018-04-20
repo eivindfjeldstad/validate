@@ -1,11 +1,11 @@
-const typeOf = require('component-type');
-const dot = require('eivindfjeldstad-dot');
+import typeOf from 'component-type';
+import dot from 'eivindfjeldstad-dot';
 
-const Property = require('./property');
-const Messages = require('./messages');
-const Validators = require('./validators');
-const ValidationError = require('./error');
-const { join, enumerate } = require('./utils');
+import Property from './property';
+import Messages from './messages';
+import Validators from './validators';
+import ValidationError from './error';
+import {join, enumerate} from './utils';
 
 /**
  * A Schema defines the structure that objects should be validated against.
@@ -47,7 +47,7 @@ const { join, enumerate } = require('./utils');
  * @param {Boolean} [opts.strip=true] - strip properties not defined in the schema
  */
 
-class Schema {
+export default class Schema {
   constructor(obj = {}, opts = {}) {
     this.opts = opts;
     this.hooks = [];
@@ -366,8 +366,5 @@ class Schema {
   }
 }
 
-// Expose ValidationError
+// Export ValidationError
 Schema.ValidationError = ValidationError;
-
-// Expose schema
-module.exports = Schema;

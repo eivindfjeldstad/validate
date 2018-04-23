@@ -13,8 +13,8 @@
   "scripts": {
     "test": "jest",
     "test-cov": "jest --coverage --runInBand --forceExit",
-    "docs": "documentation readme ./lib/*.js --section=API",
-    "lint": "eslint lib test",
+    "docs": "documentation readme ./src/*.js --section=API",
+    "lint": "eslint src test",
     "build": "babel -d build src",
     "prepublish": "npm run build"
   },

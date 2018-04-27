@@ -3,6 +3,7 @@ node_js:
   - "7"
   - "8"
   - "9"
+  - "10"
 script:
   - npm run test-cov
 after_script:

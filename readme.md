@@ -392,7 +392,7 @@ Registers a validator that checks if a value is of a given `type`
 
 **Parameters**
 
--   `type` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type to check for
+-   `type` **([String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function))** type to check for
 
 **Examples**
 

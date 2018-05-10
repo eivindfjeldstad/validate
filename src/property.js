@@ -115,7 +115,7 @@ export default class Property {
    * @example
    * prop.type('string')
    *
-   * @param {String} type - type to check for
+   * @param {String|Function} type - type to check for
    * @return {Property}
    */
 

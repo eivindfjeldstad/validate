@@ -150,8 +150,7 @@ export default class Schema {
    * Typecast given `obj`.
    *
    * @param {Object} obj - the object to typecast
-   * @param {Object} [props]
-   * @return {Object}
+   * @return {Schema}
    * @private
    */
 
@@ -172,8 +171,8 @@ export default class Schema {
    * Strip all keys not defined in the schema
    *
    * @param {Object} obj - the object to strip
-   * @param {Object} [props]
    * @param {String} [prefix]
+   * @return {Schema}
    * @private
    */
 

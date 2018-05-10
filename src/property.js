@@ -230,14 +230,17 @@ export default class Property {
    */
 
   typecast(value) {
+    const schema = this._schema;
     let type = this._type;
+
     if (!type) return value;
 
     if (typeof type == 'function') {
       type = type.name;
     }
 
-    const cast = this._schema.typecasters[type];
+    const cast = schema.typecasters[type] ||
+      schema.typecasters[type.toLowerCase()];
 
     if (typeof cast != 'function') {
       throw new Error(`Typecasting failed: No typecaster defined for ${type}.`);

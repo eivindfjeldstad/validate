@@ -201,6 +201,26 @@ car.message({
 })
 ```
 
+### Custom types
+
+Pass a constructor to `.type` to validate against a custom type:
+
+```js
+class Car {}
+
+const user = new Schema({
+  car: { type: Car }
+})
+```
+
+Register a typecaster to enable typecasting:
+
+```js
+user.typecaster({
+  Car: (val) => new Car(val)
+})
+```
+
 ### Chainable API
 
 If you want to avoid constructing large objects, you can add paths to a schema by using the chainable API:
@@ -272,6 +292,7 @@ Set `.strip = false` on the options object to disable this behavior.
     -   [assert](#assert)
     -   [message](#message-1)
     -   [validator](#validator)
+    -   [typecaster](#typecaster)
 
 ### Property
 
@@ -663,6 +684,27 @@ schema.validator('required', val => val != null)
 
 ```javascript
 schema.validator({ required: val => val != null })
+```
+
+Returns **[Schema](#schema)**
+
+#### typecaster
+
+Override default typecasters.
+
+**Parameters**
+
+-   `name` **([String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object))** name of the validator or an object with name-function pairs
+-   `fn` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** the function to use
+
+**Examples**
+
+```javascript
+schema.typecaster('SomeClass', val => new SomeClass(val))
+```
+
+```javascript
+schema.typecaster({ SomeClass: val => new SomeClass(val) })
 ```
 
 Returns **[Schema](#schema)**

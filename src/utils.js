@@ -1,6 +1,21 @@
 import dot from 'eivindfjeldstad-dot';
 
 /**
+ * Assign given key and value (or object) to given object
+ *
+ * @private
+ */
+
+export function assign(key, val, obj) {
+  if (typeof key == 'string') {
+    obj[key] = val;
+    return;
+  }
+
+  Object.keys(key).forEach(k => obj[k] = key[k]);
+}
+
+/**
  * Walk path
  *
  * @private

@@ -7,6 +7,10 @@
 const Messages = {
   // Type message
   type(prop, ctx, type) {
+    if (typeof type == 'function') {
+      type = type.name;
+    }
+
     return `${prop} must be of type ${type}.`;
   },
 

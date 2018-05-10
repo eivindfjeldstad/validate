@@ -1,11 +1,12 @@
 import typeOf from 'component-type';
 import dot from 'eivindfjeldstad-dot';
 
+import typecast from 'typecast';
 import Property from './property';
 import Messages from './messages';
 import Validators from './validators';
 import ValidationError from './error';
-import {walk, join} from './utils';
+import {walk, join, assign} from './utils';
 
 /**
  * A Schema defines the structure that objects should be validated against.
@@ -54,6 +55,7 @@ export default class Schema {
     this.props = {};
     this.messages = Object.assign({}, Messages);
     this.validators = Object.assign({}, Validators);
+    this.typecasters = Object.assign({}, typecast);
     Object.keys(obj).forEach(k => this.path(k, obj[k]));
   }
 
@@ -272,12 +274,7 @@ export default class Schema {
    */
 
   message(name, message) {
-    if (typeof name == 'string') {
-      this.messages[name] = message;
-      return this;
-    }
-
-    Object.keys(name).forEach(k => this.messages[k] = name[k]);
+    assign(name, message, this.messages);
     return this;
   }
 
@@ -296,12 +293,26 @@ export default class Schema {
    */
 
   validator(name, fn) {
-    if (typeof name == 'string') {
-      this.validators[name] = fn;
-      return this;
-    }
+    assign(name, fn, this.validators);
+    return this;
+  }
 
-    Object.keys(name).forEach(k => this.validators[k] = name[k]);
+  /**
+   * Override default typecasters.
+   *
+   * @example
+   * schema.typecaster('SomeClass', val => new SomeClass(val))
+   *
+   * @example
+   * schema.typecaster({ SomeClass: val => new SomeClass(val) })
+   *
+   * @param {String|Object} name - name of the validator or an object with name-function pairs
+   * @param {Function} [fn] - the function to use
+   * @return {Schema}
+   */
+
+  typecaster(name, fn) {
+    assign(name, fn, this.typecasters);
     return this;
   }
 

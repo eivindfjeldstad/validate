@@ -29,6 +29,12 @@ describe('Validators', () => {
       expect(Validators.type({}, {}, 'object')).toBe(true);
     });
 
+    test('should accept a constructor as type', () => {
+      class A {};
+      expect(Validators.type(new A(), {}, A)).toBe(true);
+      expect(Validators.type('', {}, A)).toBe(false);
+    });
+
     test('should return false otherwise', () => {
       expect(Validators.type('not a number', {}, 'number')).toBe(false);
       expect(Validators.type(1, {}, 'string')).toBe(false);

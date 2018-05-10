@@ -9,7 +9,9 @@ describe('Messages', () => {
 
   describe('.type()', () => {
     test('should return the correct message', () => {
+      class A {};
       expect(Messages.type('a', {}, 'string')).toBe('a must be of type string.');
+      expect(Messages.type('a', {}, A)).toBe('a must be of type A.');
     });
   });
 

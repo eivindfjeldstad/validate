@@ -26,11 +26,15 @@ const Validators = {
    *
    * @param {Mixed} value - the value being validated
    * @param {Object} ctx - the object being validated
-   * @param {String} name name of the type
+   * @param {String|Function} name name of the type or a constructor
    * @return {Boolean}
    */
 
   type(value, ctx, name) {
+    if (typeof name == 'function') {
+      return value.constructor === name;
+    }
+
     return typeOf(value) === name;
   },
 

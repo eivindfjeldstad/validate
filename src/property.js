@@ -1,4 +1,3 @@
-import typecast from 'typecast';
 import ValidationError from './error';
 
 /**
@@ -231,8 +230,20 @@ export default class Property {
    */
 
   typecast(value) {
-    if (!this._type) return value;
-    return typecast(value, this._type);
+    let type = this._type;
+    if (!type) return value;
+
+    if (typeof type == 'function') {
+      type = type.name;
+    }
+
+    const cast = this._schema.typecasters[type];
+
+    if (typeof cast != 'function') {
+      throw new Error(`Typecasting failed: No typecaster defined for ${type}.`);
+    }
+
+    return cast(value);
   }
 
   /**

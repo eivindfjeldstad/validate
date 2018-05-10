@@ -232,6 +232,24 @@ describe('Schema', () => {
     });
   });
 
+  describe('.typecaster()', () => {
+    test('should set default typecasters', () => {
+      const obj = { name: 123 };
+      const schema = new Schema({ name: { type: 'hello' } });
+      schema.typecaster('hello', (val) => val.toString());
+      schema.typecast(obj);
+      expect(obj.name).toBe('123');
+    });
+
+    test('should set default typecasters', () => {
+      const obj = { name: 123 };
+      const schema = new Schema({ name: { type: 'hello' } });
+      schema.typecaster({ hello: (val) => val.toString() });
+      schema.typecast(obj);
+      expect(obj.name).toBe('123');
+    });
+  });
+
   describe('.ValidationError', () => {
     test('should expose ValidationError', () => {
       expect(Schema.ValidationError).toBe(ValidationError);

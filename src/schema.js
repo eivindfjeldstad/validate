@@ -14,29 +14,29 @@ import {walk, join, assign} from './utils';
  * @example
  * const post = new Schema({
  *   title: {
- *     type: 'string',
+ *     type: String,
  *     required: true,
  *     length: { min: 1, max: 255 }
  *   },
  *   content: {
- *     type: 'string',
+ *     type: String,
  *     required: true
  *   },
  *   published: {
- *     type: 'date',
+ *     type: Date,
  *     required: true
  *   },
- *   keywords: [{ type: 'string' }]
+ *   keywords: [{ type: String }]
  * })
  *
  * @example
  * const author = new Schema({
  *   name: {
- *     type: 'string',
+ *     type: String,
  *     required: true
  *   },
  *   email: {
- *     type: 'string',
+ *     type: String,
  *     required: true
  *   },
  *   posts: [post]
@@ -64,8 +64,8 @@ export default class Schema {
    *
    * @example
    * const schema = new Schema()
-   * schema.path('name.first', { type: 'string' })
-   * schema.path('name.last').type('string').required()
+   * schema.path('name.first', { type: String })
+   * schema.path('name.last').type(String).required()
    *
    * @param {String} path - full path using dot-notation
    * @param {Object|Array|String|Schema|Property} [rules] - rules to apply
@@ -84,7 +84,7 @@ export default class Schema {
 
     // Array index placeholder
     if (suffix === '$') {
-      this.path(prefix).type('array');
+      this.path(prefix).type(Array);
     }
 
     // Nested schema
@@ -118,7 +118,7 @@ export default class Schema {
     }
 
     // Allow arrays to be passed implicitly:
-    // `{ keywords: [{ type: 'string' }]}`
+    // `{ keywords: [{ type: String }]}`
     if (Array.isArray(rules)) {
       return this.path(join('$', path), rules[0]);
     }
@@ -245,7 +245,7 @@ export default class Schema {
    * Assert that given `obj` is valid.
    *
    * @example
-   * const schema = new Schema({ name: 'string' })
+   * const schema = new Schema({ name: String })
    * schema.assert({ name: 1 }) // Throws an error
    *
    * @param {Object} obj

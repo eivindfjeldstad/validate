@@ -16,29 +16,29 @@ import Schema from 'validate'
 
 const user = new Schema({
   username: {
-    type: 'string',
+    type: String,
     required: true,
     length: { min: 3, max: 32 }
   },
   name: {
-    type: 'string',
+    type: String,
     required: true
   },
   pets: [{
-    name: { type: 'string' },
+    name: { type: String },
     animal: { enum: ['cat', 'dog']}
   }],
   address: {
     street: {
-      type: 'string',
+      type: String,
       required: true
     },
     city: {
-      type: 'string',
+      type: String,
       required: true
     }
     zip: {
-      type: 'string',
+      type: String,
       match: /^[0-9]+$/,
       required: true
     }
@@ -88,7 +88,7 @@ And for individual validators:
 ```js
 const post = new Schema({
   title: {
-    type: 'string',
+    type: String,
     required: true,
     message: {
       type: 'Title must be a string.',
@@ -105,20 +105,20 @@ Objects and arrays can be nested as deep as you want:
 ```js
 const event = new Schema({
   title: {
-    type: 'string',
+    type: String,
     required: true
   },
   participants: [{
     name: {
-      type: 'string'
+      type: String
     },
     email: {
-      type: 'string',
+      type: String,
       required: true
     },
     things: [{
-      name: { type: 'string' },
-      amount: { type: 'number' }
+      name: { type: String },
+      amount: { type: Number }
     }]
   }]
 })
@@ -129,8 +129,8 @@ Arrays can be defined implicitly, like in the above example, or explicitly:
 ```js
 const post = new Schema({
   keywords: {
-    type: 'array',
-    each: { type: 'string' }
+    type: Array,
+    each: { type: String }
   }
 })
 ```
@@ -140,10 +140,10 @@ Array elements can also be defined individually:
 ```js
 const user = new Schema({
   something: {
-    type: 'array',
+    type: Array,
     elements: [
-      { type: 'number' },
-      { type: 'string' }
+      { type: Number },
+      { type: String }
     ]
   }
 })
@@ -154,22 +154,22 @@ Nesting also works with schemas:
 ```js
 const user = new Schema({
   name: {
-    type: 'string',
+    type: String,
     required: true
   },
   email: {
-    type: 'string',
+    type: String,
     required: true
   }
 })
 
 const post = new Schema({
   title: {
-    type: 'string',
+    type: String,
     required: true
   },
   content: {
-    type: 'string',
+    type: String,
     required: true
   },
   author: user
@@ -187,7 +187,7 @@ const hexColor = val => /^#[0-9a-fA-F]$/.test(val)
 
 const car = new Schema({
   color: {
-    type: 'string',
+    type: String,
     use: { hexColor }
   }
 })
@@ -229,21 +229,21 @@ If you want to avoid constructing large objects, you can add paths to a schema b
 const user = new Schema()
 
 user
-  .path('username').type('string').required()
-  .path('address.zip').type('string').required()
+  .path('username').type(String).required()
+  .path('address.zip').type(String).required()
 ```
 
 Array elements can be defined by using `$` as a placeholder for indices:
 
 ```js
 const user = new Schema()
-user.path('pets.$').type('string')
+user.path('pets.$').type(String)
 ```
 
 This is equivalent to writing
 
 ```js
-const user = new Schema({ pets: [{ type: 'string' }]})
+const user = new Schema({ pets: [{ type: String }]})
 ```
 
 ### Typecasting
@@ -332,7 +332,7 @@ Mount given `schema` on current path.
 **Examples**
 
 ```javascript
-const user = new Schema({ email: 'string' })
+const user = new Schema({ email: String })
 prop.schema(user)
 ```
 
@@ -395,6 +395,10 @@ Registers a validator that checks if a value is of a given `type`
 -   `type` **([String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function))** type to check for
 
 **Examples**
+
+```javascript
+prop.type(String)
+```
 
 ```javascript
 prop.type('string')
@@ -465,9 +469,9 @@ Registers a validator that checks each value in an array against given `rules`.
 **Examples**
 
 ```javascript
-prop.each({ type: 'string' })
-prop.each([{ type: 'number' }])
-prop.each({ things: [{ type: 'string' }]})
+prop.each({ type: String })
+prop.each([{ type: Number }])
+prop.each({ things: [{ type: String }]})
 prop.each(schema)
 ```
 
@@ -484,7 +488,7 @@ Registers paths for array elements on the parent schema, with given array of rul
 **Examples**
 
 ```javascript
-prop.elements([{ type: 'string' }, { type: 'number' }])
+prop.elements([{ type: String }, { type: Number }])
 ```
 
 Returns **[Property](#property)**
@@ -501,8 +505,8 @@ Proxy method for schema path. Makes chaining properties together easier.
 
 ```javascript
 schema
-  .path('name').type('string').required()
-  .path('email').type('string').required()
+  .path('name').type(String).required()
+  .path('email').type(String).required()
 ```
 
 #### typecast
@@ -516,7 +520,7 @@ Typecast given `value`
 **Examples**
 
 ```javascript
-prop.type('string')
+prop.type(String)
 prop.typecast(123) // => '123'
 ```
 
@@ -535,7 +539,7 @@ Validate given `value`
 **Examples**
 
 ```javascript
-prop.type('number')
+prop.type(Number)
 assert(prop.validate(2) == null)
 assert(prop.validate('hello world') instanceof Error)
 ```
@@ -558,30 +562,30 @@ A Schema defines the structure that objects should be validated against.
 ```javascript
 const post = new Schema({
   title: {
-    type: 'string',
+    type: String,
     required: true,
     length: { min: 1, max: 255 }
   },
   content: {
-    type: 'string',
+    type: String,
     required: true
   },
   published: {
-    type: 'date',
+    type: Date,
     required: true
   },
-  keywords: [{ type: 'string' }]
+  keywords: [{ type: String }]
 })
 ```
 
 ```javascript
 const author = new Schema({
   name: {
-    type: 'string',
+    type: String,
     required: true
   },
   email: {
-    type: 'string',
+    type: String,
     required: true
   },
   posts: [post]
@@ -601,8 +605,8 @@ Create or update `path` with given `rules`.
 
 ```javascript
 const schema = new Schema()
-schema.path('name.first', { type: 'string' })
-schema.path('name.last').type('string').required()
+schema.path('name.first', { type: String })
+schema.path('name.last').type(String).required()
 ```
 
 Returns **[Property](#property)**
@@ -640,7 +644,7 @@ Assert that given `obj` is valid.
 **Examples**
 
 ```javascript
-const schema = new Schema({ name: 'string' })
+const schema = new Schema({ name: String })
 schema.assert({ name: 1 }) // Throws an error
 ```
 

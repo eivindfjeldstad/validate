@@ -46,7 +46,7 @@ export default class Property {
    * Mount given `schema` on current path.
    *
    * @example
-   * const user = new Schema({ email: 'string' })
+   * const user = new Schema({ email: String })
    * prop.schema(user)
    *
    * @param {Schema} schema - the schema to mount
@@ -113,6 +113,9 @@ export default class Property {
    * Registers a validator that checks if a value is of a given `type`
    *
    * @example
+   * prop.type(String)
+   *
+   * @example
    * prop.type('string')
    *
    * @param {String|Function} type - type to check for
@@ -173,9 +176,9 @@ export default class Property {
    * Registers a validator that checks each value in an array against given `rules`.
    *
    * @example
-   * prop.each({ type: 'string' })
-   * prop.each([{ type: 'number' }])
-   * prop.each({ things: [{ type: 'string' }]})
+   * prop.each({ type: String })
+   * prop.each([{ type: Number }])
+   * prop.each({ things: [{ type: String }]})
    * prop.each(schema)
    *
    * @param {Array|Object|Schema|Property} rules - rules to use
@@ -191,7 +194,7 @@ export default class Property {
    * Registers paths for array elements on the parent schema, with given array of rules.
    *
    * @example
-   * prop.elements([{ type: 'string' }, { type: 'number' }])
+   * prop.elements([{ type: String }, { type: Number }])
    *
    * @param {Array} arr - array of rules to use
    * @return {Property}
@@ -209,8 +212,8 @@ export default class Property {
    *
    * @example
    * schema
-   *   .path('name').type('string').required()
-   *   .path('email').type('string').required()
+   *   .path('name').type(String).required()
+   *   .path('email').type(String).required()
    *
    */
 
@@ -222,7 +225,7 @@ export default class Property {
    * Typecast given `value`
    *
    * @example
-   * prop.type('string')
+   * prop.type(String)
    * prop.typecast(123) // => '123'
    *
    * @param {Mixed} value - value to typecast
@@ -253,7 +256,7 @@ export default class Property {
    * Validate given `value`
    *
    * @example
-   * prop.type('number')
+   * prop.type(Number)
    * assert(prop.validate(2) == null)
    * assert(prop.validate('hello world') instanceof Error)
    *

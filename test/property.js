@@ -269,6 +269,13 @@ describe('Property', () => {
       prop.type(String);
       expect(prop.typecast(123)).toBe('123');
     });
+
+    test('should throw if no typecaster exists', () => {
+      const prop = new Property('test', new Schema());
+      prop.type('custom');
+      const wrap = () => prop.typecast(123);
+      expect(wrap).toThrowError('Typecasting failed: No typecaster defined for custom.');
+    });
   });
 
   describe('.validate()', () => {

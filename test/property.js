@@ -19,7 +19,7 @@ describe('Property', () => {
     test('should accept a string as a default message', () => {
       const prop = new Property('test', new Schema());
       prop.required();
-      prop.type('string');
+      prop.type(String);
       prop.message('hello');
       expect(prop.validate('').message).toBe('hello');
       expect(prop.validate(null).message).toBe('hello');
@@ -29,7 +29,7 @@ describe('Property', () => {
       const prop = new Property('test', new Schema());
       const message = Messages.required(prop.name, {}, true);
       prop.message({ type: 'hello' });
-      prop.type('string');
+      prop.type(String);
       prop.required();
       expect(prop.validate('').message).toBe(message);
       expect(prop.validate(1).message).toBe('hello');
@@ -113,7 +113,7 @@ describe('Property', () => {
   describe('.type()', () => {
     test('should register a validator', () => {
       const prop = new Property('test', new Schema());
-      prop.type('string');
+      prop.type(String);
       expect(prop.validate(1)).toBeInstanceOf(Error);
       expect(prop.validate('test')).toBe(null);
       expect(prop.validate(null)).toBe(null);
@@ -121,20 +121,20 @@ describe('Property', () => {
 
     test('should set the internal ._type property', () => {
       const prop = new Property('test', new Schema());
-      prop.type('string');
-      expect(prop._type).toBe('string');
+      prop.type(String);
+      expect(prop._type).toBe(String);
     });
 
     test('should use the correct error message', () => {
       const prop = new Property('test', new Schema());
-      const message = Messages.type(prop.name, {}, 'string');
-      prop.type('string');
+      const message = Messages.type(prop.name, {}, String);
+      prop.type(String);
       expect(prop.validate(1).message).toBe(message);
     });
 
     test('should support chaining', () => {
       const prop = new Property('test', new Schema());
-      expect(prop.type('number')).toBe(prop);
+      expect(prop.type(Number)).toBe(prop);
     });
   });
 
@@ -230,15 +230,15 @@ describe('Property', () => {
     test('should define paths for given array elements', () => {
       const schema = new Schema();
       const prop = new Property('test', schema);
-      prop.elements([{ type: 'number' }, { type: 'string' }]);
-      expect(schema.path('test.0')._type).toBe('number');
-      expect(schema.path('test.1')._type).toBe('string');
+      prop.elements([{ type: Number }, { type: String }]);
+      expect(schema.path('test.0')._type).toBe(Number);
+      expect(schema.path('test.1')._type).toBe(String);
     });
 
     test('should work', () => {
       const schema = new Schema();
       const prop = new Property('test', schema);
-      prop.elements([{ type: 'number' }, { type: 'string' }]);
+      prop.elements([{ type: Number }, { type: String }]);
       expect(schema.validate({ test: [1, 'hello'] })).toHaveLength(0);
       expect(schema.validate({ test: ['hello', 'hello'] })).toHaveLength(1);
     });
@@ -253,8 +253,8 @@ describe('Property', () => {
     test('should define a new array path on the parent schema', () => {
       const schema = new Schema();
       const prop = new Property('test', schema);
-      prop.each({ type: 'number' });
-      expect(schema.path('test.$')._type).toBe('number');
+      prop.each({ type: Number });
+      expect(schema.path('test.$')._type).toBe(Number);
     });
 
     test('should support chaining', () => {
@@ -266,7 +266,7 @@ describe('Property', () => {
   describe('.typecast()', () => {
     test('should typecast given value to the type defined by ._type', () => {
       const prop = new Property('test', new Schema());
-      prop.type('string');
+      prop.type(String);
       expect(prop.typecast(123)).toBe('123');
     });
   });

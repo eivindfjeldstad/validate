@@ -5,7 +5,7 @@ import ValidationError from '../src/error';
 describe('Schema', () => {
   describe('when given an object', () => {
     test('should create properties', () => {
-      const schema = new Schema({ a: { type: 'string' } });
+      const schema = new Schema({ a: { type: String } });
       expect(schema.props).toHaveProperty(['a']);
     });
   });
@@ -13,14 +13,16 @@ describe('Schema', () => {
   describe('.path()', () => {
     test('should create properties', () => {
       const schema = new Schema();
-      schema.path('a', { type: 'string' });
+      schema.path('a', { type: String });
       expect(schema.props).toHaveProperty(['a']);
     });
 
     test('should allow type shorthand', () => {
       const schema = new Schema();
       schema.path('a', 'string');
+      schema.path('b', String);
       expect(schema.props['a']._type).toBe('string');
+      expect(schema.props['b']._type).toBe(String);
     });
 
     test('should create properties for all subpaths', () => {
@@ -33,7 +35,7 @@ describe('Schema', () => {
 
     test('should support nested properties', () => {
       const schema = new Schema();
-      schema.path('a', { b: { type: 'string' } });
+      schema.path('a', { b: { type: String } });
       expect(schema.props).toHaveProperty(['a.b']);
     });
 
@@ -73,14 +75,14 @@ describe('Schema', () => {
       test('should set `property.type` to array', () => {
         const schema = new Schema();
         schema.path('hello.$');
-        expect(schema.props.hello._type).toBe('array');
+        expect(schema.props.hello._type).toBe(Array);
       });
 
       test('should apply rules to each element in the array', () => {
         const schema = new Schema();
-        schema.path('hello.$').type('number');
-        expect(schema.props.hello._type).toBe('array');
-        expect(schema.props['hello.$']._type).toBe('number');
+        schema.path('hello.$').type(Number);
+        expect(schema.props.hello._type).toBe(Array);
+        expect(schema.props['hello.$']._type).toBe(Number);
       });
     });
   });
@@ -88,9 +90,9 @@ describe('Schema', () => {
   describe('.strip()', () => {
     test('should delete all keys not in the schema', () => {
       const schema = new Schema({
-        a: { type: 'number' },
-        b: [{ a: { type: 'number' } }],
-        c: { a: { type: 'number' } }
+        a: { type: Number },
+        b: [{ a: { type: Number } }],
+        c: { a: { type: Number } }
       });
 
       const obj = { a: 1, b: [{ a: 1, b: 1 }, { a: 1 }], c: { a: 1, b: 1 }, d: 1 };
@@ -101,14 +103,14 @@ describe('Schema', () => {
 
   describe('.validate()', () => {
     test('should return an array of errors', () => {
-      const schema = new Schema({ name: { type: 'string' } });
+      const schema = new Schema({ name: { type: String } });
       const res = schema.validate({ name: 123 });
       expect(res).toBeInstanceOf(Array);
       expect(res).toHaveLength(1);
     });
 
     test('should set the correct paths on the error objects', () => {
-      const schema = new Schema({ things: [{ type: 'string' }] });
+      const schema = new Schema({ things: [{ type: String }] });
       const res = schema.validate({ things: ['car', 1, 3] });
       const [err1, err2] = res;
       expect(res).toHaveLength(2);
@@ -121,8 +123,8 @@ describe('Schema', () => {
     test('should work with $ a placeholder for array indices', () => {
       const schema = new Schema();
       schema.path('a.$.b').required();
-      schema.path('a.$.b.$').type('string');
-      schema.path('a.$.c.$.$').type('string');
+      schema.path('a.$.b.$').type(String);
+      schema.path('a.$.c.$.$').type(String);
       const res = schema.validate({
         a: [
           { b: ['hello', 'world'] },
@@ -134,14 +136,14 @@ describe('Schema', () => {
     });
 
     test('should strip by default', () => {
-      const schema = new Schema({ a: { type: 'number' } });
+      const schema = new Schema({ a: { type: Number } });
       const obj = { a: 1, b: 1 };
       schema.validate(obj);
       expect(obj).toEqual({ a: 1 });
     });
 
     test('should not strip array elements', () => {
-      const schema = new Schema({ a: { type: 'array' } });
+      const schema = new Schema({ a: { type: Array } });
       const obj = { a: [1, 2, 3] };
       schema.validate(obj);
       expect(obj).toEqual({ a: [1, 2, 3] });
@@ -150,7 +152,7 @@ describe('Schema', () => {
     describe('with strip disabled', () => {
       test('should not delete any keys', () => {
         const obj = { name: 'name', age: 23 };
-        const schema = new Schema({ name: { type: 'string' } });
+        const schema = new Schema({ name: { type: String } });
         schema.validate(obj, { strip: false });
         expect(obj).toHaveProperty('age', 23);
       });
@@ -158,7 +160,7 @@ describe('Schema', () => {
 
     describe('with typecasting enabled', () => {
       test('should typecast before validation', () => {
-        const schema = new Schema({ name: { type: 'string' } });
+        const schema = new Schema({ name: { type: String } });
         const res = schema.validate({ name: 123 }, { typecast: true });
         expect(res).toHaveLength(0);
       });
@@ -166,9 +168,9 @@ describe('Schema', () => {
       test('should typecast arrays and elements within arrays', () => {
         const schema = new Schema();
         schema.path('a.$.b').required();
-        schema.path('a.$.b.$').type('string');
-        schema.path('a.$.c.$.$').type('string');
-        schema.path('b.$').type('number');
+        schema.path('a.$.b.$').type(String);
+        schema.path('a.$.c.$.$').type(String);
+        schema.path('b.$').type(Number);
 
         const obj = {
           a: [{ b: ['a', 'b'] }, { b: 1, c: [['a', 'b'], ['a', 2]] }],
@@ -185,7 +187,7 @@ describe('Schema', () => {
       });
 
       test('should not typecast undefined', () => {
-        const schema = new Schema({ name: { type: 'string' } });
+        const schema = new Schema({ name: { type: String } });
         const wrap = () => schema.validate({}, { typecast: true });
         expect(wrap).not.toThrowError();
       });
@@ -194,7 +196,7 @@ describe('Schema', () => {
 
   describe('.assert()', () => {
     test('should throw if validation fails', () => {
-      const schema = new Schema({ name: { type: 'string' } });
+      const schema = new Schema({ name: { type: String } });
       const wrap = () => schema.assert({ name: 123 });
       expect(wrap).toThrowError();
     });

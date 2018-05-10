@@ -536,11 +536,11 @@ Validate given `value`
 
 ```javascript
 prop.type('number')
-assert(prop.validate(2) == false)
+assert(prop.validate(2) == null)
 assert(prop.validate('hello world') instanceof Error)
 ```
 
-Returns **(ValidationError | [Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean))**
+Returns **ValidationError**
 
 ### Schema
 

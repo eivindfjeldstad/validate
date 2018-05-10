@@ -251,13 +251,13 @@ export default class Property {
    *
    * @example
    * prop.type('number')
-   * assert(prop.validate(2) == false)
+   * assert(prop.validate(2) == null)
    * assert(prop.validate('hello world') instanceof Error)
    *
    * @param {Mixed} value - value to validate
    * @param {Object} ctx - the object containing the value
    * @param {String} [path] - path of the value being validated
-   * @return {ValidationError|Boolean}
+   * @return {ValidationError}
    */
 
   validate(value, ctx, path = this.name) {
@@ -270,7 +270,7 @@ export default class Property {
     if (err) return err;
 
     // No need to continue if value is null-ish
-    if (value == null) return false;
+    if (value == null) return null;
 
     // Run type second
     err = this._run('type', value, ctx, path);
@@ -287,7 +287,7 @@ export default class Property {
       if (err) return err;
     }
 
-    return false;
+    return null;
   }
 
   /**

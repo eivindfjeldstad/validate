@@ -50,7 +50,7 @@ describe('Property', () => {
       });
       expect(prop.validate(1)).toBeInstanceOf(Error);
       expect(prop.validate(2)).toBeInstanceOf(Error);
-      expect(prop.validate(3)).toBe(false);
+      expect(prop.validate(3)).toBe(null);
     });
 
     test('should use property names to look up error messages', () => {
@@ -94,7 +94,7 @@ describe('Property', () => {
       const prop = new Property('test', new Schema());
       prop.required();
       expect(prop.validate(null)).toBeInstanceOf(Error);
-      expect(prop.validate(100)).toBe(false);
+      expect(prop.validate(100)).toBe(null);
     });
 
     test('should use the correct error message', () => {
@@ -115,8 +115,8 @@ describe('Property', () => {
       const prop = new Property('test', new Schema());
       prop.type('string');
       expect(prop.validate(1)).toBeInstanceOf(Error);
-      expect(prop.validate('test')).toBe(false);
-      expect(prop.validate(null)).toBe(false);
+      expect(prop.validate('test')).toBe(null);
+      expect(prop.validate(null)).toBe(null);
     });
 
     test('should set the internal ._type property', () => {
@@ -143,8 +143,8 @@ describe('Property', () => {
       const prop = new Property('test', new Schema());
       prop.match(/^abc$/);
       expect(prop.validate('cab')).toBeInstanceOf(Error);
-      expect(prop.validate('abc')).toBe(false);
-      expect(prop.validate(null)).toBe(false);
+      expect(prop.validate('abc')).toBe(null);
+      expect(prop.validate(null)).toBe(null);
     });
 
     test('should use the correct error message', () => {
@@ -167,8 +167,8 @@ describe('Property', () => {
       prop.length({ min: 2, max: 3 });
       expect(prop.validate('abcd')).toBeInstanceOf(Error);
       expect(prop.validate('a')).toBeInstanceOf(Error);
-      expect(prop.validate('abc')).toBe(false);
-      expect(prop.validate(null)).toBe(false);
+      expect(prop.validate('abc')).toBe(null);
+      expect(prop.validate(null)).toBe(null);
     });
 
     test('should use the correct error message', () => {
@@ -190,9 +190,9 @@ describe('Property', () => {
       const prop = new Property('test', new Schema());
       prop.enum(['one', 'two']);
       expect(prop.validate('three')).toBeInstanceOf(Error);
-      expect(prop.validate('one')).toBe(false);
-      expect(prop.validate('two')).toBe(false);
-      expect(prop.validate(null)).toBe(false);
+      expect(prop.validate('one')).toBe(null);
+      expect(prop.validate('two')).toBe(null);
+      expect(prop.validate(null)).toBe(null);
     });
 
     test('should use the correct error message', () => {
@@ -277,7 +277,7 @@ describe('Property', () => {
       prop.required();
       prop.match(/^abc$/);
       expect(prop.validate(null)).toBeInstanceOf(Error);
-      expect(prop.validate('abc')).toBe(false);
+      expect(prop.validate('abc')).toBe(null);
       expect(prop.validate('cab')).toBeInstanceOf(Error);
     });
 

@@ -20,13 +20,15 @@ const user = new Schema({
     required: true,
     length: { min: 3, max: 32 }
   },
-  name: {
-    type: String,
-    required: true
-  },
   pets: [{
-    name: { type: String },
-    animal: { enum: ['cat', 'dog']}
+    name: {
+      type: String
+      required: true
+    },
+    animal: {
+      type: String
+      enum: ['cat', 'dog', 'cow']
+    }
   }],
   address: {
     street: {
@@ -109,16 +111,14 @@ const event = new Schema({
     required: true
   },
   participants: [{
-    name: {
-      type: String
-    },
+    name: String,
     email: {
       type: String,
       required: true
     },
     things: [{
-      name: { type: String },
-      amount: { type: Number }
+      name: String,
+      amount: Number
     }]
   }]
 })
@@ -213,14 +213,6 @@ const user = new Schema({
 })
 ```
 
-Register a typecaster to enable typecasting:
-
-```js
-user.typecaster({
-  Car: (val) => new Car(val)
-})
-```
-
 ### Chainable API
 
 If you want to avoid constructing large objects, you can add paths to a schema by using the chainable API:
@@ -259,6 +251,21 @@ You can override this setting by passing an option to `.validate()`.
 
 ```js
 user.validate(obj, { typecast: false })
+```
+
+To typecast custom types, you can register a typecaster:
+
+
+```js
+class Car {}
+
+const user = new Schema({
+  car: { type: Car }
+})
+
+user.typecaster({
+  Car: (val) => new Car(val)
+})
 ```
 
 ### Property stripping

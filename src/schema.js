@@ -5,7 +5,7 @@ import Property from './property';
 import Messages from './messages';
 import Validators from './validators';
 import ValidationError from './error';
-import {join, enumerate} from './utils';
+import {walk, join} from './utils';
 
 /**
  * A Schema defines the structure that objects should be validated against.
@@ -153,31 +153,17 @@ export default class Schema {
    * @private
    */
 
-  typecast(obj, props = this.generateProps(obj)) {
-    // Count how many objects are typecasted
-    let counter = 0;
-
-    Object.keys(props).forEach(key => {
-      const prop = props[key];
-      const value = dot.get(obj, key);
-
-      if (value == null) return;
-
-      const cast = prop.typecast(value);
-
-      if (cast === value) return;
-
-      dot.set(obj, key, cast);
-      counter++;
-    });
-
-    if (counter > 0) {
-      // Make another pass in case there are generated array elements
-      // E.g. '"1","2","3"' => ["1","2","3"] => [1, 2, 3]
-      return this.typecast(obj);
+  typecast(obj) {
+    for (let [path, prop] of Object.entries(this.props)) {
+      walk(path, obj, (key, value) => {
+        if (value == null) return;
+        const cast = prop.typecast(value);
+        if (cast === value) return;
+        dot.set(obj, key, cast);
+      });
     }
 
-    return props;
+    return this;
   }
 
   /**
@@ -189,21 +175,30 @@ export default class Schema {
    * @private
    */
 
-  strip(obj, props = this.generateProps(obj), prefix) {
-    Object.keys(obj).forEach(key => {
+  strip(obj, prefix) {
+    const type = typeOf(obj);
+
+    if (type === 'array') {
+      obj.forEach((v, i) => this.strip(v, join('$', prefix)));
+      return this;
+    }
+
+    if (type !== 'object') {
+      return this;
+    }
+
+    for (let [key, val] of Object.entries(obj)) {
       const path = join(key, prefix);
 
-      if (!props[path]) {
-        // Don't strip array elements (#37)
-        if (Array.isArray(obj)) return;
+      if (!this.props[path]) {
         delete obj[key];
-        return;
+        continue;
       }
 
-      if (['object', 'array'].includes(typeOf(obj[key]))) {
-        this.strip(obj[key], props, path);
-      }
-    });
+      this.strip(val, path);
+    }
+
+    return this;
   }
 
   /**
@@ -226,50 +221,22 @@ export default class Schema {
 
     const errors = [];
 
-    // Generate props object and/or typecast
-    // This object includes paths for all array elements.
-    const props = opts.typecast
-      ? this.typecast(obj)
-      : this.generateProps(obj);
-
-    if (opts.strip !== false) {
-      // Pass in props to avoid regenerating
-      this.strip(obj, props);
+    if (opts.typecast) {
+      this.typecast(obj);
     }
 
-    // Validate using the generated `props` object.
-    Object.keys(props).forEach(path => {
-      const value = dot.get(obj, path);
-      const prop = props[path];
-      const err = prop.validate(value, obj, path);
-      if (err) errors.push(err);
-    });
+    if (opts.strip !== false) {
+      this.strip(obj);
+    }
+
+    for (let [path, prop] of Object.entries(this.props)) {
+      walk(path, obj, (key, value) => {
+        const err = prop.validate(value, obj, key);
+        if (err) errors.push(err);
+      });
+    }
 
     return errors;
-  }
-
-  /**
-   * Generate props for each valid path in the given object.
-   *
-   * @param {Object} obj
-   * @return {Object}
-   * @private
-   */
-
-  generateProps(obj) {
-    const props = {};
-
-    Object.keys(this.props).forEach(key => {
-      // Enumerate all valid paths
-      const paths = enumerate(key, obj);
-      // Aassign the original `Property` object to the generated paths.
-      // E.g. some.path.1.in.an.array => some.path.$.in.an.array
-      for (const [key, path] of Object.entries(paths)) {
-        props[key] = this.props[path];
-      }
-    });
-
-    return props;
   }
 
   /**

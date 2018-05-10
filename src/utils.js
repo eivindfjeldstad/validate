@@ -1,34 +1,29 @@
 import dot from 'eivindfjeldstad-dot';
 
 /**
- * Enumerate paths
+ * Walk path
  *
  * @private
  */
 
-export function enumerate(path, obj, prefix = '', map = {}) {
-  const original = map[prefix] || '';
+export function walk(path, obj, callback) {
   const parts = path.split(/\.\$(?=\.|$)/);
   const first = parts.shift();
+  const arr = dot.get(obj, first);
 
   if (!parts.length) {
-    map[prefix + path] = original + path;
-    return map;
+    return callback(first, arr);
   }
 
-  const arr = dot.get(obj, prefix + first);
-
   if (!Array.isArray(arr)) {
-    return map;
+    return;
   }
 
   for (let i = 0; i < arr.length; i++) {
-    const current = join(i, prefix + first);
-    map[current] = join('$', original + first);
-    enumerate(parts.join('.$'), obj, current, map);
+    const current = join(i, first);
+    const next = current + parts.join('.$');
+    walk(next, obj, callback);
   }
-
-  return map;
 }
 
 /**

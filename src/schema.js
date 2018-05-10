@@ -111,8 +111,8 @@ export default class Schema {
     if (!rules) return prop;
 
     // type shorthand
-    // `{ name: 'string' }`
-    if (typeof rules == 'string') {
+    // `{ name: String }`
+    if (typeof rules == 'string' || typeof rules == 'function') {
       prop.type(rules);
       return prop;
     }

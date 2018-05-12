@@ -118,9 +118,18 @@ export default class Schema {
     }
 
     // Allow arrays to be passed implicitly:
-    // `{ keywords: [{ type: String }]}`
+    // `{ keywords: [String] }`
+    // `{ keyVal: [[String, Number]] }`
     if (Array.isArray(rules)) {
-      return this.path(join('$', path), rules[0]);
+      prop.type(Array);
+
+      if (rules.length == 1) {
+        prop.each(rules[0]);
+      } else {
+        prop.elements(rules);
+      }
+
+      return prop;
     }
 
     let nested = false;

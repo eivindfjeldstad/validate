@@ -25,6 +25,16 @@ describe('Schema', () => {
       expect(schema.props['b']._type).toBe(String);
     });
 
+    test('should accept implicit arrays', () => {
+      const schema = new Schema();
+      schema.path('a', [String]);
+      schema.path('b', [String, Number]);
+      const errors = schema.validate({ a: ['a', 1], b: ['a', 'b'] });
+      expect(errors.length).toBe(2);
+      expect(errors[0].path).toBe('a.1');
+      expect(errors[1].path).toBe('b.1');
+    });
+
     test('should create properties for all subpaths', () => {
       const schema = new Schema();
       schema.path('hello.planet.earth');

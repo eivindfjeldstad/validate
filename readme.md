@@ -66,7 +66,7 @@ const post = new Schema({
   title: { required: true }
 })
 
-post.messsage({
+post.message({
   required: (path) => `${path} can not be empty.`
 })
 

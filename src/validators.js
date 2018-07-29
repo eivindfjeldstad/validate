@@ -60,6 +60,27 @@ const Validators = {
   },
 
   /**
+   * Validates size.
+   *
+   * @param {Number} value the number being validated
+   * @param {Object} ctx the object being validated
+   * @param {Object|Number} size object with .min and/or .max props or a number
+   * @param {String|Number} [size.min] - minimum size
+   * @param {String|Number} [size.max] - maximum size
+   * @return {Boolean}
+   */
+
+  size(value, ctx, size) {
+    if (typeof size == 'number') {
+      return value === size;
+    }
+    let {min, max} = size;
+    if (parseInt(min) !== undefined && value < min) return false;
+    if (parseInt(max) !== undefined && value > max) return false;
+    return true;
+  },
+
+  /**
    * Validates enums.
    *
    * @param {String} value the string being validated

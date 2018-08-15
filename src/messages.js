@@ -43,6 +43,25 @@ const Messages = {
     }
   },
 
+  // Size message
+  size(prop, ctx, size) {
+    if (typeof size == 'number') {
+      return `${prop} must have a size of ${size}.`;
+    }
+
+    const {min, max} = size;
+
+    if (min && max) {
+      return `${prop} must be between ${min} and ${max}.`;
+    }
+    if (max) {
+      return `${prop} must be less than ${max}.`;
+    }
+    if (min) {
+      return `${prop} must be greater than ${min}.`;
+    }
+  },
+
   // Enum message
   enum(prop, ctx, enums) {
     const copy = enums.slice();

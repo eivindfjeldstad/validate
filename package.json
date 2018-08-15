@@ -32,7 +32,7 @@
     "babel-jest": "^23.0.0",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-preset-env": "^1.6.1",
-    "documentation": "^7.0.0",
+    "documentation": "^8.1.0",
     "eslint": "^5.0.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.11.0",

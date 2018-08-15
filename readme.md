@@ -432,6 +432,26 @@ prop.length(10)
 
 Returns **[Property](#property)**
 
+#### size
+
+Registers a validator that checks size.
+
+**Parameters**
+
+-   `size` **([Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number))** object with `.min` and `.max` properties or a number
+    -   `size.min` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** minimum length
+    -   `size.max` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** maximum length
+
+**Examples**
+
+```javascript
+prop.size({ min: 8, max: 255 })
+prop.size(10)
+```
+
+Returns **[Property](#property)**
+
+
 #### enum
 
 Registers a validator for enums.

@@ -80,6 +80,31 @@ describe('Validators', () => {
     });
   });
 
+  describe('.size()', () => {
+    test(
+      'should return true if given value has size between given min and max',
+      () => {
+        expect(Validators.size(2, {}, { min: 2, max: 4 })).toBe(true);
+        expect(Validators.size(3, {}, { min: 2, max: 4 })).toBe(true);
+        expect(Validators.size(4, {}, { min: 2, max: 4 })).toBe(true);
+        expect(Validators.size(5, {}, { min: 2 })).toBe(true);
+        expect(Validators.size(1, {}, { max: 4 })).toBe(true);
+      }
+    );
+
+    test('should return false otherwise', () => {
+      expect(Validators.size(1, {}, { min: 2, max: 4 })).toBe(false);
+      expect(Validators.size(5, {}, { min: 2, max: 4 })).toBe(false);
+      expect(Validators.size(1, {}, { min: 2 })).toBe(false);
+      expect(Validators.size(5, {}, { max: 4 })).toBe(false);
+    });
+
+    test('should work with a number as an exact size', () => {
+      expect(Validators.size(1, {}, 2)).toBe(false);
+      expect(Validators.size(2, {}, 2)).toBe(true);
+    });
+  });
+
   describe('.enum()', () => {
     test('should return true if given value is included in given array', () => {
       expect(Validators.enum('a', {}, ['a', 'b'])).toBe(true);

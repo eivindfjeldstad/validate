@@ -145,6 +145,23 @@ export default class Property {
   }
 
   /**
+   * Registers a validator that checks size.
+   *
+   * @example
+   * prop.size({ min: 8, max: 255 })
+   * prop.size(10)
+   *
+   * @param {Object|Number} rules - object with `.min` and `.max` properties or a number
+   * @param {Number} rules.min - minimum size
+   * @param {Number} rules.max - maximum size
+   * @return {Property}
+   */
+
+  size(rules) {
+    return this._register('size', [rules]);
+  }
+
+  /**
    * Registers a validator for enums.
    *
    * @example

@@ -255,7 +255,6 @@ user.validate(obj, { typecast: false })
 
 To typecast custom types, you can register a typecaster:
 
-
 ```js
 class Car {}
 
@@ -280,33 +279,77 @@ Set `.strip = false` on the options object to disable this behavior.
 #### Table of Contents
 
 -   [Property](#property)
+    -   [Parameters](#parameters)
     -   [message](#message)
+        -   [Parameters](#parameters-1)
+        -   [Examples](#examples)
     -   [schema](#schema)
+        -   [Parameters](#parameters-2)
+        -   [Examples](#examples-1)
     -   [use](#use)
+        -   [Parameters](#parameters-3)
+        -   [Examples](#examples-2)
     -   [required](#required)
+        -   [Parameters](#parameters-4)
+        -   [Examples](#examples-3)
     -   [type](#type)
+        -   [Parameters](#parameters-5)
+        -   [Examples](#examples-4)
     -   [length](#length)
+        -   [Parameters](#parameters-6)
+        -   [Examples](#examples-5)
+    -   [size](#size)
+        -   [Parameters](#parameters-7)
+        -   [Examples](#examples-6)
     -   [enum](#enum)
+        -   [Parameters](#parameters-8)
+        -   [Examples](#examples-7)
     -   [match](#match)
+        -   [Parameters](#parameters-9)
+        -   [Examples](#examples-8)
     -   [each](#each)
+        -   [Parameters](#parameters-10)
+        -   [Examples](#examples-9)
     -   [elements](#elements)
+        -   [Parameters](#parameters-11)
+        -   [Examples](#examples-10)
     -   [path](#path)
+        -   [Parameters](#parameters-12)
+        -   [Examples](#examples-11)
     -   [typecast](#typecast)
+        -   [Parameters](#parameters-13)
+        -   [Examples](#examples-12)
     -   [validate](#validate)
+        -   [Parameters](#parameters-14)
+        -   [Examples](#examples-13)
 -   [Schema](#schema-1)
+    -   [Parameters](#parameters-15)
+    -   [Examples](#examples-14)
     -   [path](#path-1)
+        -   [Parameters](#parameters-16)
+        -   [Examples](#examples-15)
     -   [validate](#validate-1)
+        -   [Parameters](#parameters-17)
+        -   [Examples](#examples-16)
     -   [assert](#assert)
+        -   [Parameters](#parameters-18)
+        -   [Examples](#examples-17)
     -   [message](#message-1)
+        -   [Parameters](#parameters-19)
+        -   [Examples](#examples-18)
     -   [validator](#validator)
+        -   [Parameters](#parameters-20)
+        -   [Examples](#examples-19)
     -   [typecaster](#typecaster)
+        -   [Parameters](#parameters-21)
+        -   [Examples](#examples-20)
 
 ### Property
 
 A property instance gets returned whenever you call `schema.path()`.
 Properties are also created internally when an object is passed to the Schema constructor.
 
-**Parameters**
+#### Parameters
 
 -   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the name of the property
 -   `schema` **[Schema](#schema)** parent schema
@@ -315,35 +358,35 @@ Properties are also created internally when an object is passed to the Schema co
 
 Registers messages.
 
-**Parameters**
+##### Parameters
 
--   `messages` **([Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))**
+-   `messages` **([Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))** 
 
-**Examples**
+##### Examples
 
 ```javascript
 prop.message('something is wrong')
 prop.message({ required: 'thing is required.' })
 ```
 
-Returns **[Property](#property)**
+Returns **[Property](#property)** 
 
 #### schema
 
 Mount given `schema` on current path.
 
-**Parameters**
+##### Parameters
 
 -   `schema` **[Schema](#schema)** the schema to mount
 
-**Examples**
+##### Examples
 
 ```javascript
 const user = new Schema({ email: String })
 prop.schema(user)
 ```
 
-Returns **[Property](#property)**
+Returns **[Property](#property)** 
 
 #### use
 
@@ -354,11 +397,11 @@ named error messages/generators to `schema.message()`
 The message generator receives the value being validated,
 the object it belongs to and any additional arguments.
 
-**Parameters**
+##### Parameters
 
 -   `fns` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** object with named validation functions to call
 
-**Examples**
+##### Examples
 
 ```javascript
 const schema = new Schema()
@@ -375,33 +418,33 @@ prop.use({
 })
 ```
 
-Returns **[Property](#property)**
+Returns **[Property](#property)** 
 
 #### required
 
 Registers a validator that checks for presence.
 
-**Parameters**
+##### Parameters
 
 -   `bool` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** `true` if required, `false` otherwise (optional, default `true`)
 
-**Examples**
+##### Examples
 
 ```javascript
 prop.required()
 ```
 
-Returns **[Property](#property)**
+Returns **[Property](#property)** 
 
 #### type
 
 Registers a validator that checks if a value is of a given `type`
 
-**Parameters**
+##### Parameters
 
 -   `type` **([String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function))** type to check for
 
-**Examples**
+##### Examples
 
 ```javascript
 prop.type(String)
@@ -411,89 +454,88 @@ prop.type(String)
 prop.type('string')
 ```
 
-Returns **[Property](#property)**
+Returns **[Property](#property)** 
 
 #### length
 
 Registers a validator that checks length.
 
-**Parameters**
+##### Parameters
 
 -   `rules` **([Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number))** object with `.min` and `.max` properties or a number
     -   `rules.min` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** minimum length
     -   `rules.max` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** maximum length
 
-**Examples**
+##### Examples
 
 ```javascript
 prop.length({ min: 8, max: 255 })
 prop.length(10)
 ```
 
-Returns **[Property](#property)**
+Returns **[Property](#property)** 
 
 #### size
 
 Registers a validator that checks size.
 
-**Parameters**
+##### Parameters
 
--   `size` **([Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number))** object with `.min` and `.max` properties or a number
-    -   `size.min` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** minimum length
-    -   `size.max` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** maximum length
+-   `rules` **([Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number))** object with `.min` and `.max` properties or a number
+    -   `rules.min` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** minimum size
+    -   `rules.max` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** maximum size
 
-**Examples**
+##### Examples
 
 ```javascript
 prop.size({ min: 8, max: 255 })
 prop.size(10)
 ```
 
-Returns **[Property](#property)**
-
+Returns **[Property](#property)** 
 
 #### enum
 
 Registers a validator for enums.
 
-**Parameters**
+##### Parameters
 
 -   `enums`  
 -   `rules` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** allowed values
 
-**Examples**
+##### Examples
 
 ```javascript
 prop.enum(['cat', 'dog'])
 ```
 
-Returns **[Property](#property)**
+Returns **[Property](#property)** 
 
 #### match
 
 Registers a validator that checks if a value matches given `regexp`.
 
-**Parameters**
+##### Parameters
 
 -   `regexp` **[RegExp](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp)** regular expression to match
 
-**Examples**
+##### Examples
 
 ```javascript
 prop.match(/some\sregular\sexpression/)
 ```
 
-Returns **[Property](#property)**
+Returns **[Property](#property)** 
 
 #### each
 
 Registers a validator that checks each value in an array against given `rules`.
 
-**Parameters**
+##### Parameters
 
 -   `rules` **([Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Schema](#schema) \| [Property](#property))** rules to use
 
-**Examples**
+##### Examples
 
 ```javascript
 prop.each({ type: String })
@@ -502,33 +544,33 @@ prop.each({ things: [{ type: String }]})
 prop.each(schema)
 ```
 
-Returns **[Property](#property)**
+Returns **[Property](#property)** 
 
 #### elements
 
 Registers paths for array elements on the parent schema, with given array of rules.
 
-**Parameters**
+##### Parameters
 
 -   `arr` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** array of rules to use
 
-**Examples**
+##### Examples
 
 ```javascript
 prop.elements([{ type: String }, { type: Number }])
 ```
 
-Returns **[Property](#property)**
+Returns **[Property](#property)** 
 
 #### path
 
 Proxy method for schema path. Makes chaining properties together easier.
 
-**Parameters**
+##### Parameters
 
--   `args` **...any**
+-   `args` **...any** 
 
-**Examples**
+##### Examples
 
 ```javascript
 schema
@@ -540,30 +582,30 @@ schema
 
 Typecast given `value`
 
-**Parameters**
+##### Parameters
 
 -   `value` **Mixed** value to typecast
 
-**Examples**
+##### Examples
 
 ```javascript
 prop.type(String)
 prop.typecast(123) // => '123'
 ```
 
-Returns **Mixed**
+Returns **Mixed** 
 
 #### validate
 
 Validate given `value`
 
-**Parameters**
+##### Parameters
 
 -   `value` **Mixed** value to validate
 -   `ctx` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** the object containing the value
 -   `path` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** path of the value being validated (optional, default `this.name`)
 
-**Examples**
+##### Examples
 
 ```javascript
 prop.type(Number)
@@ -571,20 +613,20 @@ assert(prop.validate(2) == null)
 assert(prop.validate('hello world') instanceof Error)
 ```
 
-Returns **ValidationError**
+Returns **ValidationError** 
 
 ### Schema
 
 A Schema defines the structure that objects should be validated against.
 
-**Parameters**
+#### Parameters
 
 -   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** schema definition (optional, default `{}`)
 -   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** options (optional, default `{}`)
     -   `opts.typecast` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** typecast values before validation (optional, default `false`)
     -   `opts.strip` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** strip properties not defined in the schema (optional, default `true`)
 
-**Examples**
+#### Examples
 
 ```javascript
 const post = new Schema({
@@ -623,12 +665,12 @@ const author = new Schema({
 
 Create or update `path` with given `rules`.
 
-**Parameters**
+##### Parameters
 
 -   `path` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** full path using dot-notation
 -   `rules` **([Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object) \| [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array) \| [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Schema](#schema) \| [Property](#property))?** rules to apply
 
-**Examples**
+##### Examples
 
 ```javascript
 const schema = new Schema()
@@ -636,18 +678,18 @@ schema.path('name.first', { type: String })
 schema.path('name.last').type(String).required()
 ```
 
-Returns **[Property](#property)**
+Returns **[Property](#property)** 
 
 #### validate
 
 Validate given `obj`.
 
-**Parameters**
+##### Parameters
 
 -   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** the object to validate
 -   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** options, see [Schema](#schema-1) (optional, default `{}`)
 
-**Examples**
+##### Examples
 
 ```javascript
 const schema = new Schema({ name: { required: true }})
@@ -657,18 +699,18 @@ assert(errors[0].message == 'name is required')
 assert(errors[0].path == 'name')
 ```
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)**
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** 
 
 #### assert
 
 Assert that given `obj` is valid.
 
-**Parameters**
+##### Parameters
 
--   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
--   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?**
+-   `obj` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+-   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
 
-**Examples**
+##### Examples
 
 ```javascript
 const schema = new Schema({ name: String })
@@ -679,12 +721,12 @@ schema.assert({ name: 1 }) // Throws an error
 
 Override default error messages.
 
-**Parameters**
+##### Parameters
 
 -   `name` **([String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object))** name of the validator or an object with name-message pairs
 -   `message` **([String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function))?** the message or message generator to use
 
-**Examples**
+##### Examples
 
 ```javascript
 const hex = (val) => /^0x[0-9a-f]+$/.test(val)
@@ -696,18 +738,18 @@ schema.message('hex', path => `${path} must be hexadecimal`)
 schema.message({ hex: path => `${path} must be hexadecimal` })
 ```
 
-Returns **[Schema](#schema)**
+Returns **[Schema](#schema)** 
 
 #### validator
 
 Override default validators.
 
-**Parameters**
+##### Parameters
 
 -   `name` **([String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object))** name of the validator or an object with name-function pairs
 -   `fn` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** the function to use
 
-**Examples**
+##### Examples
 
 ```javascript
 schema.validator('required', val => val != null)
@@ -717,18 +759,18 @@ schema.validator('required', val => val != null)
 schema.validator({ required: val => val != null })
 ```
 
-Returns **[Schema](#schema)**
+Returns **[Schema](#schema)** 
 
 #### typecaster
 
 Override default typecasters.
 
-**Parameters**
+##### Parameters
 
 -   `name` **([String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object))** name of the validator or an object with name-function pairs
 -   `fn` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** the function to use
 
-**Examples**
+##### Examples
 
 ```javascript
 schema.typecaster('SomeClass', val => new SomeClass(val))
@@ -738,7 +780,7 @@ schema.typecaster('SomeClass', val => new SomeClass(val))
 schema.typecaster({ SomeClass: val => new SomeClass(val) })
 ```
 
-Returns **[Schema](#schema)**
+Returns **[Schema](#schema)** 
 
 ## Licence
 

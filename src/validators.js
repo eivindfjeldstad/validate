@@ -75,8 +75,8 @@ const Validators = {
       return value === size;
     }
     let {min, max} = size;
-    if (parseInt(min) !== undefined && value < min) return false;
-    if (parseInt(max) !== undefined && value > max) return false;
+    if (parseInt(min) != null && value < min) return false;
+    if (parseInt(max) != null && value > max) return false;
     return true;
   },
 

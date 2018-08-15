@@ -185,6 +185,30 @@ describe('Property', () => {
     });
   });
 
+  describe('.size()', () => {
+    test('should register a validator', () => {
+      const prop = new Property('test', new Schema());
+      prop.size({ min: 2, max: 3 });
+      expect(prop.validate(4)).toBeInstanceOf(Error);
+      expect(prop.validate(1)).toBeInstanceOf(Error);
+      expect(prop.validate(2)).toBe(null);
+      expect(prop.validate(null)).toBe(null);
+    });
+
+    test('should use the correct error message', () => {
+      const prop = new Property('test', new Schema());
+      const rule = { max: 1 };
+      const message = Messages.size(prop.name, {}, rule);
+      prop.size(rule);
+      expect(prop.validate(2).message).toBe(message);
+    });
+
+    test('should support chaining', () => {
+      const prop = new Property('test', new Schema());
+      expect(prop.size({})).toBe(prop);
+    });
+  });
+
   describe('.enum()', () => {
     test('should register a validator', () => {
       const prop = new Property('test', new Schema());

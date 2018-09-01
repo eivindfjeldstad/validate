@@ -51,13 +51,13 @@ const Messages = {
 
     const {min, max} = size;
 
-    if (min && max) {
+    if (min !== undefined && max !== undefined) {
       return `${prop} must be between ${min} and ${max}.`;
     }
-    if (max) {
+    if (max !== undefined) {
       return `${prop} must be less than ${max}.`;
     }
-    if (min) {
+    if (min !== undefined) {
       return `${prop} must be greater than ${min}.`;
     }
   },

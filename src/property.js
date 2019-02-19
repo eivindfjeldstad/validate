@@ -371,6 +371,6 @@ export default class Property {
       message = message(path, ctx, ...args);
     }
 
-    return new ValidationError(message, path);
+    return new ValidationError(message, path, type);
   }
 }

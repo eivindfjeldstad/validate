@@ -314,6 +314,51 @@ export default class Property {
   }
 
   /**
+ * Validate given `value`
+ *
+ * @example
+ * prop.type(Number)
+ * assert(prop.validate(2) == null)
+ * assert(prop.validate('hello world') instanceof Error)
+ *
+ * @param {Mixed} value - value to validate
+ * @param {Object} ctx - the object containing the value
+ * @param {String} [path] - path of the value being validated
+ * @return {ValidationError}
+ */
+
+  validateAll(value, ctx, path = this.name) {
+    const types = Object.keys(this.registry);
+    const done = {};
+    const errors = []
+    let err;
+
+    // Required first
+    err = this._run('required', value, ctx, path);
+    if (err) errors.push(err);
+
+    // No need to continue if value is null-ish
+    if (value == null) return null;
+
+    // Run type second
+    err = this._run('type', value, ctx, path);
+    if (err) errors.push(err);
+
+    // Make sure required and run are not executed again
+    done.required = true;
+    done.type = true;
+
+    // Run the rest
+    for (let type of types) {
+      if (done[type]) continue;
+      err = this._run(type, value, ctx, path);
+      if (err) errors.push(err);
+    }
+
+    return errors.length ? errors : null;
+  }
+
+  /**
    * Run validator of given `type`
    *
    * @param {String} type - type of validator
@@ -327,7 +372,7 @@ export default class Property {
   _run(type, value, ctx, path) {
     if (!this.registry[type]) return;
     const schema = this._schema;
-    const {args, fn} = this.registry[type];
+    const { args, fn } = this.registry[type];
     let validator = fn || schema.validators[type];
     let valid = validator(value, ctx, ...args, path);
     if (!valid) return this._error(type, ctx, args, path);
@@ -371,6 +416,6 @@ export default class Property {
       message = message(path, ctx, ...args);
     }
 
-    return new ValidationError(message, path);
+    return new ValidationError(message, path, type);
   }
 }

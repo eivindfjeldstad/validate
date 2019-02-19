@@ -249,6 +249,44 @@ export default class Schema {
     return errors;
   }
 
+    /**
+   * Validate given `obj`.
+   *
+   * @example
+   * const schema = new Schema({ name: { required: true }})
+   * const errors = schema.validate({})
+   * assert(errors.length == 1)
+   * assert(errors[0].message == 'name is required')
+   * assert(errors[0].path == 'name')
+   *
+   * @param {Object} obj - the object to validate
+   * @param {Object} [opts] - options, see [Schema](#schema-1)
+   * @return {Array}
+   */
+
+  validateAll(obj, opts = {}) {
+    opts = Object.assign(this.opts, opts);
+
+    let errors = [];
+
+    if (opts.typecast) {
+      this.typecast(obj);
+    }
+
+    if (opts.strip !== false) {
+      this.strip(obj);
+    }
+
+    for (let [path, prop] of Object.entries(this.props)) {
+      walk(path, obj, (key, value) => {
+        const err = prop.validateAll(value, obj, key);
+        if (err) errors = errors.concat(err);
+      });
+    }
+
+    return errors;
+  }
+
   /**
    * Assert that given `obj` is valid.
    *

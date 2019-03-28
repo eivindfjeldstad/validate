@@ -337,28 +337,9 @@ export default class Property {
 
   validate(value, ctx, path = this.name) {
     const types = Object.keys(this.registry);
-    const done = {};
-    let err;
 
-    // Required first
-    err = this._run('required', value, ctx, path);
-    if (err) return err;
-
-    // No need to continue if value is null-ish
-    if (value == null) return null;
-
-    // Run type second
-    err = this._run('type', value, ctx, path);
-    if (err) return err;
-
-    // Make sure required and run are not executed again
-    done.required = true;
-    done.type = true;
-
-    // Run the rest
     for (let type of types) {
-      if (done[type]) continue;
-      err = this._run(type, value, ctx, path);
+      let err = this._run(type, value, ctx, path);
       if (err) return err;
     }
 

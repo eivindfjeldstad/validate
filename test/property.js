@@ -344,29 +344,6 @@ describe('Property', () => {
       expect(prop.validate('cab')).toBeInstanceOf(Error);
     });
 
-    test('should run `required` and `type` validators first', () => {
-      const schema = new Schema();
-      const prop = new Property('test', schema);
-      const done = {};
-      let counter = 0;
-
-      schema.validator({
-        required: () => done.required = ++counter,
-        type: () => done.type = ++counter,
-        match: () => done.match = ++counter,
-        enum: () => done.enum = ++counter
-      });
-
-      prop.match();
-      prop.enum();
-      prop.type();
-      prop.required();
-      prop.validate('something');
-
-      expect(done.required).toBe(1);
-      expect(done.type).toBe(2);
-    });
-
     test('should return a ValidationError', () => {
       const prop = new Property('some.path', new Schema());
       prop.required();

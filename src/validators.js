@@ -31,6 +31,8 @@ const Validators = {
    */
 
   type(value, ctx, name) {
+    if (value == null) return true;
+
     if (typeof name == 'function') {
       return value.constructor === name;
     }
@@ -50,6 +52,7 @@ const Validators = {
    */
 
   length(value, ctx, len) {
+    if (value == null) return true;
     if (typeof len == 'number') {
       return value.length === len;
     }
@@ -71,6 +74,7 @@ const Validators = {
    */
 
   size(value, ctx, size) {
+    if (value == null) return true;
     if (typeof size == 'number') {
       return value === size;
     }
@@ -90,6 +94,7 @@ const Validators = {
    */
 
   enum(value, ctx, enums) {
+    if (value == null) return true;
     return enums.includes(value);
   },
 
@@ -103,6 +108,7 @@ const Validators = {
    */
 
   match(value, ctx, regexp) {
+    if (value == null) return true;
     return regexp.test(value);
   }
 };

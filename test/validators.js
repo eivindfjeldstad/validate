@@ -29,6 +29,11 @@ describe('Validators', () => {
       expect(Validators.type({}, {}, 'object')).toBe(true);
     });
 
+    test('should return true if given value null or undefined', () => {
+      expect(Validators.type(null, {}, 'string')).toBe(true);
+      expect(Validators.type(undefined, {}, 'string')).toBe(true);
+    });
+
     test('should accept a constructor as type', () => {
       class A {};
       expect(Validators.type(new A(), {}, A)).toBe(true);
@@ -50,6 +55,11 @@ describe('Validators', () => {
       expect(Validators.match('abc', {}, /^abc$/)).toBe(true);
     });
 
+    test('should return true if given value null or undefined', () => {
+      expect(Validators.match(null, {}, /^abc$/)).toBe(true);
+      expect(Validators.match(undefined, {}, /^abc$/)).toBe(true);
+    });
+
     test('should return false otherwise', () => {
       expect(Validators.match('cba', {}, /^abc$/)).toBe(false);
     });
@@ -66,6 +76,11 @@ describe('Validators', () => {
         expect(Validators.length('a', {}, { max: 4 })).toBe(true);
       }
     );
+
+    test('should return true if given value null or undefined', () => {
+      expect(Validators.length(null, {}, { min: 2, max: 4 })).toBe(true);
+      expect(Validators.length(undefined, {}, { min: 2, max: 4 })).toBe(true);
+    });
 
     test('should return false otherwise', () => {
       expect(Validators.length('a', {}, { min: 2, max: 4 })).toBe(false);
@@ -92,6 +107,11 @@ describe('Validators', () => {
       }
     );
 
+    test('should return true if given value null or undefined', () => {
+      expect(Validators.size(null, {}, { min: 2, max: 4 })).toBe(true);
+      expect(Validators.size(undefined, {}, { min: 2, max: 4 })).toBe(true);
+    });
+
     test('should return false otherwise', () => {
       expect(Validators.size(1, {}, { min: 2, max: 4 })).toBe(false);
       expect(Validators.size(5, {}, { min: 2, max: 4 })).toBe(false);
@@ -109,6 +129,11 @@ describe('Validators', () => {
     test('should return true if given value is included in given array', () => {
       expect(Validators.enum('a', {}, ['a', 'b'])).toBe(true);
       expect(Validators.enum('b', {}, ['a', 'b'])).toBe(true);
+    });
+
+    test('should return true if given value null or undefined', () => {
+      expect(Validators.enum(null, {}, ['a', 'b'])).toBe(true);
+      expect(Validators.enum(undefined, {}, ['a', 'b'])).toBe(true);
     });
 
     test('should return false otherwise', () => {

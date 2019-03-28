@@ -128,6 +128,58 @@ export default class Property {
   }
 
   /**
+   * Convenience method for setting type to `String`
+   *
+   * @example
+   * prop.string()
+   *
+   * @return {Property}
+   */
+
+  string() {
+    return this.type(String);
+  }
+
+  /**
+   * Convenience method for setting type to `Number`
+   *
+   * @example
+   * prop.number()
+   *
+   * @return {Property}
+   */
+
+  number() {
+    return this.type(Number);
+  }
+
+  /**
+   * Convenience method for setting type to `Array`
+   *
+   * @example
+   * prop.array()
+   *
+   * @return {Property}
+   */
+
+  array() {
+    return this.type(Array);
+  }
+
+  /**
+   * Convenience method for setting type to `Date`
+   *
+   * @example
+   * prop.date()
+   *
+   * @return {Property}
+   */
+
+  date() {
+    return this.type(Date);
+  }
+
+  /**
    * Registers a validator that checks length.
    *
    * @example

@@ -138,6 +138,38 @@ describe('Property', () => {
     });
   });
 
+  describe('.string()', () => {
+    test('should set type to string', () => {
+      const prop = new Property('test', new Schema());
+      prop.string();
+      expect(prop._type).toBe(String);
+    });
+  });
+
+  describe('.number()', () => {
+    test('should set type to array', () => {
+      const prop = new Property('test', new Schema());
+      prop.number();
+      expect(prop._type).toBe(Number);
+    });
+  });
+
+  describe('.date()', () => {
+    test('should set type to date', () => {
+      const prop = new Property('test', new Schema());
+      prop.date();
+      expect(prop._type).toBe(Date);
+    });
+  });
+
+  describe('.array()', () => {
+    test('should set type to array', () => {
+      const prop = new Property('test', new Schema());
+      prop.array();
+      expect(prop._type).toBe(Array);
+    });
+  });
+
   describe('.match()', () => {
     test('should register a validator', () => {
       const prop = new Property('test', new Schema());

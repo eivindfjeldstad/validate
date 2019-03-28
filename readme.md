@@ -295,54 +295,62 @@ Set `.strip = false` on the options object to disable this behavior.
     -   [type](#type)
         -   [Parameters](#parameters-5)
         -   [Examples](#examples-4)
+    -   [string](#string)
+        -   [Examples](#examples-5)
+    -   [number](#number)
+        -   [Examples](#examples-6)
+    -   [array](#array)
+        -   [Examples](#examples-7)
+    -   [date](#date)
+        -   [Examples](#examples-8)
     -   [length](#length)
         -   [Parameters](#parameters-6)
-        -   [Examples](#examples-5)
+        -   [Examples](#examples-9)
     -   [size](#size)
         -   [Parameters](#parameters-7)
-        -   [Examples](#examples-6)
+        -   [Examples](#examples-10)
     -   [enum](#enum)
         -   [Parameters](#parameters-8)
-        -   [Examples](#examples-7)
+        -   [Examples](#examples-11)
     -   [match](#match)
         -   [Parameters](#parameters-9)
-        -   [Examples](#examples-8)
+        -   [Examples](#examples-12)
     -   [each](#each)
         -   [Parameters](#parameters-10)
-        -   [Examples](#examples-9)
+        -   [Examples](#examples-13)
     -   [elements](#elements)
         -   [Parameters](#parameters-11)
-        -   [Examples](#examples-10)
+        -   [Examples](#examples-14)
     -   [path](#path)
         -   [Parameters](#parameters-12)
-        -   [Examples](#examples-11)
+        -   [Examples](#examples-15)
     -   [typecast](#typecast)
         -   [Parameters](#parameters-13)
-        -   [Examples](#examples-12)
+        -   [Examples](#examples-16)
     -   [validate](#validate)
         -   [Parameters](#parameters-14)
-        -   [Examples](#examples-13)
+        -   [Examples](#examples-17)
 -   [Schema](#schema-1)
     -   [Parameters](#parameters-15)
-    -   [Examples](#examples-14)
+    -   [Examples](#examples-18)
     -   [path](#path-1)
         -   [Parameters](#parameters-16)
-        -   [Examples](#examples-15)
+        -   [Examples](#examples-19)
     -   [validate](#validate-1)
         -   [Parameters](#parameters-17)
-        -   [Examples](#examples-16)
+        -   [Examples](#examples-20)
     -   [assert](#assert)
         -   [Parameters](#parameters-18)
-        -   [Examples](#examples-17)
+        -   [Examples](#examples-21)
     -   [message](#message-1)
         -   [Parameters](#parameters-19)
-        -   [Examples](#examples-18)
+        -   [Examples](#examples-22)
     -   [validator](#validator)
         -   [Parameters](#parameters-20)
-        -   [Examples](#examples-19)
+        -   [Examples](#examples-23)
     -   [typecaster](#typecaster)
         -   [Parameters](#parameters-21)
-        -   [Examples](#examples-20)
+        -   [Examples](#examples-24)
 
 ### Property
 
@@ -452,6 +460,54 @@ prop.type(String)
 
 ```javascript
 prop.type('string')
+```
+
+Returns **[Property](#property)** 
+
+#### string
+
+Convenience method for setting type to `String`
+
+##### Examples
+
+```javascript
+prop.string()
+```
+
+Returns **[Property](#property)** 
+
+#### number
+
+Convenience method for setting type to `Number`
+
+##### Examples
+
+```javascript
+prop.number()
+```
+
+Returns **[Property](#property)** 
+
+#### array
+
+Convenience method for setting type to `Array`
+
+##### Examples
+
+```javascript
+prop.array()
+```
+
+Returns **[Property](#property)** 
+
+#### date
+
+Convenience method for setting type to `Date`
+
+##### Examples
+
+```javascript
+prop.date()
 ```
 
 Returns **[Property](#property)** 

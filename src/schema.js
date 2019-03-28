@@ -6,7 +6,7 @@ import Property from './property';
 import Messages from './messages';
 import Validators from './validators';
 import ValidationError from './error';
-import {walk, join, assign} from './utils';
+import { walk, join, assign } from './utils';
 
 /**
  * A Schema defines the structure that objects should be validated against.
@@ -123,7 +123,7 @@ export default class Schema {
     if (Array.isArray(rules)) {
       prop.type(Array);
 
-      if (rules.length == 1) {
+      if (rules.length === 1) {
         prop.each(rules[0]);
       } else {
         prop.elements(rules);

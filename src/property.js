@@ -379,7 +379,7 @@ export default class Property {
   _run(type, value, ctx, path) {
     if (!this.registry[type]) return;
     const schema = this._schema;
-    const {args, fn} = this.registry[type];
+    const { args, fn } = this.registry[type];
     let validator = fn || schema.validators[type];
     let valid = validator(value, ctx, ...args, path);
     if (!valid) return this._error(type, ctx, args, path);

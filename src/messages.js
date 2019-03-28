@@ -30,7 +30,7 @@ const Messages = {
       return `${prop} must have a length of ${len}.`;
     }
 
-    const {min, max} = len;
+    const { min, max } = len;
 
     if (min && max) {
       return `${prop} must have a length between ${min} and ${max}.`;
@@ -49,7 +49,7 @@ const Messages = {
       return `${prop} must have a size of ${size}.`;
     }
 
-    const {min, max} = size;
+    const { min, max } = size;
 
     if (min !== undefined && max !== undefined) {
       return `${prop} must be between ${min} and ${max}.`;

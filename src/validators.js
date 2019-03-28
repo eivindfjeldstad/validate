@@ -53,7 +53,7 @@ const Validators = {
     if (typeof len == 'number') {
       return value.length === len;
     }
-    let {min, max} = len;
+    let { min, max } = len;
     if (min && value.length < min) return false;
     if (max && value.length > max) return false;
     return true;
@@ -74,7 +74,7 @@ const Validators = {
     if (typeof size == 'number') {
       return value === size;
     }
-    let {min, max} = size;
+    let { min, max } = size;
     if (parseInt(min) != null && value < min) return false;
     if (parseInt(max) != null && value > max) return false;
     return true;

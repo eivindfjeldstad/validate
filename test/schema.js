@@ -49,6 +49,12 @@ describe('Schema', () => {
       expect(schema.props).toHaveProperty(['a.b']);
     });
 
+    test('should support implicit object type', () => {
+      const schema = new Schema();
+      schema.path('a', { b: { type: String } });
+      expect(schema.props.a._type).toBe(Object);
+    });
+
     test('should register validators', () => {
       const schema = new Schema();
       schema.path('a', { b: { required: true } });

@@ -138,6 +138,7 @@ export default class Schema {
     for (const key in rules) {
       if (!rules.hasOwnProperty(key)) continue;
       if (typeof prop[key] == 'function') continue;
+      prop.type(Object);
       nested = true;
       break;
     }

@@ -35,7 +35,7 @@ export default class Property {
 
     const entries = Object.entries(messages);
 
-    for (let [key, val] of entries) {
+    for (const [key, val] of entries) {
       this.messages[key] = val;
     }
 
@@ -338,8 +338,8 @@ export default class Property {
   validate(value, ctx, path = this.name) {
     const types = Object.keys(this.registry);
 
-    for (let type of types) {
-      let err = this._run(type, value, ctx, path);
+    for (const type of types) {
+      const err = this._run(type, value, ctx, path);
       if (err) return err;
     }
 
@@ -361,8 +361,8 @@ export default class Property {
     if (!this.registry[type]) return;
     const schema = this._schema;
     const { args, fn } = this.registry[type];
-    let validator = fn || schema.validators[type];
-    let valid = validator(value, ctx, ...args, path);
+    const validator = fn || schema.validators[type];
+    const valid = validator(value, ctx, ...args, path);
     if (!valid) return this._error(type, ctx, args, path);
   }
 

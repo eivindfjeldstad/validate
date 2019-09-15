@@ -21,8 +21,8 @@ describe('Schema', () => {
       const schema = new Schema();
       schema.path('a', 'string');
       schema.path('b', String);
-      expect(schema.props['a']._type).toBe('string');
-      expect(schema.props['b']._type).toBe(String);
+      expect(schema.props.a._type).toBe('string');
+      expect(schema.props.b._type).toBe(String);
     });
 
     test('should accept implicit arrays', () => {

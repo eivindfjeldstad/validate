@@ -144,7 +144,7 @@ export default class Schema {
     }
 
     Object.keys(rules).forEach(key => {
-      let rule = rules[key];
+      const rule = rules[key];
 
       if (nested) {
         return this.path(join(key, path), rule);
@@ -165,7 +165,7 @@ export default class Schema {
    */
 
   typecast(obj) {
-    for (let [path, prop] of Object.entries(this.props)) {
+    for (const [path, prop] of Object.entries(this.props)) {
       walk(path, obj, (key, value) => {
         if (value == null) return;
         const cast = prop.typecast(value);
@@ -198,7 +198,7 @@ export default class Schema {
       return this;
     }
 
-    for (let [key, val] of Object.entries(obj)) {
+    for (const [key, val] of Object.entries(obj)) {
       const path = join(key, prefix);
 
       if (!this.props[path]) {
@@ -240,7 +240,7 @@ export default class Schema {
       this.strip(obj);
     }
 
-    for (let [path, prop] of Object.entries(this.props)) {
+    for (const [path, prop] of Object.entries(this.props)) {
       walk(path, obj, (key, value) => {
         const err = prop.validate(value, obj, key);
         if (err) errors.push(err);

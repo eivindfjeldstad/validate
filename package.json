@@ -1,7 +1,7 @@
 {
   "name": "validate",
   "description": "Validate object properties in javascript.",
-  "version": "4.5.1",
+  "version": "5.0.0",
   "author": "Eivind Fjeldstad",
   "repository": "eivindfjeldstad/validate",
   "keywords": [
@@ -27,19 +27,19 @@
     "typecast": "0.0.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-jest": "^23.0.0",
-    "babel-plugin-add-module-exports": "^1.0.0",
-    "babel-preset-env": "^1.6.1",
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/preset-env": "^7.6.0",
+    "babel-jest": "^24.9.0",
+    "babel-plugin-add-module-exports": "^1.0.2",
     "documentation": "^12.1.2",
-    "eslint": "^6.0.0",
-    "eslint-config-standard": "^13.0.1",
-    "eslint-plugin-import": "^2.11.0",
-    "eslint-plugin-node": "^9.0.0",
-    "eslint-plugin-promise": "^4.0.0",
-    "eslint-plugin-standard": "^4.0.0",
-    "jest": "^22.4.3"
+    "eslint": "^6.4.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "jest": "^24.9.0"
   },
   "jest": {
     "testMatch": [

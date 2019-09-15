@@ -29,17 +29,17 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
-    "babel-jest": "^23.0.0",
+    "babel-jest": "^24.9.0",
     "babel-plugin-add-module-exports": "^1.0.0",
     "babel-preset-env": "^1.6.1",
     "documentation": "^12.1.2",
     "eslint": "^6.0.0",
-    "eslint-config-standard": "^13.0.1",
+    "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.11.0",
-    "eslint-plugin-node": "^9.0.0",
+    "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.0.0",
     "eslint-plugin-standard": "^4.0.0",
-    "jest": "^22.4.3"
+    "jest": "^24.9.0"
   },
   "jest": {
     "testMatch": [

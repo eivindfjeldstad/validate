@@ -400,4 +400,17 @@ describe('Property', () => {
       expect(schema.path('hello')).toBe(ret);
     });
   });
+
+  describe('.properties()', () => {
+    test('should register all props in given object', () => {
+      const schema = new Schema();
+      const prop = new Property('test', schema);
+      prop.properties({
+        hello: String,
+        world: String
+      });
+      expect(schema.props).toHaveProperty(['test.hello']);
+      expect(schema.props).toHaveProperty(['test.world']);
+    });
+  });
 });

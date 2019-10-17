@@ -1,4 +1,5 @@
 import ValidationError from './error';
+import { join } from './utils';
 
 /**
  * A property instance gets returned whenever you call `schema.path()`.
@@ -255,7 +256,7 @@ export default class Property {
    */
 
   each(rules) {
-    this._schema.path(`${this.name}.$`, rules);
+    this._schema.path(join('$', this.name), rules);
     return this;
   }
 
@@ -271,8 +272,28 @@ export default class Property {
 
   elements(arr) {
     arr.forEach((rules, i) => {
-      this._schema.path(`${this.name}.${i}`, rules);
+      this._schema.path(join(i, this.name), rules);
     });
+    return this;
+  }
+
+  /**
+   * Registers a validator that checks if a value is of a given `type`
+   *
+   * @example
+   * prop.properties({
+   *   name: String,
+   *   email: String
+   * })
+   *
+   * @param {Object} props - properties with rules
+   * @return {Property}
+   */
+
+  properties(props) {
+    for (const [prop, rule] of Object.entries(props)) {
+      this._schema.path(join(prop, this.name), rule);
+    }
     return this;
   }
 

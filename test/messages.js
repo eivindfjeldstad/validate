@@ -31,8 +31,14 @@ describe('Messages', () => {
   });
 
   describe('.enum()', () => {
-    test('should return true if given value is included in given array', () => {
+    test('should return the correct message', () => {
       expect(Messages.enum('a', {}, ['b', 'c'])).toBe('a must be either b or c.');
+    });
+  });
+
+  describe('.illegal()', () => {
+    test('should return the correct message', () => {
+      expect(Messages.illegal('a')).toBe('a is not allowed.');
     });
   });
 });

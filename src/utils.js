@@ -1,4 +1,5 @@
-import dot from 'eivindfjeldstad-dot';
+import dot from '@eivifj/dot';
+import typeOf from 'component-type';
 
 /**
  * Assign given key and value (or object) to given object
@@ -16,12 +17,12 @@ export function assign(key, val, obj) {
 }
 
 /**
- * Walk path
+ * Enumerate all permutations of `path`, replacing $ with array indices
  *
  * @private
  */
 
-export function walk(path, obj, callback) {
+export function enumerate(path, obj, callback) {
   const parts = path.split(/\.\$(?=\.|$)/);
   const first = parts.shift();
   const arr = dot.get(obj, first);
@@ -37,7 +38,36 @@ export function walk(path, obj, callback) {
   for (let i = 0; i < arr.length; i++) {
     const current = join(i, first);
     const next = current + parts.join('.$');
-    walk(next, obj, callback);
+    enumerate(next, obj, callback);
+  }
+}
+
+/**
+ * Walk object and call `callback` with path and prop name
+ *
+ * @private
+ */
+
+export function walk(obj, callback, path, prop) {
+  const type = typeOf(obj);
+
+  if (type === 'array') {
+    obj.forEach((v, i) =>
+      walk(v, callback, join(i, path), join('$', prop))
+    );
+    return;
+  }
+
+  if (type !== 'object') {
+    return;
+  }
+
+  for (const [key, val] of Object.entries(obj)) {
+    const newPath = join(key, path);
+    const newProp = join(key, prop);
+    if (callback(newPath, newProp)) {
+      walk(val, callback, newPath, newProp);
+    }
   }
 }
 

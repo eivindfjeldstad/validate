@@ -1,12 +1,10 @@
-import typeOf from 'component-type';
-import dot from 'eivindfjeldstad-dot';
-
+import dot from '@eivifj/dot';
 import typecast from 'typecast';
 import Property from './property';
 import Messages from './messages';
 import Validators from './validators';
 import ValidationError from './error';
-import { walk, join, assign } from './utils';
+import { walk, enumerate, join, assign } from './utils';
 
 /**
  * A Schema defines the structure that objects should be validated against.
@@ -46,6 +44,7 @@ import { walk, join, assign } from './utils';
  * @param {Object} [opts] - options
  * @param {Boolean} [opts.typecast=false] - typecast values before validation
  * @param {Boolean} [opts.strip=true] - strip properties not defined in the schema
+ * @param {Boolean} [opts.strict=false] - validation fails when object contains properties not defined in the schema
  */
 
 export default class Schema {
@@ -166,7 +165,7 @@ export default class Schema {
 
   typecast(obj) {
     for (const [path, prop] of Object.entries(this.props)) {
-      walk(path, obj, (key, value) => {
+      enumerate(path, obj, (key, value) => {
         if (value == null) return;
         const cast = prop.typecast(value);
         if (cast === value) return;
@@ -186,30 +185,35 @@ export default class Schema {
    * @private
    */
 
-  strip(obj, prefix) {
-    const type = typeOf(obj);
-
-    if (type === 'array') {
-      obj.forEach((v, i) => this.strip(v, join('$', prefix)));
-      return this;
-    }
-
-    if (type !== 'object') {
-      return this;
-    }
-
-    for (const [key, val] of Object.entries(obj)) {
-      const path = join(key, prefix);
-
-      if (!this.props[path]) {
-        delete obj[key];
-        continue;
-      }
-
-      this.strip(val, path);
-    }
+  strip(obj) {
+    walk(obj, (path, prop) => {
+      if (this.props[prop]) return true;
+      dot.delete(obj, path);
+      return false;
+    });
 
     return this;
+  }
+
+  /**
+   * Create errors for all properties that are not defined in the schema
+   *
+   * @param {Object} obj - the object to check
+   * @return {Schema}
+   * @private
+   */
+
+  enforce(obj) {
+    const errors = [];
+
+    walk(obj, (path, prop) => {
+      if (this.props[prop]) return true;
+      const error = new ValidationError(Messages.illegal(path), path);
+      errors.push(error);
+      return false;
+    });
+
+    return errors;
   }
 
   /**
@@ -236,12 +240,16 @@ export default class Schema {
       this.typecast(obj);
     }
 
+    if (opts.strict) {
+      errors.push(...this.enforce(obj));
+    }
+
     if (opts.strip !== false) {
       this.strip(obj);
     }
 
     for (const [path, prop] of Object.entries(this.props)) {
-      walk(path, obj, (key, value) => {
+      enumerate(path, obj, (key, value) => {
         const err = prop.validate(value, obj, key);
         if (err) errors.push(err);
       });

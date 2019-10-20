@@ -179,7 +179,8 @@ const post = new Schema({
 If you think it should work, it probably works.
 
 #### Naming conflicts
-Validate will naively assume that a nested object where *all* property names are validators is not a nested object.
+
+Validate will naively assume that a nested object where _all_ property names are validators is not a nested object.
 
 ```js
 const schema = new Schema({
@@ -192,6 +193,7 @@ const schema = new Schema({
   }
 });
 ```
+
 In this example, the `pet.type` property will be interpreted as a `type` rule, and the validations will not work as intended. To work around this we could use the slightly more verbose `properties` rule:
 
 ```js
@@ -207,6 +209,7 @@ const schema = new Schema({
   }
 });
 ```
+
 In this case the `type` property of `pets.properties` will be interpreted as a nested property, and the validations will work as intended.
 
 ### Custom validators
@@ -301,7 +304,10 @@ user.typecaster({
 ### Property stripping
 
 By default, all values not defined in the schema will be stripped from the object.
-Set `.strip = false` on the options object to disable this behavior.
+Set `.strip = false` on the options object to disable this behavior. This will likely be changed in a future version.
+
+### Strict mode
+When strict mode is enabled, properties that are not defined in the schema will trigger a validation error. Set `.strict = true` on the options object to enable strict mode.
 
 ## API
 
@@ -734,6 +740,7 @@ A Schema defines the structure that objects should be validated against.
 -   `opts` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** options (optional, default `{}`)
     -   `opts.typecast` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** typecast values before validation (optional, default `false`)
     -   `opts.strip` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** strip properties not defined in the schema (optional, default `true`)
+    -   `opts.strict` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** validation fails when object contains properties not defined in the schema (optional, default `false`)
 
 #### Examples
 

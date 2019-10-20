@@ -1,6 +1,7 @@
 import Schema from '../src/schema';
 import Property from '../src/property';
 import ValidationError from '../src/error';
+import Messages from '../src/messages';
 
 describe('Schema', () => {
   describe('when given an object', () => {
@@ -206,6 +207,44 @@ describe('Schema', () => {
         const schema = new Schema({ name: { type: String } });
         const wrap = () => schema.validate({}, { typecast: true });
         expect(wrap).not.toThrowError();
+      });
+    });
+
+    describe('with strict mode enabled', () => {
+      test('should generate errors for properties not in schema', () => {
+        const schema = new Schema({
+          a: Number,
+          b: [{ a: Number }],
+          c: { a: Number },
+          d: [[{ a: Number }]]
+        });
+
+        const obj = {
+          a: 1,
+          b: [{ a: 1, b: 1 }, { a: 1, c: { d: 1 } }],
+          c: { a: 1, b: 1 },
+          d: [[{ a: 1 }, { a: 1, b: 1 }]],
+          e: 1
+        };
+
+        const errors = schema.validate(obj, { strict: true });
+        const messages = errors.map(e => e.message);
+        const paths = errors.map(e => e.path);
+
+        expect(messages).toStrictEqual([
+          Messages.illegal('b.0.b'),
+          Messages.illegal('b.1.c'),
+          Messages.illegal('c.b'),
+          Messages.illegal('d.0.1.b'),
+          Messages.illegal('e')
+        ]);
+        expect(paths).toStrictEqual([
+          'b.0.b',
+          'b.1.c',
+          'c.b',
+          'd.0.1.b',
+          'e'
+        ]);
       });
     });
   });

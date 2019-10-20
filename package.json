@@ -22,8 +22,8 @@
     "node": ">=7.6"
   },
   "dependencies": {
+    "@eivifj/dot": "^1.0.1",
     "component-type": "1.2.1",
-    "eivindfjeldstad-dot": "0.0.1",
     "typecast": "0.0.1"
   },
   "devDependencies": {

@@ -43,6 +43,7 @@ interface MessageFunction {
 interface ValidationOptions {
   typecast?: boolean;
   strip?: boolean;
+  strict?: boolean;
 }
 
 export class ValidationError {

@@ -69,6 +69,11 @@ const Messages = {
     return `${prop} must be either ${copy.join(', ')} or ${last}.`;
   },
 
+  // Illegal property
+  illegal(prop) {
+    return `${prop} is not allowed.`;
+  },
+
   // Default message
   default(prop) {
     return `Validation failed for ${prop}.`;

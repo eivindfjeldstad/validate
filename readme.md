@@ -321,36 +321,39 @@ Set `.strip = false` on the options object to disable this behavior.
     -   [elements](#elements)
         -   [Parameters](#parameters-11)
         -   [Examples](#examples-14)
-    -   [path](#path)
+    -   [properties](#properties)
         -   [Parameters](#parameters-12)
         -   [Examples](#examples-15)
-    -   [typecast](#typecast)
+    -   [path](#path)
         -   [Parameters](#parameters-13)
         -   [Examples](#examples-16)
-    -   [validate](#validate)
+    -   [typecast](#typecast)
         -   [Parameters](#parameters-14)
         -   [Examples](#examples-17)
+    -   [validate](#validate)
+        -   [Parameters](#parameters-15)
+        -   [Examples](#examples-18)
 -   [Schema](#schema-1)
-    -   [Parameters](#parameters-15)
-    -   [Examples](#examples-18)
+    -   [Parameters](#parameters-16)
+    -   [Examples](#examples-19)
     -   [path](#path-1)
-        -   [Parameters](#parameters-16)
-        -   [Examples](#examples-19)
-    -   [validate](#validate-1)
         -   [Parameters](#parameters-17)
         -   [Examples](#examples-20)
-    -   [assert](#assert)
+    -   [validate](#validate-1)
         -   [Parameters](#parameters-18)
         -   [Examples](#examples-21)
-    -   [message](#message-1)
+    -   [assert](#assert)
         -   [Parameters](#parameters-19)
         -   [Examples](#examples-22)
-    -   [validator](#validator)
+    -   [message](#message-1)
         -   [Parameters](#parameters-20)
         -   [Examples](#examples-23)
-    -   [typecaster](#typecaster)
+    -   [validator](#validator)
         -   [Parameters](#parameters-21)
         -   [Examples](#examples-24)
+    -   [typecaster](#typecaster)
+        -   [Parameters](#parameters-22)
+        -   [Examples](#examples-25)
 
 ### Property
 
@@ -614,6 +617,25 @@ Registers paths for array elements on the parent schema, with given array of rul
 
 ```javascript
 prop.elements([{ type: String }, { type: Number }])
+```
+
+Returns **[Property](#property)** 
+
+#### properties
+
+Registers all properties from the given object as nested properties
+
+##### Parameters
+
+-   `props` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** properties with rules
+
+##### Examples
+
+```javascript
+prop.properties({
+  name: String,
+  email: String
+})
 ```
 
 Returns **[Property](#property)** 

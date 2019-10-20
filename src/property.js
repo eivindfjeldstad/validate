@@ -278,7 +278,7 @@ export default class Property {
   }
 
   /**
-   * Registers a validator that checks if a value is of a given `type`
+   * Registers all properties from the given object as nested properties
    *
    * @example
    * prop.properties({

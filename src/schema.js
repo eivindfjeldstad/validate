@@ -116,7 +116,7 @@ export default class Schema {
       return prop;
     }
 
-    // Allow arrays to be passed implicitly:
+    // Allow arrays to be defined implicitly:
     // `{ keywords: [String] }`
     // `{ keyVal: [[String, Number]] }`
     if (Array.isArray(rules)) {
@@ -131,18 +131,18 @@ export default class Schema {
       return prop;
     }
 
+    const keys = Object.keys(rules);
     let nested = false;
 
     // Check for nested objects
-    for (const key in rules) {
-      if (!rules.hasOwnProperty(key)) continue;
+    for (const key of keys) {
       if (typeof prop[key] == 'function') continue;
       prop.type(Object);
       nested = true;
       break;
     }
 
-    Object.keys(rules).forEach(key => {
+    keys.forEach(key => {
       const rule = rules[key];
 
       if (nested) {

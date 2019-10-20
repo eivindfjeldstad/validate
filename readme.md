@@ -178,6 +178,37 @@ const post = new Schema({
 
 If you think it should work, it probably works.
 
+#### Naming conflicts
+Validate will naively assume that a nested object where *all* property names are validators is not a nested object.
+
+```js
+const schema = new Schema({
+  pet: {
+    type: {
+      required: true,
+      type: String,
+      enum: ['cat', 'dog']
+    }
+  }
+});
+```
+In this example, the `pet.type` property will be interpreted as a `type` rule, and the validations will not work as intended. To work around this we could use the slightly more verbose `properties` rule:
+
+```js
+const schema = new Schema({
+  pet: {
+    properties: {
+      type: {
+        required: true,
+        type: String,
+        enum: ['cat', 'dog']
+      }
+    }
+  }
+});
+```
+In this case the `type` property of `pets.properties` will be interpreted as a nested property, and the validations will work as intended.
+
 ### Custom validators
 
 Custom validators can be defined by passing an object with named validators to `.use`:

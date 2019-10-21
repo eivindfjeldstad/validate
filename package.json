@@ -22,7 +22,7 @@
     "node": ">=7.6"
   },
   "dependencies": {
-    "@eivifj/dot": "^1.0.1",
+    "@eivifj/dot": "^1.0.2",
     "component-type": "1.2.1",
     "typecast": "0.0.1"
   },

@@ -66,7 +66,10 @@ const Messages = {
   enum(prop, ctx, enums) {
     const copy = enums.slice();
     const last = copy.pop();
-    return `${prop} must be either ${copy.join(', ')} or ${last}.`;
+
+    return copy.length
+      ? `${prop} must be either ${copy.join(', ')} or ${last}.`
+      : `${prop} must be ${last}.`
   },
 
   // Illegal property

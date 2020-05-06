@@ -69,7 +69,7 @@ const Messages = {
 
     return copy.length
       ? `${prop} must be either ${copy.join(', ')} or ${last}.`
-      : `${prop} must be ${last}.`
+      : `${prop} must be ${last}.`;
   },
 
   // Illegal property

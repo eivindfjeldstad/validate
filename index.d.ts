@@ -51,6 +51,7 @@ export class ValidationError {
   path: string;
   status: number;
   expose: boolean;
+  message: string;
 }
 
 export default class Schema {

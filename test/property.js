@@ -45,8 +45,8 @@ describe('Property', () => {
     test('should register each object property as a validator', () => {
       const prop = new Property('test', new Schema());
       prop.use({
-        one: (v) => v !== 1,
-        two: (v) => v !== 2
+        one: v => v !== 1,
+        two: v => v !== 2
       });
       expect(prop.validate(1)).toBeInstanceOf(Error);
       expect(prop.validate(2)).toBeInstanceOf(Error);
@@ -63,8 +63,8 @@ describe('Property', () => {
       });
 
       prop.use({
-        one: (v) => v !== 1,
-        two: (v) => v !== 2
+        one: v => v !== 1,
+        two: v => v !== 2
       });
 
       expect(prop.validate(1).message).toBe('error 1');

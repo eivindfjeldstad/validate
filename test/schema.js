@@ -102,6 +102,21 @@ describe('Schema', () => {
         expect(schema.props['hello.$']._type).toBe(Number);
       });
     });
+
+    describe('when given a path ending with *', () => {
+      test('should set `property.type` to object', () => {
+        const schema = new Schema();
+        schema.path('hello.*');
+        expect(schema.props.hello._type).toBe(Object);
+      });
+
+      test('should apply rules to each property of the object', () => {
+        const schema = new Schema();
+        schema.path('hello.*').type(Number);
+        expect(schema.props.hello._type).toBe(Object);
+        expect(schema.props['hello.*']._type).toBe(Number);
+      });
+    });
   });
 
   describe('.strip()', () => {
@@ -148,6 +163,29 @@ describe('Schema', () => {
           { b: ['hello', 1] },
           { c: [['hello', 'world'], ['hello', 2]] }
         ]
+      });
+      expect(res).toHaveLength(3);
+    });
+
+    test('should work with * a placeholder for object keys', () => {
+      const schema = new Schema();
+      schema.path('a.*.c').required();
+      schema.path('a.*.b.*').type(String);
+      schema.path('a.*.b.*.*').type(String);
+      const res = schema.validate({
+        a: {
+          x: {
+            b: { z: { m: 'hello' } },
+            c: {
+              k: {
+                l: ['hello', 2]
+              }
+            }
+          },
+          y: {
+            b: { z: ['hello', 1] }
+          }
+        }
       });
       expect(res).toHaveLength(3);
     });
@@ -200,6 +238,27 @@ describe('Schema', () => {
         expect(obj).toEqual({
           a: [{ b: ['a', 'b'] }, { b: ['1'], c: [['a', 'b'], ['a', '2']] }],
           b: [1, 2, 3, 4, 5]
+        });
+      });
+
+      test('should typecast objects and properties within objects', () => {
+        const schema = new Schema();
+        schema.path('a.*.b').required();
+        schema.path('a.*.b.*').type(String);
+        schema.path('a.*.c.*.*').type(String);
+        schema.path('b.*').type(Number);
+
+        const obj = {
+          a: { y: { b: { z: 1 } }, x: { b: { j: 'hello' }, c: { m: { l: { o: 2056 } } } } },
+          b: { n: '1', t: '2' }
+        };
+
+        const res = schema.validate(obj, { typecast: true });
+        expect(res).toHaveLength(0);
+
+        expect(obj).toEqual({
+          a: { y: { b: { z: '1' } }, x: { b: { j: 'hello' }, c: { m: { l: '[object Object]' } } } },
+          b: { n: 1, t: 2 }
         });
       });
 
@@ -293,7 +352,7 @@ describe('Schema', () => {
     test('should set default typecasters', () => {
       const obj = { name: 123 };
       const schema = new Schema({ name: { type: 'hello' } });
-      schema.typecaster('hello', (val) => val.toString());
+      schema.typecaster('hello', val => val.toString());
       schema.typecast(obj);
       expect(obj.name).toBe('123');
     });
@@ -301,7 +360,7 @@ describe('Schema', () => {
     test('should set default typecasters', () => {
       const obj = { name: 123 };
       const schema = new Schema({ name: { type: 'hello' } });
-      schema.typecaster({ hello: (val) => val.toString() });
+      schema.typecaster({ hello: val => val.toString() });
       schema.typecast(obj);
       expect(obj.name).toBe('123');
     });

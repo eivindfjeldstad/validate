@@ -46,7 +46,7 @@ describe('Property', () => {
       const prop = new Property('test', new Schema());
       prop.use({
         one: v => v !== 1,
-        two: v => v !== 2
+        two: v => v !== 2,
       });
       expect(prop.validate(1)).toBeInstanceOf(Error);
       expect(prop.validate(2)).toBeInstanceOf(Error);
@@ -59,12 +59,12 @@ describe('Property', () => {
 
       schema.message({
         one: () => 'error 1',
-        two: () => 'error 2'
+        two: () => 'error 2',
       });
 
       prop.use({
         one: v => v !== 1,
-        two: v => v !== 2
+        two: v => v !== 2,
       });
 
       expect(prop.validate(1).message).toBe('error 1');
@@ -76,7 +76,7 @@ describe('Property', () => {
       let first, second;
       prop.use({
         one: [(v, c, arg) => first = arg, 1],
-        two: [(v, c, arg) => second = arg, 2]
+        two: [(v, c, arg) => second = arg, 2],
       });
       prop.validate({ test: 1 });
       expect(first).toBe(1);
@@ -167,6 +167,14 @@ describe('Property', () => {
       const prop = new Property('test', new Schema());
       prop.array();
       expect(prop._type).toBe(Array);
+    });
+  });
+
+  describe('.object()', () => {
+    test('should set type to object', () => {
+      const prop = new Property('test', new Schema());
+      prop.object();
+      expect(prop._type).toBe(Object);
     });
   });
 
@@ -324,6 +332,10 @@ describe('Property', () => {
       const prop = new Property('test', new Schema());
       prop.type(String);
       expect(prop.typecast(123)).toBe('123');
+      prop.type(Object);
+      expect(prop.typecast(123)).toStrictEqual({ value: 123 });
+      expect(prop.typecast('{"a":123}')).toStrictEqual({ a: 123 });
+      expect(prop.typecast('{a:123}')).toStrictEqual({ value: '{a:123}' });
     });
 
     test('should throw if no typecaster exists', () => {
@@ -370,7 +382,7 @@ describe('Property', () => {
       prop.use({
         context: (v, c) => {
           ctx = c;
-        }
+        },
       });
 
       prop.validate('abc', obj);
@@ -384,7 +396,7 @@ describe('Property', () => {
       prop.use({
         context: (v, c, p) => {
           path = p;
-        }
+        },
       });
 
       prop.validate('abc', { test: 1 });
@@ -407,7 +419,7 @@ describe('Property', () => {
       const prop = new Property('test', schema);
       prop.properties({
         hello: String,
-        world: String
+        world: String,
       });
       expect(schema.props).toHaveProperty(['test.hello']);
       expect(schema.props).toHaveProperty(['test.world']);

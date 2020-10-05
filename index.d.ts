@@ -79,7 +79,7 @@ declare class Property {
   date(): Property;
   length(rule: number | { min?: number; max?: number }): Property;
   size(rule: number | { min?: number; max?: number }): Property;
-  enum(enums: string[]): Property;
+  enum(enums: string[] | number[]): Property;
   match(regexp: RegExp): Property;
   each(rules: Rule): Property;
   elements(arr: Rule[]): Property;

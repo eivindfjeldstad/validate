@@ -22,11 +22,11 @@ const user = new Schema({
   },
   pets: [{
     name: {
-      type: String
+      type: String,
       required: true
     },
     animal: {
-      type: String
+      type: String,
       enum: ['cat', 'dog', 'cow']
     }
   }],
@@ -38,7 +38,7 @@ const user = new Schema({
     city: {
       type: String,
       required: true
-    }
+    },
     zip: {
       type: String,
       match: /^[0-9]+$/,

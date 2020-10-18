@@ -703,9 +703,16 @@ Typecast given `value`
 
 ##### Examples
 
+###### **String**
 ```javascript
 prop.type(String)
 prop.typecast(123) // => '123'
+```
+###### **Objcet**
+```javascript
+prop.type(Object)
+prop.typecast('{"x":123}') // => {x:123}
+prop.typecast('{x:123}') // => {value:'{x:123}'}
 ```
 
 Returns **Mixed** 

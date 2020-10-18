@@ -6,6 +6,19 @@ import Validators from './validators';
 import ValidationError from './error';
 import { walk, enumerate, join, assign } from './utils';
 
+const typecastObjectPoly = function(val) {
+  if (val == null) return {};
+  if (val instanceof Object) return val;
+  if (typeof val != 'string') return { value: val };
+  let obj = {};
+  try {
+    obj = JSON.parse(val);
+  } catch (error) {
+    obj = { value: val };
+  }
+  return obj;
+};
+
 /**
  * A Schema defines the structure that objects should be validated against.
  *
@@ -54,7 +67,7 @@ export default class Schema {
     this.props = {};
     this.messages = Object.assign({}, Messages);
     this.validators = Object.assign({}, Validators);
-    this.typecasters = Object.assign({}, typecast);
+    this.typecasters = Object.assign({}, { object: typecastObjectPoly, ...typecast });
     Object.keys(obj).forEach(k => this.path(k, obj[k]));
   }
 
@@ -84,6 +97,11 @@ export default class Schema {
     // Array index placeholder
     if (suffix === '$') {
       this.path(prefix).type(Array);
+    }
+
+    // Catchall Object placeholder
+    if (suffix === '*') {
+      this.path(prefix).type(Object);
     }
 
     // Nested schema
@@ -186,8 +204,9 @@ export default class Schema {
    */
 
   strip(obj) {
-    walk(obj, (path, prop) => {
+    walk(obj, (path, prop, isCatchall = false) => {
       if (this.props[prop]) return true;
+      if (isCatchall) return false;
       dot.delete(obj, path);
       return false;
     });
@@ -206,8 +225,9 @@ export default class Schema {
   enforce(obj) {
     const errors = [];
 
-    walk(obj, (path, prop) => {
+    walk(obj, (path, prop, isCatchall = false) => {
       if (this.props[prop]) return true;
+      if (isCatchall) return false;
       const error = new ValidationError(Messages.illegal(path), path);
       errors.push(error);
       return false;

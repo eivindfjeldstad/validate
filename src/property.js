@@ -168,6 +168,19 @@ export default class Property {
   }
 
   /**
+   * Convenience method for setting type to `Object`
+   *
+   * @example
+   * prop.object()
+   *
+   * @return {Property}
+   */
+
+  object() {
+    return this.type(Object);
+  }
+
+  /**
    * Convenience method for setting type to `Date`
    *
    * @example

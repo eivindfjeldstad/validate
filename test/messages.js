@@ -34,6 +34,9 @@ describe('Messages', () => {
     test('should return the correct message', () => {
       expect(Messages.enum('a', {}, ['b', 'c'])).toBe('a must be either b or c.');
     });
+    test('should return the correct message with single enum', () => {
+      expect(Messages.enum('a', {}, ['c'])).toBe('a must be c.');
+    });
   });
 
   describe('.illegal()', () => {

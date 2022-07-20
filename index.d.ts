@@ -46,7 +46,7 @@ interface ValidationOptions {
   strict?: boolean;
 }
 
-export class ValidationError {
+export class ValidationError extends Error {
   constructor(message: string, path: string);
   path: string;
   status: number;

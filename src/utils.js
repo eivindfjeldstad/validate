@@ -23,7 +23,7 @@ export function assign(key, val, obj) {
  */
 
 export function enumerate(path, obj, callback) {
-  const parts = path.split(/\.\$(?=\.|$)/);
+  const parts = path.split(/\.[$*](?=\.|$|\*)/);
   const first = parts.shift();
   const arr = dot.get(obj, first);
 
@@ -32,6 +32,14 @@ export function enumerate(path, obj, callback) {
   }
 
   if (!Array.isArray(arr)) {
+    if (typeOf(arr) === 'object') {
+      const keys = Object.keys(arr);
+      for (let i = 0; i < keys.length; i++) {
+        const current = join(keys[i], first);
+        const next = current + parts.join('.*');
+        enumerate(next, obj, callback);
+      }
+    }
     return;
   }
 
@@ -65,7 +73,10 @@ export function walk(obj, callback, path, prop) {
   for (const [key, val] of Object.entries(obj)) {
     const newPath = join(key, path);
     const newProp = join(key, prop);
-    if (callback(newPath, newProp)) {
+    const newCatchProp = join('*', prop);
+    if (callback(newPath, newCatchProp, true)) {
+      walk(val, callback, newPath, newCatchProp);
+    } else if (callback(newPath, newProp)) {
       walk(val, callback, newPath, newProp);
     }
   }

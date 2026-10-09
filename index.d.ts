@@ -1,7 +1,11 @@
 type Type = Function | string
 
+interface TypeUnion {
+  anyOf: Type[];
+}
+
 interface PropertyDefinition {
-  type?: Type;
+  type?: Type | TypeUnion;
   required?: boolean;
   length?: number | { min?: number; max?: number };
   size?: number | { min?: number; max?: number };
@@ -72,7 +76,7 @@ declare class Property {
   schema(schema: Schema): Property;
   use(fns: { [name: string]: ValidationFunction }): Property;
   required(bool?: boolean): Property;
-  type(type: Type): Property;
+  type(type: Type | TypeUnion): Property;
   string(): Property;
   number(): Property;
   array(): Property;

@@ -83,7 +83,12 @@ export default class Schema {
 
     // Array index placeholder
     if (suffix === '$') {
-      this.path(prefix).type(Array);
+      const parent = this.path(prefix);
+      const type = parent._type;
+      const union = type && Array.isArray(type.anyOf);
+      if (!union || !type.anyOf.some(t => t === Array || t === 'array')) {
+        parent.type(Array);
+      }
     }
 
     // Nested schema

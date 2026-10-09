@@ -247,6 +247,24 @@ const user = new Schema({
 })
 ```
 
+### Union types
+
+Use `{ anyOf: [...] }` as the `type` to accept a value of any of the listed types:
+
+```js
+const user = new Schema({
+  id: { type: { anyOf: [String, Number] } }
+})
+
+const errors = user.validate({ id: true })
+errors[0].message //=> 'id must be of type String or Number.'
+```
+
+Members can be constructors or type names like `'string'`, and can be mixed.
+`anyOf` works only as the value of `type`; `{ id: { anyOf: [String, Number] } }` defines a nested object with a property named `anyOf`.
+`[String, Number]` as a property value still defines an array, not a union.
+A custom `type` validator registered via `schema.validator('type', fn)` receives the whole `{ anyOf: [...] }` object as its `type` argument.
+
 ### Chainable API
 
 If you want to avoid constructing large objects, you can add paths to a schema by using the chainable API:
@@ -300,6 +318,8 @@ user.typecaster({
   Car: (val) => new Car(val)
 })
 ```
+
+Values of properties with a [union type](#union-types) are not typecast.
 
 ### Property stripping
 
@@ -490,7 +510,7 @@ Registers a validator that checks if a value is of a given `type`
 
 ##### Parameters
 
--   `type` **([String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function))** type to check for
+-   `type` **([String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object))** type to check for, or `{ anyOf: [...] }` to accept any of the listed types
 
 ##### Examples
 
@@ -500,6 +520,10 @@ prop.type(String)
 
 ```javascript
 prop.type('string')
+```
+
+```javascript
+prop.type({ anyOf: [String, Number] })
 ```
 
 Returns **[Property](#property)** 

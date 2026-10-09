@@ -13,6 +13,13 @@ describe('Messages', () => {
       expect(Messages.type('a', {}, 'string')).toBe('a must be of type string.');
       expect(Messages.type('a', {}, A)).toBe('a must be of type A.');
     });
+
+    test('should list the members of a union', () => {
+      class A {};
+      expect(Messages.type('a', {}, { anyOf: [String, Number] })).toBe('a must be of type String or Number.');
+      expect(Messages.type('a', {}, { anyOf: [String, 'number', A] })).toBe('a must be of type String, number or A.');
+      expect(Messages.type('a', {}, { anyOf: [String] })).toBe('a must be of type String.');
+    });
   });
 
   describe('.match()', () => {

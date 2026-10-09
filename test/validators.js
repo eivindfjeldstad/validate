@@ -48,6 +48,51 @@ describe('Validators', () => {
       expect(Validators.type(1, {}, 'array')).toBe(false);
       expect(Validators.type(1, {}, 'object')).toBe(false);
     });
+
+    test('should accept a union of constructors', () => {
+      const union = { anyOf: [String, Number] };
+      expect(Validators.type('x', {}, union)).toBe(true);
+      expect(Validators.type(1, {}, union)).toBe(true);
+      expect(Validators.type(true, {}, union)).toBe(false);
+      expect(Validators.type({}, {}, union)).toBe(false);
+      expect(Validators.type([], {}, union)).toBe(false);
+    });
+
+    test('should accept a union of type names', () => {
+      const union = { anyOf: ['string', 'number'] };
+      expect(Validators.type('x', {}, union)).toBe(true);
+      expect(Validators.type(1, {}, union)).toBe(true);
+      expect(Validators.type(true, {}, union)).toBe(false);
+      expect(Validators.type({}, {}, union)).toBe(false);
+      expect(Validators.type([], {}, union)).toBe(false);
+    });
+
+    test('should accept a union of mixed constructors and type names', () => {
+      const union = { anyOf: [Number, 'date'] };
+      expect(Validators.type(1, {}, union)).toBe(true);
+      expect(Validators.type(new Date(), {}, union)).toBe(true);
+      expect(Validators.type('x', {}, union)).toBe(false);
+    });
+
+    test('should accept a custom class in a union', () => {
+      class A {};
+      const union = { anyOf: [A, String] };
+      expect(Validators.type(new A(), {}, union)).toBe(true);
+      expect(Validators.type('x', {}, union)).toBe(true);
+      expect(Validators.type(1, {}, union)).toBe(false);
+    });
+
+    test('should not throw on an unknown type name in a union', () => {
+      const union = { anyOf: ['hello', Number] };
+      expect(Validators.type(1, {}, union)).toBe(true);
+      expect(Validators.type('x', {}, union)).toBe(false);
+    });
+
+    test('should return true for null or undefined with a union', () => {
+      const union = { anyOf: [String, Number] };
+      expect(Validators.type(null, {}, union)).toBe(true);
+      expect(Validators.type(undefined, {}, union)).toBe(true);
+    });
   });
 
   describe('.match()', () => {

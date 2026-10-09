@@ -36,6 +36,21 @@ describe('Schema', () => {
       expect(errors[1].path).toBe('b.1');
     });
 
+    test('should keep the meaning of implicit array shorthand', () => {
+      const schema = new Schema();
+      schema.path('a', [String]);
+      schema.path('b', [String, Number]);
+      expect(schema.props).toHaveProperty(['a.$']);
+      expect(schema.props).toHaveProperty(['b.0']);
+      expect(schema.props).toHaveProperty(['b.1']);
+    });
+
+    test('should not treat a union type as a nested object', () => {
+      const schema = new Schema({ a: { type: { anyOf: [String, Number] } } });
+      expect(Object.keys(schema.props)).toStrictEqual(['a']);
+      expect(schema.props.a._type.anyOf).toStrictEqual([String, Number]);
+    });
+
     test('should create properties for all subpaths', () => {
       const schema = new Schema();
       schema.path('hello.planet.earth');
@@ -137,6 +152,54 @@ describe('Schema', () => {
       expect(err2.message).toMatch(/things\.2/);
     });
 
+    test('should validate union types', () => {
+      const schema = new Schema({ a: { type: { anyOf: [String, Number] } } });
+      expect(schema.validate({ a: 'x' })).toHaveLength(0);
+      expect(schema.validate({ a: 1 })).toHaveLength(0);
+      const res = schema.validate({ a: true });
+      expect(res).toHaveLength(1);
+      expect(res[0].path).toBe('a');
+      expect(res[0].message).toBe('a must be of type String or Number.');
+    });
+
+    test('should let null and undefined pass a union type unless required', () => {
+      const schema = new Schema({ a: { type: { anyOf: [String, Number] } } });
+      expect(schema.validate({})).toHaveLength(0);
+      expect(schema.validate({ a: null })).toHaveLength(0);
+
+      const required = new Schema({ a: { type: { anyOf: [String, Number] }, required: true } });
+      const res = required.validate({});
+      expect(res).toHaveLength(1);
+      expect(res[0].message).toBe('a is required.');
+    });
+
+    test('should validate union types in array elements', () => {
+      const schema = new Schema({ a: [{ type: { anyOf: [String, Number] } }] });
+      expect(schema.validate({ a: ['x', 1] })).toHaveLength(0);
+      const res = schema.validate({ a: ['x', true] });
+      expect(res).toHaveLength(1);
+      expect(res[0].path).toBe('a.1');
+    });
+
+    test('should keep a union containing Array when combined with each', () => {
+      const typeFirst = new Schema({ tags: { type: { anyOf: [String, Array] }, each: String } });
+      const eachFirst = new Schema({ tags: { each: String, type: { anyOf: [String, Array] } } });
+      const chained = new Schema();
+      chained.path('tags').type({ anyOf: [String, Array] }).each(String);
+
+      [typeFirst, eachFirst, chained].forEach(schema => {
+        expect(schema.validate({ tags: 'a' })).toHaveLength(0);
+        expect(schema.validate({ tags: ['a', 'b'] })).toHaveLength(0);
+        const element = schema.validate({ tags: ['a', 1] });
+        expect(element).toHaveLength(1);
+        expect(element[0].path).toBe('tags.1');
+        expect(element[0].message).toBe('tags.1 must be of type String.');
+        const res = schema.validate({ tags: 5 });
+        expect(res).toHaveLength(1);
+        expect(res[0].message).toBe('tags must be of type String or Array.');
+      });
+    });
+
     test('should work with $ a placeholder for array indices', () => {
       const schema = new Schema();
       schema.path('a.$.b').required();
@@ -208,6 +271,19 @@ describe('Schema', () => {
         const wrap = () => schema.validate({}, { typecast: true });
         expect(wrap).not.toThrowError();
       });
+
+      test('should not typecast union types', () => {
+        const schema = new Schema({ a: { type: { anyOf: [String, Number] } } });
+        const obj = { a: '1' };
+        expect(schema.validate(obj, { typecast: true })).toHaveLength(0);
+        expect(obj.a).toBe('1');
+
+        const invalid = { a: true };
+        const res = schema.validate(invalid, { typecast: true });
+        expect(invalid.a).toBe(true);
+        expect(res).toHaveLength(1);
+        expect(res[0].message).toBe('a must be of type String or Number.');
+      });
     });
 
     describe('with strict mode enabled', () => {
@@ -245,6 +321,12 @@ describe('Schema', () => {
           'd.0.1.b',
           'e'
         ]);
+      });
+
+      test('should only report undeclared properties next to a union type', () => {
+        const schema = new Schema({ a: { type: { anyOf: [String, Number] } } });
+        const errors = schema.validate({ a: 1, b: 1 }, { strict: true });
+        expect(errors.map(e => e.message)).toStrictEqual([Messages.illegal('b')]);
       });
     });
   });

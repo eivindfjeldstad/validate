@@ -136,6 +136,25 @@ describe('Property', () => {
       const prop = new Property('test', new Schema());
       expect(prop.type(Number)).toBe(prop);
     });
+
+    test('should accept a union', () => {
+      const prop = new Property('test', new Schema());
+      const union = { anyOf: [String, Number] };
+      const message = Messages.type(prop.name, {}, union);
+      prop.type(union);
+      expect(prop._type).toBe(union);
+      expect(prop.validate('x')).toBe(null);
+      expect(prop.validate(1)).toBe(null);
+      expect(prop.validate(null)).toBe(null);
+      expect(prop.validate(true)).toBeInstanceOf(Error);
+      expect(prop.validate(true).message).toBe(message);
+    });
+
+    test('should throw on a malformed union', () => {
+      const prop = new Property('test', new Schema());
+      expect(() => prop.type({ anyOf: [] })).toThrow(TypeError);
+      expect(() => prop.type({ anyOf: 'string' })).toThrow('anyOf must be a non-empty array of types');
+    });
   });
 
   describe('.string()', () => {
@@ -331,6 +350,12 @@ describe('Property', () => {
       prop.type('custom');
       const wrap = () => prop.typecast(123);
       expect(wrap).toThrowError('Typecasting failed: No typecaster defined for custom.');
+    });
+
+    test('should return the value unchanged for a union', () => {
+      const prop = new Property('test', new Schema());
+      prop.type({ anyOf: [String, Number] });
+      expect(prop.typecast('1')).toBe('1');
     });
   });
 

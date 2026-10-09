@@ -7,11 +7,11 @@
 const Messages = {
   // Type message
   type(prop, ctx, type) {
-    if (typeof type == 'function') {
-      type = type.name;
-    }
-
-    return `${prop} must be of type ${type}.`;
+    const names = (type && Array.isArray(type.anyOf) ? type.anyOf : [type])
+      .map(member => typeof member == 'function' ? member.name : member);
+    const last = names.pop();
+    const list = names.length ? `${names.join(', ')} or ${last}` : last;
+    return `${prop} must be of type ${list}.`;
   },
 
   // Required message

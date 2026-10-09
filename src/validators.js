@@ -26,12 +26,17 @@ const Validators = {
    *
    * @param {Mixed} value - the value being validated
    * @param {Object} ctx - the object being validated
-   * @param {String|Function} name name of the type or a constructor
+   * @param {String|Function|Object} name name of the type, a constructor,
+   *   or `{ anyOf: [...] }` to accept any of the listed types
    * @return {Boolean}
    */
 
   type(value, ctx, name) {
     if (value == null) return true;
+
+    if (name && Array.isArray(name.anyOf)) {
+      return name.anyOf.some(member => Validators.type(value, ctx, member));
+    }
 
     if (typeof name == 'function') {
       return value.constructor === name;
